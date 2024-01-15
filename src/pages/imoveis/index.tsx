@@ -487,98 +487,32 @@ export default function Imoveis() {
           <Table
             columns={[
               {
+                title: "Status",
+                dataIndex: "status",
+                key: "status",
+              },
+              {
                 title: "Referência",
                 dataIndex: "reference",
                 key: "reference",
               },
               {
                 title: "Titulo",
-                dataIndex: "title_formatted",
-                key: "title_formatted",
+                dataIndex: "title",
+                key: "title",
               },
               {
                 title: "Endereço",
-                dataIndex: "address",
-                key: "address",
-                render: (address: any) => {
-                   
-                  const verificarJson = (json: any) => {
-                    //verifica se o json é um objeto
-                    if (typeof json === "object") {
-                      //verifica se o json é um array
-                      if (Array.isArray(json)) {
-                        //verifica se o array é vazio
-                        if (json.length === 0) {
-                          return false;
-                        } else {
-                          return true;
-                        }
-                      } else {
-                        //verifica se o objeto é vazio
-                        if (Object.keys(json).length === 0) {
-                          return false;
-                        } else {
-                          return true;
-                        }
-                      }
-                    } else {
-                      return false;
-                    }
-                  };
-                
-                  const endereco = verificarJson(address) ? JSON.parse(address || "{}") : address;
+                dataIndex: "city",
+                key: "city",
+                render: (address: any, record: any) => {       
                   return (
                     <div>
-                      <p>{endereco?.formatted ?? endereco}</p>
+                      <p>{record?.neighborhood} - {address}</p>
                     </div>
                   );
                 },
               },
-              // {
-              //     title: 'Garagem',
-              //     dataIndex: 'garage',
-              //     key: 'garage',
-              // },
-              // {
-              //     title: 'Quartos',
-              //     dataIndex: 'bedroom',
-              //     key: 'bedroom',
-              // },
-              // {
-              //     title: 'Suites',
-              //     dataIndex: 'suite',
-              //     key: 'suite',
-              // },
-              // {
-              //     title: 'Closet',
-              //     dataIndex: 'closet',
-              //     key: 'closet',
-              // },
-              // {
-              //     title: 'Cozinha',
-              //     dataIndex: 'kitchen',
-              //     key: 'kitchen',
-              // },
-              // {
-              //     title: 'Sala de Jantar',
-              //     dataIndex: 'diningroom',
-              //     key: 'diningroom',
-              // },
-              // {
-              //     title: 'Sala de Estar',
-              //     dataIndex: 'livingroom',
-              //     key: 'livingroom',
-              // },
-              // {
-              //     title: 'Área de Serviço',
-              //     dataIndex: 'service_area',
-              //     key: 'service_area',
-              // },
-              // {
-              //     title: 'Banheiros',
-              //     dataIndex: 'bathroom',
-              //     key: 'bathroom',
-              // },
               {
                 title: "Preço",
                 dataIndex: "price",
@@ -613,7 +547,7 @@ export default function Imoveis() {
                       <EditOutlined
                         className="text-orange-500 hover:text-orange-700 text-xl"
                         onClick={() => {
-                          router.push(`/imoveis/editar/${record.url}`);
+                          router.push(`/imoveis/editar/${record.id}`);
                         }}
                       />
                       <DeleteOutlined
