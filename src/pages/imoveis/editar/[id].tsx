@@ -127,16 +127,6 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
     []
   );
 
-  const handleArrayChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setFormState((formState) => ({
-        ...formState,
-        [event.target.name]: event.target.value.split(","),
-      }));
-    },
-    []
-  );
-
   const handleDescricaoChange = useCallback((value: string) => {
     setFormState((formState: any) => ({
       ...formState,
