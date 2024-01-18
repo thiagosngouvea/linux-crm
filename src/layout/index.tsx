@@ -62,7 +62,7 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
         </div>
         <Menu defaultSelectedKeys={['1']} mode="inline">
             <Menu.Item key="1" icon={<BiSolidDashboard />} onClick={() => route.push('/')}>
-                Dashboard
+                Inicio
             </Menu.Item>
             <SubMenu key="sub1" icon={<BsFillHouseDoorFill />} title="Imóveis">
                 <Menu.Item key="sub2" icon={<BsListUl />} onClick={() => route.push('/imoveis')}>
