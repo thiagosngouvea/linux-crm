@@ -21,7 +21,7 @@ export function CardMenu ({ nome, descricao, imagem, rota }: CardMenuProps) {
     hover:-translate-y-1 hover:scale-110 w-80 cursor-pointer"
     onClick={() => router.push(`${rota}`)}
     >
-      <Image className="object-cover w-full" src={imagem} alt="avatar" quality={100} width={500}/>
+      <Image className="w-full h-56" src={imagem} alt="avatar" quality={100} width={500} height={300}/>
 
       <div className="py-5 text-center">
         <span className="block text-2xl font-bold text-orange-500 dark:text-white">{nome}</span>
