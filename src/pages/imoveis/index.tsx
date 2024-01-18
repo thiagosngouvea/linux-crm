@@ -129,7 +129,7 @@ export default function Imoveis() {
                 <Row
                     gutter={16}
                 >
-                    <Col span={4}>
+                    {/* <Col span={4}>
                         <Form.Item label="Tipo do imóvel" name="tipoImovel">
                             <Select
                             placeholder="Tipo do imóvel"
@@ -430,8 +430,8 @@ export default function Imoveis() {
                             ]}
                             />
                         </Form.Item>
-                    </Col>
-                    <Col span={2}>
+                    </Col> */}
+                    <Col span={4}>
                         <Form.Item label="Referência" name="referencia">
                             <Input
                             placeholder="AP0001"
@@ -447,7 +447,7 @@ export default function Imoveis() {
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={3}>
+                    <Col span={5}>
                     <Form.Item label="Valor Mínimo" name="valor_min">
                       <Input
                         placeholder="Digite o valor mínimo"
@@ -463,7 +463,7 @@ export default function Imoveis() {
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={3}>
+                  <Col span={5}>
                     <Form.Item label="Valor Máximo" name="valor_max">
                       <Input
                         placeholder="Digite o valor máximo"
@@ -528,7 +528,7 @@ export default function Imoveis() {
                       className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
                       onClick={() => {
                         setVisible(true);
-                        setImages(images);
+                        setImages(images ?? record?.images_old_links);
                       }}
                     >
                       Ver Imagens
@@ -575,7 +575,7 @@ export default function Imoveis() {
             }}
           />
           <Modal
-            title="Imagens retiradas via web scraping"
+            title="Fotos do Imovel"
             visible={visible}
             width={"80%"}
             onCancel={() => setVisible(false)}
@@ -586,17 +586,19 @@ export default function Imoveis() {
               </Button>
             }
           >
+            {!!images && images.length > 0 && (
             <Image.PreviewGroup>
               {images.map((image, index) => (
                 <Image
                   key={index}
                   width={200}
                   height={120}
-                  src={"https://" + image}
+                  src={image.includes("http") ? image : "https://" + image}
                   alt="foto-imovel"
                 />
               ))}
             </Image.PreviewGroup>
+            )}
           </Modal>
         </div>
       </div>

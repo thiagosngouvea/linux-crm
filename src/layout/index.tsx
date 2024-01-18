@@ -72,11 +72,11 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
                     Cadastro
                 </Menu.Item>
             </SubMenu>
-            <SubMenu key="sub4" icon={<BsFillHouseDoorFill />} title="Scraping">
+            {/* <SubMenu key="sub4" icon={<BsFillHouseDoorFill />} title="Scraping">
                 <Menu.Item key="sub5" icon={<BsListUl />} onClick={() => route.push('/scraping/amancio')}>
                     Amancio
                 </Menu.Item>
-            </SubMenu>
+            </SubMenu> */}
             <Menu.Item key="10" icon={<LogoutOutlined />} onClick={logout}>
                 Sair
             </Menu.Item>
