@@ -188,16 +188,19 @@ export default function Imoveis() {
                 title: "Status",
                 dataIndex: "status",
                 key: "status",
+                width: 100,
               },
               {
                 title: "Referência",
                 dataIndex: "reference",
                 key: "reference",
+                width: 100,
               },
               {
                 title: "Titulo",
                 dataIndex: "title",
                 key: "title",
+                width: 400,
               },
               {
                 title: "Endereço",
