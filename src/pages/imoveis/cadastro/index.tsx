@@ -3,10 +3,19 @@ import BackTitle from "@/components/BackTitle";
 import dynamic from "next/dynamic";
 import { propertiesService } from "@/services/properties.service";
 
-import { Button, Checkbox, Col, Form, Input, Row, Select, notification } from "antd";
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Input,
+  Row,
+  Select,
+  notification,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
-import ApiCep from 'cep-promise';
+import ApiCep from "cep-promise";
 
 const ReactQuill = dynamic(import("react-quill"), { ssr: false });
 
@@ -80,8 +89,12 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
     owner_email: null,
   });
 
-  const [invalidOrRemovedImages, setInvalidOrRemovedImages] = useState<string[]>([]);
-  const [images, setImages] = useState<Array<{ name: string; file: File | null }>>([]);
+  const [invalidOrRemovedImages, setInvalidOrRemovedImages] = useState<
+    string[]
+  >([]);
+  const [images, setImages] = useState<
+    Array<{ name: string; file: File | null }>
+  >([]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,11 +107,11 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
   );
 
   const handleSelectChange = useCallback((value: string, fieldName: string) => {
-    setFormState(formState => ({
-        ...formState,
-        [fieldName]: value,
+    setFormState((formState) => ({
+      ...formState,
+      [fieldName]: value,
     }));
-}, []);
+  }, []);
 
   const handleCheckboxChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,7 +141,6 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
   }, []);
 
   const submitForm = async (values: any) => {
-
     try {
       await propertiesService
         .create(formState)
@@ -136,12 +148,15 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           try {
             for (const image of images) {
               const formData = new FormData();
-      
+
               if (image.file) {
-                  formData.append("image", image.file, image.name);
-                  await propertiesService.uploadImages(response.data.properties.id, formData);
+                formData.append("image", image.file, image.name);
+                await propertiesService.uploadImages(
+                  response.data.properties.id,
+                  formData
+                );
               }
-          }
+            }
           } catch (error) {
             console.log(error);
           }
@@ -160,8 +175,8 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
     <div>
       <BackTitle title="Cadastro de Imóvel" />
       <div>
-        <Form 
-          layout="vertical" 
+        <Form
+          layout="vertical"
           onFinish={submitForm}
           fields={[
             {
@@ -402,7 +417,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             Informações do Imóvel
           </h2>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Titulo do imóvel" name="title">
                 <Input
                   placeholder="Titulo do imóvel"
@@ -411,7 +426,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Título do site" name="meta_title">
                 <Input
                   placeholder="Título do site"
@@ -420,111 +435,104 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Preço" name="price">
-                <Input 
-                  placeholder="Preço" 
-                  onChange={handleInputChange} 
+                <Input
+                  placeholder="Preço"
+                  onChange={handleInputChange}
                   name="price"
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Referência" name="reference">
-                <Input 
-                  placeholder="Referência" 
+                <Input
+                  placeholder="Referência"
                   onChange={handleInputChange}
                   name="reference"
                 />
               </Form.Item>
             </Col>
-            {/* <Col span={6}>
-                            <Form.Item label="URL" name="url">
-                                <Input 
-                                    placeholder="URL"
-                                    onChange={handleInputChange}    
-                                />
-                            </Form.Item>
-                        </Col> */}
           </Row>
           <Row gutter={16}>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="CEP" name="cep">
-                <Input 
-                  placeholder="Ex: 00000-000" 
-                  // onChange={handleInputChange}
+                <Input
+                  placeholder="Ex: 00000-000"
                   name="cep"
                   onBlur={async (event) => {
                     const cep = event.target.value;
-                    await ApiCep(cep).then((response) => {
-                    setFormState((formState: any) => ({
-                      ...formState,
-                      state: response.state,
-                      city: response.city,
-                      neighborhood: response.neighborhood,
-                      street: response.street,
-                      cep: response.cep,
-                    }));
-                  }).catch((error) => {
-                    notification.error({
-                      message: 'Erro',
-                      description: error?.message,
-                    });
-                  });
+                    await ApiCep(cep)
+                      .then((response) => {
+                        setFormState((formState: any) => ({
+                          ...formState,
+                          state: response.state,
+                          city: response.city,
+                          neighborhood: response.neighborhood,
+                          street: response.street,
+                          cep: response.cep,
+                        }));
+                      })
+                      .catch((error) => {
+                        notification.error({
+                          message: "Erro",
+                          description: error?.message,
+                        });
+                      });
                   }}
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Rua" name="street">
-                <Input 
-                  placeholder="Ex: rua, avenida, etc" 
+                <Input
+                  placeholder="Ex: rua, avenida, etc"
                   onChange={handleInputChange}
                   name="street"
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Bairro" name="neighborhood">
-                <Input 
-                  placeholder="Bairro" 
+                <Input
+                  placeholder="Bairro"
                   onChange={handleInputChange}
                   name="neighborhood"
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Cidade" name="city">
-                <Input 
-                  placeholder="Cidade" 
+                <Input
+                  placeholder="Cidade"
                   onChange={handleInputChange}
                   name="city"
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Estado" name="state">
-                <Input 
+                <Input
                   placeholder="Estado"
-                  onChange={handleInputChange} 
+                  onChange={handleInputChange}
                   name="state"
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Complemento" name="complement">
-                <Input 
-                  placeholder="Complemento" 
+                <Input
+                  placeholder="Complemento"
                   onChange={handleInputChange}
                   name="complement"
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Tipo do imóvel" name="type">
                 <Select
                   placeholder="Tipo do imóvel"
-                  onChange={(value) => handleSelectChange(value, 'type')}
+                  onChange={(value) => handleSelectChange(value, "type")}
                   showSearch
                   allowClear
                   options={[
@@ -822,11 +830,11 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Subtipo do imóvel" name="subtype">
                 <Select
                   placeholder="Subtipo do imóvel"
-                  onChange={(value) => handleSelectChange(value, 'subtype')}
+                  onChange={(value) => handleSelectChange(value, "subtype")}
                   showSearch
                   allowClear
                   options={[
@@ -1124,11 +1132,11 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Proximidades" name="nearby">
                 <Select
                   placeholder="Selecione ou Escreva"
-                  onChange={(value) => handleSelectChange(value, 'nearby')}
+                  onChange={(value) => handleSelectChange(value, "nearby")}
                   showSearch
                   allowClear
                   mode="tags"
@@ -1169,7 +1177,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               {/* CAMPO PARA ESCOLHER UMA COR EM HEXADECIMAL */}
               <Form.Item label="Cor da faixa" name="stripe_color">
                 <Input
@@ -1181,7 +1189,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Transação" name="transaction">
                 <button
                   onClick={() =>
@@ -1211,7 +1219,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Aceita Financiamento" name="accept_financing">
                 <button
                   onClick={() =>
@@ -1241,7 +1249,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Escriturado" name="written">
                 <button
                   onClick={() => setFormState({ ...formState, written: true })}
@@ -1267,7 +1275,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Marca D'água" name="watermark">
                 <button
                   onClick={() =>
@@ -1300,7 +1308,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Condominio</h2>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Nome do condomínio" name="condominium_name">
                 <Input
                   placeholder="Nome do condomínio"
@@ -1309,7 +1317,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item
                 label="Total de unidades"
                 name="condominium_total_units"
@@ -1322,7 +1330,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item
                 label="Unidades por andar"
                 name="condominium_units_per_floor"
@@ -1335,7 +1343,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Pavimentação" name="condominium_flooring">
                 <Input
                   type="number"
@@ -1345,7 +1353,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item
                 label="Número de torres"
                 name="condominium_number_towers"
@@ -1358,7 +1366,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item
                 label="Características"
                 name="condominium_caracteristics"
@@ -1373,7 +1381,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Cômodos</h2>
           <Row gutter={16}>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Garagem" name="garage">
                 <Input
                   type="number"
@@ -1383,7 +1391,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Quartos" name="bedroom">
                 <Input
                   type="number"
@@ -1393,7 +1401,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Suítes" name="suites">
                 <Input
                   type="number"
@@ -1403,7 +1411,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Closets" name="closet">
                 <Input
                   type="number"
@@ -1413,7 +1421,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Cozinha" name="kitchen">
                 <Input
                   type="number"
@@ -1423,7 +1431,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Sala de jantar" name="dinning_room">
                 <Input
                   type="number"
@@ -1433,7 +1441,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Sala de estar" name="living_room">
                 <Input
                   type="number"
@@ -1443,7 +1451,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Área de serviço" name="service_area">
                 <Input
                   type="number"
@@ -1453,7 +1461,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Banheiros" name="bathroom">
                 <Input
                   type="number"
@@ -1463,7 +1471,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Escritórios" name="office">
                 <Input
                   type="number"
@@ -1473,7 +1481,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Sala de TV" name="tv_room">
                 <Input
                   type="number"
@@ -1486,20 +1494,20 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Situação</h2>
           <Row gutter={16}>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Perfil do Imóvel" name="profile">
-                <Input 
-                  placeholder="Sala de TV" 
+                <Input
+                  placeholder="Sala de TV"
                   onChange={handleInputChange}
                   name="profile"
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Situação" name="situation">
                 <Select
                   placeholder="Situação"
-                  onChange={(value) => handleSelectChange(value, 'situation')}
+                  onChange={(value) => handleSelectChange(value, "situation")}
                   showSearch
                   allowClear
                   options={[
@@ -1517,11 +1525,11 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Tipo de IPTU" name="iptu_type">
                 <Select
                   placeholder="Tipo de IPTU"
-                  onChange={(value) => handleSelectChange(value, 'iptu_type')}
+                  onChange={(value) => handleSelectChange(value, "iptu_type")}
                   showSearch
                   allowClear
                   options={[
@@ -1538,7 +1546,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Área do Imóvel</h2>
           <Row gutter={16}>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Área privativa" name="area_privative">
                 <Input
                   type="number"
@@ -1548,11 +1556,13 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Unidade" name="area_privative_unit">
                 <Select
                   placeholder="Unidade"
-                  onChange={(value) => handleSelectChange(value, 'area_privative_unit')}
+                  onChange={(value) =>
+                    handleSelectChange(value, "area_privative_unit")
+                  }
                   showSearch
                   allowClear
                   options={[
@@ -1564,7 +1574,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Área construída" name="area_built">
                 <Input
                   type="number"
@@ -1573,11 +1583,13 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Unidade" name="area_built_unit">
                 <Select
                   placeholder="Unidade"
-                  onChange={(value) => handleSelectChange(value, 'area_built_unit')}
+                  onChange={(value) =>
+                    handleSelectChange(value, "area_built_unit")
+                  }
                   showSearch
                   allowClear
                   options={[
@@ -1589,7 +1601,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Área total" name="area_total">
                 <Input
                   type="number"
@@ -1598,11 +1610,13 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Unidade" name="area_total_unit">
                 <Select
                   placeholder="Unidade"
-                  onChange={(value) => handleSelectChange(value, 'area_total_unit')}
+                  onChange={(value) =>
+                    handleSelectChange(value, "area_total_unit")
+                  }
                   showSearch
                   allowClear
                   options={[
@@ -1614,7 +1628,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Área do terreno" name="area_terrain_total">
                 <Input
                   type="number"
@@ -1623,11 +1637,13 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Unidade" name="area_terrain_total_unit">
                 <Select
                   placeholder="Unidade"
-                  onChange={(value) => handleSelectChange(value, 'area_terrain_total_unit')}
+                  onChange={(value) =>
+                    handleSelectChange(value, "area_terrain_total_unit")
+                  }
                   showSearch
                   allowClear
                   options={[
@@ -1645,7 +1661,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </h2>
           <Row gutter={16}>
             {/*CRIAR 2 CHECKBOX*/}
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Visível para todos?" name="visivel">
                 <button
                   onClick={() =>
@@ -1675,7 +1691,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Destacar na pagina inicial?" name="destaque">
                 <button
                   onClick={() =>
@@ -1705,7 +1721,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Publicar na Rede" name="published_network">
                 <button
                   onClick={() =>
@@ -1735,7 +1751,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Mostrar Bairro" name="show_neighborhood">
                 <button
                   onClick={() =>
@@ -1765,7 +1781,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Mostrar Rua" name="show_street">
                 <button
                   onClick={() =>
@@ -1795,7 +1811,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Mostrar Condominio" name="show_condominium">
                 <button
                   onClick={() =>
@@ -1825,7 +1841,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Mostrar Preço" name="show_price">
                 <button
                   onClick={() =>
@@ -1858,37 +1874,37 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Corretor</h2>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Nome" name="broker_name">
-                <Input 
-                  placeholder="Nome" 
-                  onChange={handleInputChange} 
+                <Input
+                  placeholder="Nome"
+                  onChange={handleInputChange}
                   name="broker_name"
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="CRECI" name="broker_creci">
-                <Input 
-                  placeholder="CRECI" 
-                  onChange={handleInputChange} 
+                <Input
+                  placeholder="CRECI"
+                  onChange={handleInputChange}
                   name="broker_creci"
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="E-mail" name="broker_email">
-                <Input 
-                  placeholder="E-mail" 
-                  onChange={handleInputChange} 
+                <Input
+                  placeholder="E-mail"
+                  onChange={handleInputChange}
                   name="broker_email"
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Telefone" name="broker_phone">
-                <Input 
-                  placeholder="Telefone" 
+                <Input
+                  placeholder="Telefone"
                   onChange={handleInputChange}
                   name="broker_phone"
                 />
@@ -1897,20 +1913,20 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Proprietário</h2>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Nome" name="owner_name">
-                <Input 
-                  placeholder="Nome" 
+                <Input
+                  placeholder="Nome"
                   onChange={handleInputChange}
                   name="owner_name"
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="E-mail" name="owner_email">
-                <Input 
-                  placeholder="E-mail" 
-                  onChange={handleInputChange} 
+                <Input
+                  placeholder="E-mail"
+                  onChange={handleInputChange}
                   name="owner_email"
                 />
               </Form.Item>
@@ -1931,41 +1947,52 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                         <p className="ant-upload-text">Clique ou arraste as imagens para o campo de Upload</p>
                     </Dragger> */}
           <Form.Item name="images">
-          <Upload 
-            name="images" 
-            maxCount={30} 
-            accept="image/*" 
-            multiple
-            onChange={({ file, fileList }) => {
-              setImages(images => {
-                  const imageExists = images.some(image => image.name === file.name);
-                  const isInvalidOrRemoved = invalidOrRemovedImages.includes(file.name);
-                  const isRemoved = fileList.every(listFile => listFile.name !== file.name);
-      
+            <Upload
+              name="images"
+              maxCount={30}
+              accept="image/*"
+              multiple
+              onChange={({ file, fileList }) => {
+                setImages((images) => {
+                  const imageExists = images.some(
+                    (image) => image.name === file.name
+                  );
+                  const isInvalidOrRemoved = invalidOrRemovedImages.includes(
+                    file.name
+                  );
+                  const isRemoved = fileList.every(
+                    (listFile) => listFile.name !== file.name
+                  );
+
                   if (!imageExists && !isInvalidOrRemoved && !isRemoved) {
-                      return [
-                          ...images,
-                          {
-                              name: file.name,
-                              file: file.originFileObj || null,
-                          },
-                      ];
+                    return [
+                      ...images,
+                      {
+                        name: file.name,
+                        file: file.originFileObj || null,
+                      },
+                    ];
                   }
-      
+
                   return images;
-              });
-          }}
-          onRemove={(file) => {
-              setImages(images => {
-                  const newImages = images.filter(image => image.name !== file.name);
-                  setInvalidOrRemovedImages(invalidOrRemovedImages => [...invalidOrRemovedImages, file.name]);
-      
+                });
+              }}
+              onRemove={(file) => {
+                setImages((images) => {
+                  const newImages = images.filter(
+                    (image) => image.name !== file.name
+                  );
+                  setInvalidOrRemovedImages((invalidOrRemovedImages) => [
+                    ...invalidOrRemovedImages,
+                    file.name,
+                  ]);
+
                   return newImages;
-              });
-          }}
-        >
-            <Button icon={<UploadOutlined />}>Carregar Imagens</Button>
-        </Upload>
+                });
+              }}
+            >
+              <Button icon={<UploadOutlined />}>Carregar Imagens</Button>
+            </Upload>
           </Form.Item>
           <Row>
             <Col span={24}>

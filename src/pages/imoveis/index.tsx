@@ -129,309 +129,7 @@ export default function Imoveis() {
                 <Row
                     gutter={16}
                 >
-                    {/* <Col span={4}>
-                        <Form.Item label="Tipo do imóvel" name="tipoImovel">
-                            <Select
-                            placeholder="Tipo do imóvel"
-                            onChange={(e) => setTipoImovel(e)}
-                            showSearch
-                            allowClear
-                            options={[
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Apartamento
-                                    </span>
-                                ),
-                                options: [
-                                    {
-                                    label: "Alto Padrão",
-                                    value: "apartamento-alto-padrao",
-                                    },
-                                    { label: "Cobertura", value: "apartamento-cobertura" },
-                                    {
-                                    label: "Cobertura Duplex",
-                                    value: "apartamento-cobertura-duplex",
-                                    },
-                                    {
-                                    label: "Cobertura Linear",
-                                    value: "apartamento-cobertura-linear",
-                                    },
-                                    {
-                                    label: "Cobertura Triplex",
-                                    value: "apartamento-cobertura-triplex",
-                                    },
-                                    {
-                                    label: "Com área externa",
-                                    value: "apartamento-area-externa",
-                                    },
-                                    { label: "Conjugado", value: "apartamento-conjugado" },
-                                    { label: "Duplex", value: "apartamento-duplex" },
-                                    { label: "Flat", value: "apartamento-flat" },
-                                    { label: "Garden", value: "apartamento-garden" },
-                                    { label: "Kitnet", value: "apartamento-kitnet" },
-                                    { label: "Loft", value: "apartamento-loft" },
-                                    { label: "Padrão", value: "apartamento-padrao" },
-                                    { label: "Penthouse", value: "apartamento-penthouse" },
-                                    { label: "Studio", value: "apartamento-studio" },
-                                    { label: "Triplex", value: "apartamento-triplex" },
-                                    { label: "Térreo", value: "apartamento-terreo" },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Casa
-                                    </span>
-                                ),
-                                options: [
-                                    { label: "Alto Padrão", value: "casa-alto-padrao" },
-                                    { label: "Alvenaria", value: "casa-alvenaria" },
-                                    { label: "Chalé", value: "casa-chale" },
-                                    { label: "Duplex", value: "casa-duplex" },
-                                    { label: "Geminada", value: "casa-geminada" },
-                                    { label: "kitnet", value: "casa-kitnet" },
-                                    { label: "Linear", value: "casa-linear" },
-                                    { label: "Madeira", value: "casa-madeira" },
-                                    { label: "Mista", value: "casa-mista" },
-                                    { label: "Padrão", value: "casa-padrao" },
-                                    { label: "Sobrado", value: "casa-sobrado" },
-                                    { label: "Pré-moldada", value: "casa-pre-moldada" },
-                                    { label: "Sobreloja", value: "casa-sobreloja" },
-                                    { label: "Sobreposta", value: "casa-sobreposta" },
-                                    { label: "Triplex", value: "casa-triplex" },
-                                    { label: "Térrea", value: "casa-terrea" },
-                                    { label: "Vila", value: "casa-vila" },
-                                    { label: "em Condomínio", value: "casa-em-condominio" },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Terreno
-                                    </span>
-                                ),
-                                options: [
-                                    { label: "Lote", value: "terreno-lote" },
-                                    { label: "Terreno", value: "terreno" },
-                                    {
-                                    label: "em Condomínio",
-                                    value: "terreno-em-condominio",
-                                    },
-                                    {
-                                    label: "em Loteamento",
-                                    value: "terreno-em-loteamento",
-                                    },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Sítio
-                                    </span>
-                                ),
-                                options: [
-                                    { label: "Sítio", value: "sitio" },
-                                    { label: "Haras", value: "sitio-haras" },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Garagem
-                                    </span>
-                                ),
-                                options: [
-                                    { label: "Box", value: "garagem-box" },
-                                    { label: "Garagem Externa", value: "garagem-externa" },
-                                    {
-                                    label: "Garagem Externa Coberta",
-                                    value: "garagem-externa-coberta",
-                                    },
-                                    { label: "Garagem Interna", value: "garagem-interna" },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Fazenda
-                                    </span>
-                                ),
-                                options: [
-                                    { label: "Fazenda", value: "fazenda" },
-                                    { label: "Haras", value: "fazenda-haras" },
-                                    { label: "Lavoura", value: "fazenda-lavoura" },
-                                    { label: "Mista", value: "fazenda-mista" },
-                                    { label: "Pecuária", value: "fazenda-pecuaria" },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Chácara
-                                    </span>
-                                ),
-                                options: [{ label: "Chácara", value: "chacara" }],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Rancho
-                                    </span>
-                                ),
-                                options: [{ label: "Rancho", value: "rancho" }],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Pousada
-                                    </span>
-                                ),
-                                options: [{ label: "Pousada", value: "pousada" }],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Sala
-                                    </span>
-                                ),
-                                options: [
-                                    {
-                                    label: "Andar Comercial",
-                                    value: "sala-andar-comercial",
-                                    },
-                                    { label: "Comercial", value: "sala-comercial" },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Loja
-                                    </span>
-                                ),
-                                options: [
-                                    { label: "Loja", value: "loja" },
-                                    {
-                                    label: "Ponto Comercial",
-                                    value: "loja-ponto-comercial",
-                                    },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Flat
-                                    </span>
-                                ),
-                                options: [{ label: "Flat", value: "flat" }],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Sobrado
-                                    </span>
-                                ),
-                                options: [
-                                    { label: "Alto padrão", value: "sobrado-alto-padrao" },
-                                    { label: "Geminado", value: "sobrado-geminado" },
-                                    { label: "Padrão", value: "sobrado-padrao" },
-                                    {
-                                    label: "em Condomínio",
-                                    value: "sobrado-em-condominio",
-                                    },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Prédio
-                                    </span>
-                                ),
-                                options: [
-                                    { label: "Comercial", value: "predio-comercial" },
-                                    { label: "Residencial", value: "predio-comercial" },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Indústria
-                                    </span>
-                                ),
-                                options: [{ label: "Indústria", value: "industria" }],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Pavilhão/Galpão
-                                    </span>
-                                ),
-                                options: [
-                                    {
-                                    label: "Em condomínio",
-                                    value: "pavilhao-galpao-condominio",
-                                    },
-                                    {
-                                    label: "Industrial",
-                                    value: "pavilhao-galpao-industrial",
-                                    },
-                                    {
-                                    label: "Logístico",
-                                    value: "pavilhao-galpao-logistico",
-                                    },
-                                    {
-                                    label: "Salão Comercial",
-                                    value: "pavilhao-galpao-salao-comercial",
-                                    },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Área
-                                    </span>
-                                ),
-                                options: [
-                                    { label: "Comercial", value: "area-comercial" },
-                                    { label: "Industrial", value: "area-industrial" },
-                                    {
-                                    label: "Reflorestamento",
-                                    value: "area-reflorestamento",
-                                    },
-                                    { label: "Residencial", value: "area-residencial" },
-                                    {
-                                    label: "Residencial/Comercial",
-                                    value: "area-residencial-comercial",
-                                    },
-                                    { label: "Rural", value: "area-rural" },
-                                ],
-                                },
-                                {
-                                label: (
-                                    <span className="font-bold text-sm text-black">
-                                    Ponto Comercial
-                                    </span>
-                                ),
-                                options: [
-                                    {
-                                    label: "Andar Comercial",
-                                    value: "ponto-comercial-andar-comercial",
-                                    },
-                                    {
-                                    label: "Comercio",
-                                    value: "ponto-comercial-comercio",
-                                    },
-                                    {
-                                    label: "Indústria",
-                                    value: "ponto-comercial-industria",
-                                    },
-                                ],
-                                },
-                            ]}
-                            />
-                        </Form.Item>
-                    </Col> */}
-                    <Col span={4}>
+                    <Col xs={24} sm={12} md={8} xl={6}>
                         <Form.Item label="Referência" name="referencia">
                             <Input
                             placeholder="AP0001"
@@ -439,7 +137,7 @@ export default function Imoveis() {
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={6}>
+                    <Col xs={24} sm={12} md={8} xl={6}>
                         <Form.Item label="Titulo" name="titulo">
                             <Input
                             placeholder="Ex: Apartamento em Copacabana..."
@@ -447,7 +145,7 @@ export default function Imoveis() {
                             />
                         </Form.Item>
                     </Col>
-                    <Col span={5}>
+                    <Col xs={24} sm={12} md={8} xl={6}>
                     <Form.Item label="Valor Mínimo" name="valor_min">
                       <Input
                         placeholder="Digite o valor mínimo"
@@ -463,7 +161,7 @@ export default function Imoveis() {
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={5}>
+                  <Col xs={24} sm={12} md={8} xl={6}>
                     <Form.Item label="Valor Máximo" name="valor_max">
                       <Input
                         placeholder="Digite o valor máximo"
@@ -541,6 +239,9 @@ export default function Imoveis() {
                 dataIndex: "actions",
                 key: "actions",
                 align: "center",
+                //fixar a coluna de ações
+                fixed: "right",
+                width: 100,
                 render: (actions: any[], record: any) => {
                   return (
                     <div className="flex justify-around">

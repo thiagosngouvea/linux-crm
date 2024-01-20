@@ -16,6 +16,7 @@ import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { useRouter } from 'next/router';
 import Logo from '@/assets/logo.png';
 import Image from 'next/image';
+import useWindowSize from '@/hooks/useWindowSize';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -43,59 +44,103 @@ const excludePaths:any = ['/auth/login'];
 
 export default function LayoutSidebar({children}: LayoutSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const windowSize = useWindowSize();
 
   const route = useRouter();
 
   const { SubMenu } = Menu;
   
   const { logout } = useAuthStore();
+
+  const isMobile = windowSize.width ? windowSize.width <= 768 : false;
+
   return !route.pathname.includes(excludePaths) ? (
+    !isMobile ? (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider theme='light' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} style={{ position: 'sticky', maxHeight: '100vh'}}>
-        <div className="demo-logo-vertical py-2 pb-4">
+          <Sider theme='light' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} style={{ position: 'sticky', maxHeight: '100vh'}}>
+            <div className="demo-logo-vertical py-2 pb-4">
+                <Image
+                    src={Logo}
+                    alt="Logo"
+                    width={200}
+                    height={100}
+                />
+            </div>
+            <Menu defaultSelectedKeys={['1']} mode="inline">
+                <Menu.Item key="1" icon={<BiSolidDashboard />} onClick={() => route.push('/')}>
+                    Inicio
+                </Menu.Item>
+                <SubMenu key="sub1" icon={<BsFillHouseDoorFill />} title="Imóveis">
+                    <Menu.Item key="sub2" icon={<BsListUl />} onClick={() => route.push('/imoveis')}>
+                        Listagem
+                    </Menu.Item>
+                    <Menu.Item key="sub3" icon={<BsFillHouseAddFill />} onClick={() => route.push('/imoveis/cadastro')}>
+                        Cadastro
+                    </Menu.Item>
+                </SubMenu>
+                <Menu.Item key="10" icon={<LogoutOutlined />} onClick={logout}>
+                    Sair
+                </Menu.Item>
+            </Menu>
+          </Sider>
+          <Layout>
+            <Content style={{ margin: '0 16px' }}>
+              <div style={{ padding: 24, minHeight: 360 }}>
+                {children}
+              </div>
+            </Content>
+            <Footer style={{ textAlign: 'center' }}>Linux Imóveis ©2023 Created by TG Software</Footer>
+          </Layout>
+        </Layout>
+    ) : (
+      //faça o layout para mobile usando navbar em vez do componente de sidebar
+      <Layout style={{ minHeight: '100vh' }}>
+        <Header 
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: '#fff',
+        }}
+        //precisa ser light para que o logo fique visível
+        >
+          {/* <div className="logo">
             <Image
-                src={Logo}
-                alt="Logo"
-                width={200}
-                height={100}
+              src={Logo}
+              alt="Logo"
+              width={100}
+              height={50}
             />
-        </div>
-        <Menu defaultSelectedKeys={['1']} mode="inline">
+          </div> */}
+          <Menu theme="light" mode="horizontal" defaultSelectedKeys={['2']}>
             <Menu.Item key="1" icon={<BiSolidDashboard />} onClick={() => route.push('/')}>
-                Inicio
+              Inicio
             </Menu.Item>
             <SubMenu key="sub1" icon={<BsFillHouseDoorFill />} title="Imóveis">
-                <Menu.Item key="sub2" icon={<BsListUl />} onClick={() => route.push('/imoveis')}>
-                    Listagem
-                </Menu.Item>
-                <Menu.Item key="sub3" icon={<BsFillHouseAddFill />} onClick={() => route.push('/imoveis/cadastro')}>
-                    Cadastro
-                </Menu.Item>
+              <Menu.Item key="sub2" icon={<BsListUl />} onClick={() => route.push('/imoveis')}>
+                Listagem
+              </Menu.Item>
+              <Menu.Item key="sub3" icon={<BsFillHouseAddFill />} onClick={() => route.push('/imoveis/cadastro')}>
+                Cadastro
+              </Menu.Item>
             </SubMenu>
-            {/* <SubMenu key="sub4" icon={<BsFillHouseDoorFill />} title="Scraping">
-                <Menu.Item key="sub5" icon={<BsListUl />} onClick={() => route.push('/scraping/amancio')}>
-                    Amancio
-                </Menu.Item>
-            </SubMenu> */}
             <Menu.Item key="10" icon={<LogoutOutlined />} onClick={logout}>
-                Sair
+              Sair
             </Menu.Item>
-        </Menu>
-      </Sider>
-      <Layout>
-        {/* <Header style={{ padding: 0, background: colorBgContainer }} /> */}
-        <Content style={{ margin: '0 16px' }}>
-          {/* <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb> */}
-          <div style={{ padding: 24, minHeight: 360 }}>
+          </Menu>
+        </Header>
+        <Content >
+          <div style={{ padding: 16, minHeight: 360 }}>
             {children}
           </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}>Linux Imóveis ©2023 Created by TG Software</Footer>
       </Layout>
-    </Layout>
+    )
+    
   ) : (
     <>{children}</>
   )

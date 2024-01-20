@@ -257,7 +257,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
 
   return (
     <div>
-      <BackTitle title="Cadastro de Imóvel" />
+      <BackTitle title="Editar Dados do Imóvel" />
       <div>
         <Form
           layout="vertical"
@@ -501,7 +501,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             Informações do Imóvel
           </h2>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Titulo do imóvel" name="title">
                 <Input
                   placeholder="Titulo do imóvel"
@@ -510,7 +510,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Título do site" name="meta_title">
                 <Input
                   placeholder="Título do site"
@@ -519,7 +519,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Preço" name="price">
                 <Input
                   placeholder="Preço"
@@ -528,7 +528,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Referência" name="reference">
                 <Input
                   placeholder="Referência"
@@ -537,21 +537,12 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            {/* <Col span={6}>
-                            <Form.Item label="URL" name="url">
-                                <Input 
-                                    placeholder="URL"
-                                    onChange={handleInputChange}    
-                                />
-                            </Form.Item>
-                        </Col> */}
           </Row>
           <Row gutter={16}>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="CEP" name="cep">
                 <Input
                   placeholder="Ex: 00000-000"
-                  // onChange={handleInputChange}
                   name="cep"
                   onBlur={async (event) => {
                     const cep = event.target.value;
@@ -576,7 +567,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Rua" name="street">
                 <Input
                   placeholder="Ex: rua, avenida, etc"
@@ -585,7 +576,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Bairro" name="neighborhood">
                 <Input
                   placeholder="Bairro"
@@ -594,7 +585,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Cidade" name="city">
                 <Input
                   placeholder="Cidade"
@@ -603,7 +594,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Estado" name="state">
                 <Input
                   placeholder="Estado"
@@ -612,7 +603,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Complemento" name="complement">
                 <Input
                   placeholder="Complemento"
@@ -621,7 +612,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Tipo do imóvel" name="type">
                 <Select
                   placeholder="Tipo do imóvel"
@@ -923,7 +914,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Subtipo do imóvel" name="subtype">
                 <Select
                   placeholder="Subtipo do imóvel"
@@ -1225,7 +1216,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Proximidades" name="nearby">
                 <Select
                   placeholder="Selecione ou Escreva"
@@ -1270,7 +1261,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               {/* CAMPO PARA ESCOLHER UMA COR EM HEXADECIMAL */}
               <Form.Item label="Cor da faixa" name="stripe_color">
                 <Input
@@ -1282,7 +1273,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Transação" name="transaction">
                 <button
                   onClick={() =>
@@ -1312,7 +1303,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Aceita Financiamento" name="accept_financing">
                 <button
                   onClick={() =>
@@ -1342,7 +1333,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Escriturado" name="written">
                 <button
                   onClick={() => setFormState({ ...formState, written: true })}
@@ -1368,7 +1359,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Marca D'água" name="watermark">
                 <button
                   onClick={() =>
@@ -1401,7 +1392,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Condominio</h2>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Nome do condomínio" name="condominium_name">
                 <Input
                   placeholder="Nome do condomínio"
@@ -1410,7 +1401,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item
                 label="Total de unidades"
                 name="condominium_total_units"
@@ -1423,7 +1414,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item
                 label="Unidades por andar"
                 name="condominium_units_per_floor"
@@ -1436,7 +1427,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Pavimentação" name="condominium_flooring">
                 <Input
                   type="number"
@@ -1446,7 +1437,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item
                 label="Número de torres"
                 name="condominium_number_towers"
@@ -1459,7 +1450,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item
                 label="Características"
                 name="condominium_caracteristics"
@@ -1474,7 +1465,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Cômodos</h2>
           <Row gutter={16}>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Garagem" name="garage">
                 <Input
                   type="number"
@@ -1484,7 +1475,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Quartos" name="bedroom">
                 <Input
                   type="number"
@@ -1494,7 +1485,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Suítes" name="suites">
                 <Input
                   type="number"
@@ -1504,7 +1495,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Closets" name="closet">
                 <Input
                   type="number"
@@ -1514,7 +1505,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Cozinha" name="kitchen">
                 <Input
                   type="number"
@@ -1524,7 +1515,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Sala de jantar" name="dinning_room">
                 <Input
                   type="number"
@@ -1534,7 +1525,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Sala de estar" name="living_room">
                 <Input
                   type="number"
@@ -1544,7 +1535,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Área de serviço" name="service_area">
                 <Input
                   type="number"
@@ -1554,7 +1545,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Banheiros" name="bathroom">
                 <Input
                   type="number"
@@ -1564,7 +1555,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Escritórios" name="office">
                 <Input
                   type="number"
@@ -1574,7 +1565,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={12} sm={8} md={6} xl={4}>
               <Form.Item label="Sala de TV" name="tv_room">
                 <Input
                   type="number"
@@ -1587,7 +1578,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Situação</h2>
           <Row gutter={16}>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Perfil do Imóvel" name="profile">
                 <Input
                   placeholder="Sala de TV"
@@ -1596,7 +1587,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Situação" name="situation">
                 <Select
                   placeholder="Situação"
@@ -1618,7 +1609,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Tipo de IPTU" name="iptu_type">
                 <Select
                   placeholder="Tipo de IPTU"
@@ -1639,7 +1630,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Área do Imóvel</h2>
           <Row gutter={16}>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Área privativa" name="area_privative">
                 <Input
                   type="number"
@@ -1649,7 +1640,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Unidade" name="area_privative_unit">
                 <Select
                   placeholder="Unidade"
@@ -1667,7 +1658,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Área construída" name="area_built">
                 <Input
                   type="number"
@@ -1676,7 +1667,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Unidade" name="area_built_unit">
                 <Select
                   placeholder="Unidade"
@@ -1694,7 +1685,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Área total" name="area_total">
                 <Input
                   type="number"
@@ -1703,7 +1694,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Unidade" name="area_total_unit">
                 <Select
                   placeholder="Unidade"
@@ -1721,7 +1712,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Área do terreno" name="area_terrain_total">
                 <Input
                   type="number"
@@ -1730,7 +1721,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={12} md={8} xl={4}>
               <Form.Item label="Unidade" name="area_terrain_total_unit">
                 <Select
                   placeholder="Unidade"
@@ -1754,7 +1745,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </h2>
           <Row gutter={16}>
             {/*CRIAR 2 CHECKBOX*/}
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Visível para todos?" name="visivel">
                 <button
                   onClick={() =>
@@ -1784,7 +1775,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Destacar na pagina inicial?" name="destaque">
                 <button
                   onClick={() =>
@@ -1814,7 +1805,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Publicar na Rede" name="published_network">
                 <button
                   onClick={() =>
@@ -1844,7 +1835,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Mostrar Bairro" name="show_neighborhood">
                 <button
                   onClick={() =>
@@ -1874,7 +1865,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Mostrar Rua" name="show_street">
                 <button
                   onClick={() =>
@@ -1904,7 +1895,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Mostrar Condominio" name="show_condominium">
                 <button
                   onClick={() =>
@@ -1934,7 +1925,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Mostrar Preço" name="show_price">
                 <button
                   onClick={() =>
@@ -1967,7 +1958,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Corretor</h2>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Nome" name="broker_name">
                 <Input
                   placeholder="Nome"
@@ -1976,7 +1967,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="CRECI" name="broker_creci">
                 <Input
                   placeholder="CRECI"
@@ -1985,7 +1976,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="E-mail" name="broker_email">
                 <Input
                   placeholder="E-mail"
@@ -1994,7 +1985,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Telefone" name="broker_phone">
                 <Input
                   placeholder="Telefone"
@@ -2006,7 +1997,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Proprietário</h2>
           <Row gutter={16}>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Nome" name="owner_name">
                 <Input
                   placeholder="Nome"
@@ -2015,7 +2006,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="E-mail" name="owner_email">
                 <Input
                   placeholder="E-mail"
@@ -2112,7 +2103,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               type="submit"
               className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded"
             >
-              Cadastrar
+              Salvar
             </button>
           </Row>
         </Form>

@@ -6,7 +6,7 @@ import CadastroImagem from '@/assets/cadastro.png'
 export default function Home() {
   return (
     <main>
-      <div className='flex'>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
         <CardMenu
           nome="Imóveis"
           descricao="Listagem de Imóveis"
