@@ -24,6 +24,16 @@ const create = async (data: any) => await api.post(`/properties`, data);
 
 const update = async (id: any, data: any) => await api.put(`/properties/${id}`, data);
 
+const getNeighborhoods = async () => await api.get(`/properties/neighborhoods/list`);
+
+const getNeighborhoodsByCity = async (city: string | null) => await api.get(`/properties/neighborhoods/${city}`);
+
+const getCities = async () => await api.get(`/cities-states/`);
+
+const getCondominiums = async () => await api.get(`/properties/condominiums/list`);
+
+const getTypes = async () => await api.get(`/properties/types/list`);
+
 const uploadImages = async (id:string, data: any) => await api.post(`/properties/images/${id}`, data ,{
   headers: {
     "Content-Type": "multipart/form-data"
@@ -36,5 +46,10 @@ export const propertiesService = {
   getById,
   create,
   update,
-  uploadImages
+  uploadImages,
+  getNeighborhoods,
+  getNeighborhoodsByCity,
+  getCities,
+  getCondominiums,
+  getTypes,
 };

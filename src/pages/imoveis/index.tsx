@@ -18,6 +18,19 @@ export default function Imoveis() {
   const [valorMin, setValorMin] = useState<string | null>(null)
   const [valorMax, setValorMax] = useState<string | null>(null)
 
+  const [cities, setCities] = useState<Record<string, string[]>>({});
+  const [neighborhoods, setNeighborhoods] = useState<string[]>([])
+  const [condominiums, setCondominiums] = useState<string[]>([])
+  const [types, setTypes] = useState<string[]>([])
+  const [cidade, setCidade] = useState<string>("")
+  const [bairro, setBairro] = useState<string>("")
+  const [negocio, setNegocio] = useState<string>("")
+  const [tipo, setTipo] = useState<string>("")
+  const [condominios, setCondominios] = useState<string>("")
+
+
+  console.log("negocio", negocio)
+
   const router = useRouter();
 
   const fetchData = useCallback(async () => {
@@ -57,9 +70,39 @@ export default function Imoveis() {
     }
 
     if(!!titulo) {
-        filterBy += filterBy === "" ? "title_formatted" : ",title_formatted";
+        filterBy += filterBy === "" ? "meta_title" : ",meta_title";
         filterValue += filterValue === "" ? `${titulo}` : `,${titulo}`;
         filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+
+    if (!!cidade) {
+      filterBy += filterBy === "" ? "city" : ",city";
+      filterValue += filterValue === "" ? `${cidade}` : `,${cidade}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+
+    if (!!bairro) {
+      filterBy += filterBy === "" ? "neighborhood" : ",neighborhood";
+      filterValue += filterValue === "" ? `${bairro}` : `,${bairro}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+
+    if (!!negocio) {
+      filterBy += filterBy === "" ? "transaction" : ",transaction";
+      filterValue += filterValue === "" ? `${negocio}` : `,${negocio}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+
+    if (!!tipo) {
+      filterBy += filterBy === "" ? "type" : ",type";
+      filterValue += filterValue === "" ? `${tipo}` : `,${tipo}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+
+    if (!!condominios) {
+      filterBy += filterBy === "" ? "condominium_name" : ",condominium_name";
+      filterValue += filterValue === "" ? `${condominios}` : `,${condominios}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
     }
 
     try {
@@ -75,12 +118,81 @@ export default function Imoveis() {
     } catch (error: any) {
       console.log("error", error);
     }
-  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo]);
+  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, tipo, condominios]);
   
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo]);
+  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, tipo, condominios, fetchData]);
+
+  const getNeighborhoods = useCallback(async () => {
+    await propertiesService.getNeighborhoodsByCity(
+      cidade
+    )
+    .then((response: any) => {
+      // const data = response.data.neighborhoods.filter((neighborhood: string) =>  neighborhood !== "Não Informado")
+      setNeighborhoods(response.data.neighborhoods.neighborhoods)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  } , [cidade])
+
+  useEffect(() => {
+    getNeighborhoods()
+  }, [getNeighborhoods, cidade])
+
+  const getCities = useCallback(async () => {
+    await propertiesService.getCities()
+    .then((response: any) => {
+      setCities(response.data.cities_states.result)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  } , [])
+
+  useEffect(() => {
+    getCities()
+  }, [getCities])
+
+  const getCondominiums = useCallback(async () => {
+    await propertiesService.getCondominiums()
+    .then((response: any) => {
+      const data = response.data.condominiums.filter((condominium: string) =>  condominium !== "Não Informado")
+      setCondominiums(data)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  } , [])
+
+  useEffect(() => {
+    getCondominiums()
+  }, [getCondominiums])
+
+  const getTypes = useCallback(async () => {
+    await propertiesService.getTypes()
+    .then((response: any) => {
+      console.log(response.data.types)
+      const data = response.data.types.map((type: string) => {
+        if (type?.includes("Pavilhão/Galpão")) {
+          return type?.replace("Pavilhão/Galpão", "Galpão")
+        }
+        return type
+      })
+
+      const removeNull = data.filter((type: string) => type !== null)
+      setTypes(removeNull)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+  } , [])
+
+  useEffect(() => {
+    getTypes()
+  }, [getTypes])
 
   return (
     <div>
@@ -124,13 +236,33 @@ export default function Imoveis() {
                         name: ['valor_max'],
                         value: valorMax,
                     },
+                    {
+                        name: ['negocio'],
+                        value: negocio,
+                    },
+                    {
+                        name: ['tipo_imovel'],
+                        value: tipo,
+                    },
+                    {
+                        name: ['cidade'],
+                        value: cidade,
+                    },
+                    {
+                        name: ['bairro'],
+                        value: bairro,
+                    },
+                    {
+                        name: ['condominios'],
+                        value: condominios,
+                    },
                 ]}
             >
                 <Row
                     gutter={16}
                 >
                     <Col xs={24} sm={12} md={8} xl={6}>
-                        <Form.Item label="Referência" name="referencia">
+                        <Form.Item label={<span className="font-bold">Referência</span>} name="referencia">
                             <Input
                             placeholder="AP0001"
                             onChange={(e) => setReferencia(e.target.value)}
@@ -138,7 +270,7 @@ export default function Imoveis() {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12} md={8} xl={6}>
-                        <Form.Item label="Titulo" name="titulo">
+                        <Form.Item label={<span className="font-bold">Título</span>} name="titulo">
                             <Input
                             placeholder="Ex: Apartamento em Copacabana..."
                             onChange={(e) => setTitulo(e.target.value)}
@@ -146,7 +278,7 @@ export default function Imoveis() {
                         </Form.Item>
                     </Col>
                     <Col xs={24} sm={12} md={8} xl={6}>
-                    <Form.Item label="Valor Mínimo" name="valor_min">
+                    <Form.Item label={<span className="font-bold">Valor Mínimo</span>} name="valor_min">
                       <Input
                         placeholder="Digite o valor mínimo"
                         onChange={(e) => {
@@ -162,7 +294,7 @@ export default function Imoveis() {
                     </Form.Item>
                   </Col>
                   <Col xs={24} sm={12} md={8} xl={6}>
-                    <Form.Item label="Valor Máximo" name="valor_max">
+                    <Form.Item label={<span className="font-bold">Valor Máximo</span>} name="valor_max">
                       <Input
                         placeholder="Digite o valor máximo"
                         onChange={(e) => {
@@ -178,6 +310,144 @@ export default function Imoveis() {
                     </Form.Item>
                   </Col>
                 </Row>
+                <Row
+                    gutter={16}
+                >
+                    <Col xs={24} sm={12} md={8} xl={6}>
+                      <Form.Item label={<span className="font-bold">Negócio</span>} name="negocio">
+                        <Select
+                          placeholder="Selecione"
+                          allowClear
+                          onChange={(value) => {
+                            setNegocio(value)
+                          }}
+                          showSearch
+                          filterOption={(input, option: any) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                          } 
+                        >
+                          <Select.Option value="Venda">Comprar</Select.Option>
+                          <Select.Option value="Aluguel">Alugar</Select.Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} xl={6}>
+                      <Form.Item label={<span className="font-bold">Tipo de Imóvel</span>} name="tipo_imovel">
+                        <Select
+                          placeholder="Selecione"
+                          allowClear
+                          
+                          onChange={(value) => {
+                            setTipo(value)
+                          }}
+                          showSearch
+                          filterOption={(input, option: any) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                          } 
+                        >
+                          {types.map((type) => (
+                            <Select.Option key={type} value={type}>{type}</Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} xl={6}>
+                      <Form.Item label={<span className="font-bold">Cidade</span>} name="cidade">
+                    {cities.PE && (
+                        <Select
+                          placeholder="Selecione"
+                          allowClear
+                          
+                          onChange={(value) => {
+                            setCidade(value)
+                          }}
+                          options={[
+                            {
+                              label: <span className="font-bold text-sm text-black">Pernambuco</span>,
+                              options: cities.PE.map((city) => ({
+                                label: city,
+                                value: city,
+                              })),
+                            },
+                            {
+                              label: <span className="font-bold text-sm text-black">Paraíba</span>,
+                              options: cities.PB.map((city) => ({
+                                label: city,
+                                value: city,
+                              })),
+                            },
+                            {
+                              label: <span className="font-bold text-sm text-black">Alagoas</span>,
+                              options: cities.AL.map((city) => ({
+                                label: city,
+                                value: city,
+                              })),
+                            }
+                          ]}
+                          showSearch
+                          filterOption={(input, option: any) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                          } 
+                          >
+                            
+                            {/* {cities.PE.map((city) => (
+                              <Select.Option key={city} value={city}>{city}</Select.Option>
+                            ))} */}
+                          </Select>
+                    )}
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} xl={6}>
+                      <Form.Item label={<span className="font-bold">Bairro</span>} name="bairro">
+                        <Select
+                          placeholder="Selecione"
+                          allowClear
+                          
+                          onChange={(value) => {
+                            setBairro(value)
+                          }}
+
+                          showSearch
+                          filterOption={(input, option: any) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                          } 
+                        >
+                          {neighborhoods.map((neighborhood) => (
+                            <Select.Option key={neighborhood} value={neighborhood}>{neighborhood}</Select.Option>
+                          ))}
+                          </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} xl={6}>
+                      <Form.Item label={<span className="font-bold">Condomínios</span>} name="condominios">
+                        <Select
+                          placeholder="Selecione"
+                          allowClear
+                          
+                          onChange={(value) => {
+                            setCondominios(value)
+                          }}
+                          showSearch
+                          filterOption={(input, option: any) =>
+                            option.children
+                              ?.normalize('NFD')
+                              .replace(/[\u0300-\u036f]/g, '')
+                              .toLowerCase()
+                              .indexOf(
+                                input
+                                  ?.normalize('NFD')
+                                  .replace(/[\u0300-\u036f]/g, '')
+                                  .toLowerCase()
+                              ) >= 0
+                          }
+                        >
+                          {condominiums.map((condominium) => (
+                            <Select.Option key={condominium} value={condominium}>{condominium}</Select.Option>
+                          ))}
+                          </Select>
+                      </Form.Item>
+                    </Col>
+                </Row>
             </Form>
           </div>
         </div>
@@ -191,6 +461,12 @@ export default function Imoveis() {
                 width: 100,
               },
               {
+                title: "Transação",
+                dataIndex: "transaction",
+                key: "transaction",
+                width: 100,
+              },
+              {
                 title: "Referência",
                 dataIndex: "reference",
                 key: "reference",
@@ -198,8 +474,8 @@ export default function Imoveis() {
               },
               {
                 title: "Titulo",
-                dataIndex: "title",
-                key: "title",
+                dataIndex: "meta_title",
+                key: "meta_title",
                 width: 400,
               },
               {
@@ -235,6 +511,26 @@ export default function Imoveis() {
                       Ver Imagens
                     </button>
                   );
+                },
+              },
+              {
+                title: "Fonte dos Dados",
+                dataIndex: "url",
+                key: "url",
+                width: 100,
+                render: (url) => {
+                  console.log("url", url)
+                  if(url !== null && url !== "") {
+                    return (
+                      <a href={url} target="_black">
+                        Clique aqui
+                      </a>
+                    );
+                  } else {
+                    return (
+                      <p>Não Informado</p>
+                    )
+                  }
                 },
               },
               {
