@@ -25,11 +25,9 @@ export default function Imoveis() {
   const [cidade, setCidade] = useState<string>("")
   const [bairro, setBairro] = useState<string>("")
   const [negocio, setNegocio] = useState<string>("")
+  const [status, setStatus] = useState<string>("")
   const [tipo, setTipo] = useState<string>("")
   const [condominios, setCondominios] = useState<string>("")
-
-
-  console.log("negocio", negocio)
 
   const router = useRouter();
 
@@ -105,6 +103,12 @@ export default function Imoveis() {
       filterType += filterType === "" ? "ilike" : ",ilike";
     }
 
+    if (!!status) {
+      filterBy += filterBy === "" ? "status" : ",status";
+      filterValue += filterValue === "" ? `${status}` : `,${status}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+
     try {
       const res = await propertiesService.getAll(
         page,
@@ -118,12 +122,12 @@ export default function Imoveis() {
     } catch (error: any) {
       console.log("error", error);
     }
-  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, tipo, condominios]);
+  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, status, tipo, condominios]);
   
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, tipo, condominios, fetchData]);
+  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, status, tipo, condominios, fetchData]);
 
   const getNeighborhoods = useCallback(async () => {
     await propertiesService.getNeighborhoodsByCity(
@@ -332,6 +336,24 @@ export default function Imoveis() {
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={12} md={8} xl={6}>
+                      <Form.Item label={<span className="font-bold">Status</span>} name="status">
+                        <Select
+                          placeholder="Selecione"
+                          allowClear
+                          onChange={(value) => {
+                            setStatus(value)
+                          }}
+                          showSearch
+                          filterOption={(input, option: any) =>
+                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                          } 
+                        >
+                          <Select.Option value="Disponível">Disponível</Select.Option>
+                          <Select.Option value="Excluído">Excluído</Select.Option>
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} xl={6}>
                       <Form.Item label={<span className="font-bold">Tipo de Imóvel</span>} name="tipo_imovel">
                         <Select
                           placeholder="Selecione"
@@ -357,7 +379,6 @@ export default function Imoveis() {
                         <Select
                           placeholder="Selecione"
                           allowClear
-                          
                           onChange={(value) => {
                             setCidade(value)
                           }}
@@ -386,7 +407,7 @@ export default function Imoveis() {
                           ]}
                           showSearch
                           filterOption={(input, option: any) =>
-                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                            option?.value?.toLowerCase()?.indexOf(input?.toLowerCase()) >= 0
                           } 
                           >
                             
