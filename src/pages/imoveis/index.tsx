@@ -28,6 +28,7 @@ export default function Imoveis() {
   const [status, setStatus] = useState<string>("")
   const [tipo, setTipo] = useState<string>("")
   const [condominios, setCondominios] = useState<string>("")
+  const [origem, setOrigem] = useState<string>("")
 
   const router = useRouter();
 
@@ -109,6 +110,12 @@ export default function Imoveis() {
       filterType += filterType === "" ? "ilike" : ",ilike";
     }
 
+    if (!!origem) {
+      filterBy += filterBy === "" ? "url" : ",url";
+      filterValue += filterValue === "" ? `${origem}` : `,${origem}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+
     try {
       const res = await propertiesService.getAll(
         page,
@@ -122,12 +129,12 @@ export default function Imoveis() {
     } catch (error: any) {
       console.log("error", error);
     }
-  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, status, tipo, condominios]);
+  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, status, tipo, condominios, origem]);
   
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, status, tipo, condominios, fetchData]);
+  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, status, tipo, condominios, origem, fetchData]);
 
   const getNeighborhoods = useCallback(async () => {
     await propertiesService.getNeighborhoodsByCity(
@@ -259,6 +266,14 @@ export default function Imoveis() {
                     {
                         name: ['condominios'],
                         value: condominios,
+                    },
+                    {
+                        name: ['status'],
+                        value: status,
+                    },
+                    {
+                        name: ['origem'],
+                        value: origem,
                     },
                 ]}
             >
@@ -465,6 +480,63 @@ export default function Imoveis() {
                           {condominiums.map((condominium) => (
                             <Select.Option key={condominium} value={condominium}>{condominium}</Select.Option>
                           ))}
+                          </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} xl={6}>
+                      <Form.Item label={<span className="font-bold">Condomínios</span>} name="condominios">
+                        <Select
+                          placeholder="Selecione"
+                          allowClear
+                          
+                          onChange={(value) => {
+                            setCondominios(value)
+                          }}
+                          showSearch
+                          filterOption={(input, option: any) =>
+                            option.children
+                              ?.normalize('NFD')
+                              .replace(/[\u0300-\u036f]/g, '')
+                              .toLowerCase()
+                              .indexOf(
+                                input
+                                  ?.normalize('NFD')
+                                  .replace(/[\u0300-\u036f]/g, '')
+                                  .toLowerCase()
+                              ) >= 0
+                          }
+                        >
+                          {condominiums.map((condominium) => (
+                            <Select.Option key={condominium} value={condominium}>{condominium}</Select.Option>
+                          ))}
+                          </Select>
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12} md={8} xl={6}>
+                      <Form.Item label={<span className="font-bold">Origem</span>} name="origem">
+                        <Select
+                          placeholder="Selecione"
+                          allowClear
+                          onChange={(value) => {
+                            setOrigem(value)
+                          }}
+                          showSearch
+                          filterOption={(input, option: any) =>
+                            option.children
+                              ?.normalize('NFD')
+                              .replace(/[\u0300-\u036f]/g, '')
+                              .toLowerCase()
+                              .indexOf(
+                                input
+                                  ?.normalize('NFD')
+                                  .replace(/[\u0300-\u036f]/g, '')
+                                  .toLowerCase()
+                              ) >= 0
+                          }
+                        >
+                          <Select.Option value="grego">Grego Imoveis</Select.Option>
+                          <Select.Option value="liberato">Imobiliaria Liberato</Select.Option>
+                          <Select.Option value="amancio">Imobiliaria Amancio</Select.Option>
                           </Select>
                       </Form.Item>
                     </Col>
