@@ -30,6 +30,8 @@ export default function Imoveis() {
   const [condominios, setCondominios] = useState<string>("")
   const [origem, setOrigem] = useState<string>("")
 
+  
+
   const router = useRouter();
 
   const fetchData = useCallback(async () => {
