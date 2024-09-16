@@ -4,3 +4,9 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
+
+module.exports = {
+  images: {
+    domains: ['via.placeholder.com', 'linuximoveis.nyc3.digitaloceanspaces.com', 'objectstorage.sa-saopaulo-1.oraclecloud.com'],
+  },
+}

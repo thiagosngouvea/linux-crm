@@ -16,11 +16,104 @@ import {
 import { UploadOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
 import ApiCep from "cep-promise";
+import { useRouter } from "next/router";
 
 const ReactQuill = dynamic(import("react-quill"), { ssr: false });
 
+interface Imovel {
+  exclusivity: boolean | null;
+  price: string | null;
+  transaction: string | null;
+  reference: string | null;
+  status: string | null;
+  garage: number | null;
+  bathroom: number | null;
+  bedroom: number | null;
+  kitchen: number | null;
+  dinning_room: number | null;
+  living_room: number | null;
+  service_area: number | null;
+  tv_room: number | null;
+  office: number | null;
+  closet: number | null;
+  suites: number | null;
+  profile: string | null;
+  situation: string | null;
+  area_privative: number | null;
+  area_privative_unit: string | null;
+  area_built: number | null;
+  area_built_unit: string | null;
+  area_total: number | null;
+  area_total_unit: string | null;
+  area_terrain_total: number | null;
+  area_terrain_total_unit: string | null;
+  state: string | null;
+  city: string | null;
+  neighborhood: string | null;
+  cep: string | null;
+  street: string | null;
+  number: string | null;
+  complement: string | null;
+  iptu_type: string | null;
+  description: string | null;
+  title: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  published_website: boolean;
+  published_network: boolean;
+  show_neighborhood: boolean;
+  show_street: boolean;
+  show_condominium: boolean;
+  show_price: boolean;
+  watermark: boolean;
+  stripe_color: string | null;
+  broker_name: string | null;
+  broker_email: string | null;
+  broker_creci: string | null;
+  broker_phone: string | null;
+  condominium_name: string | null;
+  condominium_value: string | null;
+  condominium_total_units: number | null;
+  condominium_units_per_floor: number | null;
+  condominium_flooring: string | null;
+  condominium_number_towers: number | null;
+  condominium_caracteristics: string | null;
+  nearby: string | null;
+  highlight_website: boolean;
+  written: boolean;
+  accept_financing: boolean;
+  type: string | null;
+  subtype: string | null;
+  images: string[];
+  images_old_links: string[];
+  owner_name: string | null;
+  owner_id: string | null;
+  owner_email: string | null;
+  owner_phone: string | null;
+  sec_owner_name: string | null;
+  sec_owner_id: string | null;
+  sec_owner_email: string | null;
+  sec_owner_phone: string | null;
+  is_condominium: boolean;
+  accept_goods: boolean | null;
+  has_financing: boolean | null;
+  balcony: boolean | null;
+  commission: string | number | null;
+  tax_value: string | null;
+  tax_description: string | null;
+  sales_conditions: string | null;
+  rent_conditions: string | null;
+  iptu_value: string | null;
+  sun_position: string | null;
+  corner_property: boolean | null;
+  is_busy: boolean | null;
+  capture_link: string | null;
+  site_link: string | null;
+  olx_link: string | null;
+}
+
 const ImovelCadastro = React.memo(function ImovelCadastro() {
-  const [formState, setFormState] = useState({
+  const [formState, setFormState] = useState<Imovel>({
     price: null,
     transaction: "aluguel",
     reference: null,
@@ -87,6 +180,32 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
     owner_name: null,
     owner_id: null,
     owner_email: null,
+    owner_phone: null,
+
+    is_condominium: false,
+    accept_goods: null,
+    has_financing: null,
+    balcony: null,
+    exclusivity: null,
+    commission: null,
+    tax_value: null,
+    tax_description: null,
+    sales_conditions: null,
+    iptu_value: null,
+    sun_position: null,
+    corner_property: null,
+    condominium_value: null,
+    sec_owner_name: null,
+    sec_owner_id: null,
+    sec_owner_email: null,
+    sec_owner_phone: null,
+    is_busy: null,
+    rent_conditions: null,
+
+    capture_link: null,
+    site_link: null,
+    olx_link: null,
+
   });
 
   const [invalidOrRemovedImages, setInvalidOrRemovedImages] = useState<
@@ -95,6 +214,8 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
   const [images, setImages] = useState<
     Array<{ name: string; file: File | null }>
   >([]);
+
+  const router = useRouter();
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,7 +262,6 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
   }, []);
 
   const submitForm = async (values: any) => {
-    try {
       await propertiesService
         .create(formState)
         .then(async (response) => {
@@ -160,16 +280,114 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           } catch (error) {
             console.log(error);
           }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  console.log(images);
+          if(response.status === 201) {
+            notification.success({
+              message: "Imóvel cadastrado com sucesso!",
+            });
+            setFormState({
+              price: null,
+              transaction: "aluguel",
+              reference: null,
+              status: null,
+              garage: 0,
+              bathroom: 0,
+              bedroom: 0,
+              kitchen: 0,
+              dinning_room: 0,
+              living_room: 0,
+              service_area: 0,
+              tv_room: 0,
+              office: 0,
+              closet: 0,
+              suites: 0,
+              profile: null,
+              situation: null,
+              area_privative: null,
+              area_privative_unit: null,
+              area_built: null,
+              area_built_unit: null,
+              area_total: null,
+              area_total_unit: null,
+              area_terrain_total: null,
+              area_terrain_total_unit: null,
+              state: null,
+              city: null,
+              neighborhood: null,
+              cep: null,
+              street: null,
+              number: null,
+              complement: null,
+              iptu_type: null,
+              description: null,
+              title: null,
+              meta_title: null,
+              meta_description: null,
+              published_website: false,
+              published_network: false,
+              show_neighborhood: false,
+              show_street: false,
+              show_condominium: false,
+              show_price: false,
+              watermark: false,
+              stripe_color: null,
+              broker_name: null,
+              broker_email: null,
+              broker_creci: null,
+              broker_phone: null,
+              condominium_name: null,
+              condominium_total_units: null,
+              condominium_units_per_floor: null,
+              condominium_flooring: null,
+              condominium_number_towers: null,
+              condominium_caracteristics: null,
+              nearby: null,
+              highlight_website: false,
+              written: false,
+              accept_financing: false,
+              type: null,
+              subtype: null,
+              images: [],
+              images_old_links: [],
+              owner_name: null,
+              owner_id: null,
+              owner_email: null,
+              owner_phone: null,
+          
+              is_condominium: false,
+              accept_goods: null,
+              has_financing: null,
+              balcony: null,
+              exclusivity: null,
+              commission: null,
+              tax_value: null,
+              tax_description: null,
+              sales_conditions: null,
+              iptu_value: null,
+              sun_position: null,
+              corner_property: null,
+              condominium_value: null,
+              sec_owner_name: null,
+              sec_owner_id: null,
+              sec_owner_email: null,
+              sec_owner_phone: null,
+              is_busy: null,
+              rent_conditions: null,
+          
+              capture_link: null,
+              site_link: null,
+              olx_link: null,
+          
+            });
+            setImages([]);
+          }}
+        )
+        .catch((error) => {
+          notification.error({
+            message: "Erro ao cadastrar o imóvel",
+          });
+        });
+  };
 
   return (
     <div>
@@ -229,7 +447,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             },
             {
               name: "nearby",
-              value: formState.nearby,
+              value: formState.nearby || undefined,
             },
             {
               name: "transaction",
@@ -353,7 +571,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             },
             {
               name: "condominium_caracteristics",
-              value: formState.condominium_caracteristics,
+              value: formState.condominium_caracteristics || undefined,
             },
             {
               name: "highlight_website",
@@ -417,7 +635,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             Informações do Imóvel
           </h2>
           <Row gutter={16}>
-            <Col xs={24} sm={24} md={12} xl={6}>
+          <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Titulo do imóvel" name="title">
                 <Input
                   placeholder="Titulo do imóvel"
@@ -427,104 +645,11 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Título do site" name="meta_title">
-                <Input
-                  placeholder="Título do site"
-                  onChange={handleInputChange}
-                  name="meta_title"
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Preço" name="price">
-                <Input
-                  placeholder="Preço"
-                  onChange={handleInputChange}
-                  name="price"
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Referência" name="reference">
                 <Input
                   placeholder="Referência"
                   onChange={handleInputChange}
                   name="reference"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col xs={24} sm={24} md={8} xl={4}>
-              <Form.Item label="CEP" name="cep">
-                <Input
-                  placeholder="Ex: 00000-000"
-                  name="cep"
-                  onBlur={async (event) => {
-                    const cep = event.target.value;
-                    await ApiCep(cep)
-                      .then((response) => {
-                        setFormState((formState: any) => ({
-                          ...formState,
-                          state: response.state,
-                          city: response.city,
-                          neighborhood: response.neighborhood,
-                          street: response.street,
-                          cep: response.cep,
-                        }));
-                      })
-                      .catch((error) => {
-                        notification.error({
-                          message: "Erro",
-                          description: error?.message,
-                        });
-                      });
-                  }}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={8} xl={4}>
-              <Form.Item label="Rua" name="street">
-                <Input
-                  placeholder="Ex: rua, avenida, etc"
-                  onChange={handleInputChange}
-                  name="street"
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={8} xl={4}>
-              <Form.Item label="Bairro" name="neighborhood">
-                <Input
-                  placeholder="Bairro"
-                  onChange={handleInputChange}
-                  name="neighborhood"
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={8} xl={4}>
-              <Form.Item label="Cidade" name="city">
-                <Input
-                  placeholder="Cidade"
-                  onChange={handleInputChange}
-                  name="city"
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={8} xl={4}>
-              <Form.Item label="Estado" name="state">
-                <Input
-                  placeholder="Estado"
-                  onChange={handleInputChange}
-                  name="state"
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={8} xl={4}>
-              <Form.Item label="Complemento" name="complement">
-                <Input
-                  placeholder="Complemento"
-                  onChange={handleInputChange}
-                  name="complement"
                 />
               </Form.Item>
             </Col>
@@ -831,6 +956,889 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Disponivel" name="status">
+                <button
+                  onClick={() =>
+                    setFormState({ ...formState, status: "Disponível" })
+                  }
+                  type="button"
+                  className={
+                    formState.status === "Disponível"
+                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                  }
+                >
+                  Sim
+                </button>
+                <button
+                  onClick={() =>
+                    setFormState({ ...formState, status: "Excluído" })
+                  }
+                  type="button"
+                  className={
+                    formState.status === "Excluído"
+                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                  }
+                >
+                  Não
+                </button>
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Transação" name="transaction">
+                <button
+                  onClick={() =>
+                    setFormState({ ...formState, transaction: "venda" })
+                  }
+                  type="button"
+                  className={
+                    formState.transaction === "venda"
+                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                  }
+                >
+                  Venda
+                </button>
+                <button
+                  onClick={() =>
+                    setFormState({ ...formState, transaction: "aluguel" })
+                  }
+                  type="button"
+                  className={
+                    formState.transaction === "aluguel"
+                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                  }
+                >
+                  Aluguel
+                </button>
+              </Form.Item>
+            </Col>
+
+            {/* <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Titulo do imóvel" name="title">
+                <Input
+                  placeholder="Titulo do imóvel"
+                  onChange={handleInputChange}
+                  name="title"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Título do site" name="meta_title">
+                <Input
+                  placeholder="Título do site"
+                  onChange={handleInputChange}
+                  name="meta_title"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Preço" name="price">
+                <Input
+                  placeholder="Preço"
+                  onChange={handleInputChange}
+                  name="price"
+                />
+              </Form.Item>
+            </Col> */}
+          </Row>
+          {formState.transaction === "venda" && (
+            <>
+              <h2 className="font-bold text-lg text-orange-400">
+                Informações adicionais para Venda
+              </h2>
+              <Row gutter={16}>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Valor de Venda" name="price">
+                    <Input
+                      placeholder="Digite o valor de venda"
+                      onChange={(e) => {
+                        const inputValue = e.target.value.replace(/\D/g, "");
+                        const formatted = new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                        }).format(Number(inputValue) / 100);
+                        setFormState({ ...formState, price: formatted });
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Condições da Venda" name="sales_conditions">
+                    <Select
+                        placeholder="Condições da Venda"
+                        onChange={(value) =>
+                            handleSelectChange(value, "sales_conditions")
+                        }
+                        showSearch
+                        allowClear
+                        mode="tags"
+                        options={[
+                            { label: "Nenhum", value: null },
+                            { label: "À vista", value: "a-vista" },
+                            { label: "Financiado", value: "financiado" },
+                            { label: "Permuta", value: "permuta" },
+                            { label: "Outros", value: "outros" },
+                        ]}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Período do IPTU" name="iptu_type">
+                    <Select
+                      placeholder="Período do IPTU"
+                      onChange={(value) =>
+                        handleSelectChange(value, "iptu_type")
+                      }
+                      showSearch
+                      allowClear
+                      options={[
+                        { label: "Nenhum", value: null },
+                        { label: "Anual", value: "anual" },
+                        { label: "Mensal", value: "mensal" },
+                        { label: "Trimestral", value: "trimestral" },
+                        { label: "Semestral", value: "semestral" },
+                        { label: "Indefinido", value: "indefinido" },
+                      ]}
+                    />
+                  </Form.Item>
+                </Col>
+                {formState.iptu_type !== null && (
+                  <Col xs={24} sm={24} md={12} xl={6}>
+                    <Form.Item label="Valor do IPTU" name="iptu_value">
+                      <Input
+                        placeholder="Digite o valor do IPTU"
+                        onChange={(e) => {
+                          const inputValue = e.target.value.replace(/\D/g, "");
+                          const formatted = new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                            minimumFractionDigits: 2,
+                          }).format(Number(inputValue) / 100);
+                          setFormState({ ...formState, iptu_value: formatted });
+                        }}
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Valor das Taxas" name="tax_value">
+                    <Input
+                      placeholder="Digite o valor das Taxas"
+                      onChange={(e) => {
+                        const inputValue = e.target.value.replace(/\D/g, "");
+                        const formatted = new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                        }).format(Number(inputValue) / 100);
+                        setFormState({ ...formState, tax_value: formatted });
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={18} xl={18}>
+                  <Form.Item label="Descrição das Taxas" name="tax_description">
+                    <Input.TextArea
+                      placeholder="Descreva as taxas"
+                      name="tax_description"
+                      //quando escrever mudar o state
+                      onChange={(e) => {
+                        setFormState({
+                          ...formState,
+                          tax_description: e.target.value,
+                        });
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Escriturado" name="written">
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, written: true })
+                      }
+                      type="button"
+                      className={
+                        formState.written === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, written: false })
+                      }
+                      type="button"
+                      className={
+                        formState.written === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Aceita Bens na Negociação?"
+                    name="accept_goods"
+                  >
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, accept_goods: true })
+                      }
+                      type="button"
+                      className={
+                        formState.accept_goods === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, accept_goods: false })
+                      }
+                      type="button"
+                      className={
+                        formState.accept_goods === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Tem Financiamento?" name="has_financing">
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, has_financing: true })
+                      }
+                      type="button"
+                      className={
+                        formState.has_financing === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, has_financing: false })
+                      }
+                      type="button"
+                      className={
+                        formState.has_financing === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Aceita Financiamento"
+                    name="accept_financing"
+                  >
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, accept_financing: true })
+                      }
+                      type="button"
+                      className={
+                        formState.accept_financing === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, accept_financing: false })
+                      }
+                      type="button"
+                      className={
+                        formState.accept_financing === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Está Ocupado?"
+                    name="is_busy"
+                  >
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, is_busy: true })
+                      }
+                      type="button"
+                      className={
+                        formState.is_busy === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, is_busy: false })
+                      }
+                      type="button"
+                      className={
+                        formState.is_busy === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Imóvel de Esquina" name="corner_property">
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, corner_property: true })
+                      }
+                      type="button"
+                      className={
+                        formState.corner_property === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, corner_property: false })
+                      }
+                      type="button"
+                      className={
+                        formState.corner_property === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Posição Solar" name="sun_position">
+                    <Select
+                      placeholder="Posição Solar"
+                      onChange={(value) =>
+                        handleSelectChange(value, "sun_position")
+                      }
+                      showSearch
+                      allowClear
+                      options={[
+                        { label: "Norte", value: "norte" },
+                        { label: "Sul", value: "sul" },
+                        { label: "Leste", value: "leste" },
+                        { label: "Oeste", value: "oeste" },
+                        { label: "Nordeste", value: "nordeste" },
+                        { label: "Noroeste", value: "noroeste" },
+                        { label: "Sudeste", value: "sudeste" },
+                        { label: "Sudoeste", value: "sudoeste" },
+                      ]}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </>
+          )}
+          {formState.transaction === "aluguel" && (
+            <>
+              <h2 className="font-bold text-lg text-orange-400">
+                Informações adicionais para Aluguel
+              </h2>
+              <Row gutter={16}>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Valor do Aluguel" name="price">
+                    <Input
+                      placeholder="Digite o valor do Aluguel"
+                      onChange={(e) => {
+                        const inputValue = e.target.value.replace(/\D/g, "");
+                        const formatted = new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                        }).format(Number(inputValue) / 100);
+                        setFormState({ ...formState, price: formatted });
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Condições do Aluguel"
+                    name="rent_conditions"
+                  >
+                    <Select
+                        placeholder="Condições de Aluguel"
+                        onChange={(value) => handleSelectChange(value, "rent_conditions")}
+                        showSearch
+                        allowClear
+                        value={formState.rent_conditions || undefined}
+                        >
+                        <Select.Option value="mensal">Mensal</Select.Option>
+                        <Select.Option value="anual">Anual</Select.Option>
+                        <Select.Option value="temporada">Temporada</Select.Option>
+                        <Select.Option value="diaria">Diária</Select.Option>
+                        <Select.Option value="semestral">Semestral</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Período do IPTU" name="iptu_type">
+                    <Select
+                      placeholder="Período do IPTU"
+                      onChange={(value) =>
+                        handleSelectChange(value, "iptu_type")
+                      }
+                      showSearch
+                      allowClear
+                      options={[
+                        { label: "Nenhum", value: null },
+                        { label: "Anual", value: "anual" },
+                        { label: "Mensal", value: "mensal" },
+                        { label: "Trimestral", value: "trimestral" },
+                        { label: "Semestral", value: "semestral" },
+                        { label: "Indefinido", value: "indefinido" },
+                      ]}
+                    />
+                  </Form.Item>
+                </Col>
+                {formState.iptu_type !== null && (
+                  <Col xs={24} sm={24} md={12} xl={6}>
+                    <Form.Item label="Valor do IPTU" name="iptu_value">
+                      <Input
+                        placeholder="Digite o valor do IPTU"
+                        onChange={(e) => {
+                          const inputValue = e.target.value.replace(/\D/g, "");
+                          const formatted = new Intl.NumberFormat("pt-BR", {
+                            style: "currency",
+                            currency: "BRL",
+                            minimumFractionDigits: 2,
+                          }).format(Number(inputValue) / 100);
+                          setFormState({ ...formState, iptu_value: formatted });
+                        }}
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Valor das Taxas" name="tax_value">
+                    <Input
+                      placeholder="Digite o valor das Taxas"
+                      onChange={(e) => {
+                        const inputValue = e.target.value.replace(/\D/g, "");
+                        const formatted = new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                        }).format(Number(inputValue) / 100);
+                        setFormState({ ...formState, tax_value: formatted });
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={18} xl={18}>
+                  <Form.Item label="Descrição das Taxas" name="tax_description">
+                    <Input.TextArea
+                      placeholder="Descreva as taxas"
+                      name="tax_description"
+                      //quando escrever mudar o state
+                      onChange={(e) => {
+                        setFormState({
+                          ...formState,
+                          tax_description: e.target.value,
+                        });
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Escriturado" name="written">
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, written: true })
+                      }
+                      type="button"
+                      className={
+                        formState.written === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, written: false })
+                      }
+                      type="button"
+                      className={
+                        formState.written === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Aceita Bens na Negociação?"
+                    name="accept_goods"
+                  >
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, accept_goods: true })
+                      }
+                      type="button"
+                      className={
+                        formState.accept_goods === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, accept_goods: false })
+                      }
+                      type="button"
+                      className={
+                        formState.accept_goods === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Tem Financiamento?" name="has_financing">
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, has_financing: true })
+                      }
+                      type="button"
+                      className={
+                        formState.has_financing === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, has_financing: false })
+                      }
+                      type="button"
+                      className={
+                        formState.has_financing === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Aceita Financiamento"
+                    name="accept_financing"
+                  >
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, accept_financing: true })
+                      }
+                      type="button"
+                      className={
+                        formState.accept_financing === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, accept_financing: false })
+                      }
+                      type="button"
+                      className={
+                        formState.accept_financing === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Está Ocupado?"
+                    name="is_busy"
+                  >
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, is_busy: true })
+                      }
+                      type="button"
+                      className={
+                        formState.is_busy === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, is_busy: false })
+                      }
+                      type="button"
+                      className={
+                        formState.is_busy === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Imóvel de Esquina" name="corner_property">
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, corner_property: true })
+                      }
+                      type="button"
+                      className={
+                        formState.corner_property === true
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Sim
+                    </button>
+                    <button
+                      onClick={() =>
+                        setFormState({ ...formState, corner_property: false })
+                      }
+                      type="button"
+                      className={
+                        formState.corner_property === false
+                          ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                          : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                      }
+                    >
+                      Não
+                    </button>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Posição Solar" name="sun_position">
+                    <Select
+                      placeholder="Posição Solar"
+                      onChange={(value) =>
+                        handleSelectChange(value, "sun_position")
+                      }
+                      showSearch
+                      allowClear
+                      options={[
+                        { label: "Nascente", value: "nascente" },
+                        { label: "Poente", value: "poente" },
+                        { label: "Norte", value: "norte" },
+                        { label: "Sul", value: "sul" },
+                        { label: "Leste", value: "leste" },
+                        { label: "Oeste", value: "oeste" },
+                        { label: "Nordeste", value: "nordeste" },
+                        { label: "Noroeste", value: "noroeste" },
+                        { label: "Sudeste", value: "sudeste" },
+                        { label: "Sudoeste", value: "sudoeste" },
+                      ]}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </>
+          )}
+          <hr className="my-4"/>
+          <Row gutter={16}>
+            <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="É Condominio?" name="is_condominium">
+                <button
+                  onClick={() =>
+                    setFormState({ ...formState, is_condominium: true })
+                  }
+                  type="button"
+                  className={
+                    formState.is_condominium === true
+                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                  }
+                >
+                  Sim
+                </button>
+                <button
+                  onClick={() =>
+                    setFormState({ ...formState, is_condominium: false })
+                  }
+                  type="button"
+                  className={
+                    formState.is_condominium === false
+                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                  }
+                >
+                  Não
+                </button>
+              </Form.Item>
+            </Col>
+          </Row>
+          {formState.is_condominium && (
+            <>
+              <h2 className="font-bold text-lg text-orange-400">Condomínio</h2>
+              <Row gutter={16}>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Nome do condomínio" name="condominium_name">
+                    <Input
+                      placeholder="Nome do condomínio"
+                      onChange={handleInputChange}
+                      name="condominium_name"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Valor do Condomínio"
+                    name="condominium_value"
+                  >
+                    <Input
+                      placeholder="Digite o valor do Condomínio"
+                      onChange={(e) => {
+                        const inputValue = e.target.value.replace(/\D/g, "");
+                        const formatted = new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                        }).format(Number(inputValue) / 100);
+                        setFormState({
+                          ...formState,
+                          condominium_value: formatted,
+                        });
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Total de unidades"
+                    name="condominium_total_units"
+                  >
+                    <Input
+                      type="number"
+                      placeholder="Total de unidades"
+                      onChange={handleInputChange}
+                      name="condominium_total_units"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Unidades por andar"
+                    name="condominium_units_per_floor"
+                  >
+                    <Input
+                      type="number"
+                      placeholder="Unidades por andar"
+                      onChange={handleInputChange}
+                      name="condominium_units_per_floor"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item label="Pavimentação" name="condominium_flooring">
+                    <Input
+                      type="number"
+                      placeholder="Pavimentação"
+                      onChange={handleInputChange}
+                      name="condominium_flooring"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={6}>
+                  <Form.Item
+                    label="Número de torres"
+                    name="condominium_number_towers"
+                  >
+                    <Input
+                      type="number"
+                      placeholder="Número de torres"
+                      onChange={handleInputChange}
+                      name="condominium_number_towers"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} xl={12}>
+                  <Form.Item
+                    label="O que vem incluso no condomínio?"
+                    name="condominium_caracteristics"
+                  >
+                    <Select
+                        mode="tags"
+                        placeholder="Características"
+                        onChange={(value) =>
+                            handleSelectChange(value, "condominium_caracteristics")
+                        }
+                        showSearch
+                        allowClear
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </>
+          )}
+          <h2 className="font-bold text-lg text-orange-400">Informações</h2>
+          <Row gutter={16}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Subtipo do imóvel" name="subtype">
                 <Select
                   placeholder="Subtipo do imóvel"
@@ -1133,6 +2141,46 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Perfil do Imóvel" name="profile">
+                <Input
+                  placeholder="Ex.: Residencial em Condomínio"
+                  onChange={handleInputChange}
+                  name="profile"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Situação" name="situation">
+                <Select
+                  placeholder="Situação"
+                  onChange={(value) => handleSelectChange(value, "situation")}
+                  showSearch
+                  allowClear
+                  options={[
+                    { label: "Novo", value: "Novo" },
+                    { label: "Usado", value: "Usado" },
+                    { label: "Em construção", value: "Em construção" },
+                    {
+                      label: "Pronto para construir",
+                      value: "Pronto para construir",
+                    },
+                    { label: "Pronto para morar", value: "Pronto para morar" },
+                    { label: "Área de Plantio", value: "Área de Plantio" },
+                    { label: "Indefinido", value: "Indefinido" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Proximidade do Mar" name="proximity_sea">
+                <Input
+                  placeholder="Proximidade do Mar"
+                  onChange={handleInputChange}
+                  name="proximity_sea"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Proximidades" name="nearby">
                 <Select
                   placeholder="Selecione ou Escreva"
@@ -1177,8 +2225,95 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </Select>
               </Form.Item>
             </Col>
+
+            {/* <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Comissão" name="commission">
+                <Select
+                  placeholder="Selecione ou Escreva"
+                  onChange={(value) => handleSelectChange(value, "commission")}
+                  showSearch
+                  allowClear
+                  mode="multiple"
+                >
+                  <Select.Option value="Academia">Academia</Select.Option>
+                </Select>
+              </Form.Item>
+            </Col> */}
             <Col xs={24} sm={24} md={12} xl={6}>
-              {/* CAMPO PARA ESCOLHER UMA COR EM HEXADECIMAL */}
+              <Form.Item label="Comissão" name="commission">
+                <Input
+                  placeholder="Digite o valor da Comissão"
+                  onChange={(e) => {
+                    const inputValue = e.target.value.replace(/\D/g, "");
+                    const formatted = new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                      minimumFractionDigits: 2,
+                    }).format(Number(inputValue) / 100);
+                    setFormState({ ...formState, commission: formatted });
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={8} xl={6}>
+              <Form.Item label="Área total" name="area_total">
+                <Input
+                  type="number"
+                  placeholder="Área total"
+                  onChange={handleInputChange}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={8} xl={6}>
+              <Form.Item label="Unidade" name="area_total_unit">
+                <Select
+                  placeholder="Unidade"
+                  onChange={(value) =>
+                    handleSelectChange(value, "area_total_unit")
+                  }
+                  showSearch
+                  allowClear
+                  options={[
+                    { label: "m²", value: "m²" },
+                    { label: "ha", value: "ha" },
+                    { label: "km²", value: "km²" },
+                    { label: "ac", value: "ac" },
+                  ]}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Exclusividade" name="exclusivity">
+                <button
+                  onClick={() =>
+                    setFormState({ ...formState, exclusivity: true })
+                  }
+                  type="button"
+                  className={
+                    formState.exclusivity === true
+                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                  }
+                >
+                  Sim
+                </button>
+                <button
+                  onClick={() =>
+                    setFormState({ ...formState, exclusivity: false })
+                  }
+                  type="button"
+                  className={
+                    formState.exclusivity === false
+                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
+                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
+                  }
+                >
+                  Não
+                </button>
+              </Form.Item>
+            </Col>
+
+            {/* <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Cor da faixa" name="stripe_color">
                 <Input
                   type="color"
@@ -1186,195 +2321,118 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   name="stripe_color"
                 />
               </Form.Item>
+            </Col> */}
+          </Row>
+          <h2 className="font-bold text-lg text-orange-400">Endereço</h2>
+          <Row gutter={16}>
+            <Col xs={24} sm={24} md={8} xl={4}>
+              <Form.Item label="CEP" name="cep">
+                <Input
+                  placeholder="Ex: 00000-000"
+                  name="cep"
+                  onBlur={async (event) => {
+                    const cep = event.target.value;
+                    await ApiCep(cep)
+                      .then((response) => {
+                        setFormState((formState: any) => ({
+                          ...formState,
+                          state: response.state,
+                          city: response.city,
+                          neighborhood: response.neighborhood,
+                          street: response.street,
+                          cep: response.cep,
+                        }));
+                      })
+                      .catch((error) => {
+                        notification.error({
+                          message: "Erro",
+                          description: error?.message,
+                        });
+                      });
+                  }}
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={8} xl={4}>
+              <Form.Item label="Rua" name="street">
+                <Input
+                  placeholder="Ex: rua, avenida, etc"
+                  onChange={handleInputChange}
+                  name="street"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={8} xl={4}>
+              <Form.Item label="Bairro" name="neighborhood">
+                <Input
+                  placeholder="Bairro"
+                  onChange={handleInputChange}
+                  name="neighborhood"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={8} xl={4}>
+              <Form.Item label="Cidade" name="city">
+                <Input
+                  placeholder="Cidade"
+                  onChange={handleInputChange}
+                  name="city"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={8} xl={4}>
+              <Form.Item label="Estado" name="state">
+                <Input
+                  placeholder="Estado"
+                  onChange={handleInputChange}
+                  name="state"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={8} xl={4}>
+              <Form.Item label="Complemento" name="complement">
+                <Input
+                  placeholder="Complemento"
+                  onChange={handleInputChange}
+                  name="complement"
+                />
+              </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Transação" name="transaction">
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, transaction: "venda" })
-                  }
-                  type="button"
-                  className={
-                    formState.transaction === "venda"
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Venda
-                </button>
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, transaction: "aluguel" })
-                  }
-                  type="button"
-                  className={
-                    formState.transaction === "aluguel"
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Aluguel
-                </button>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Aceita Financiamento" name="accept_financing">
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, accept_financing: true })
-                  }
-                  type="button"
-                  className={
-                    formState.accept_financing === true
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Sim
-                </button>
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, accept_financing: false })
-                  }
-                  type="button"
-                  className={
-                    formState.accept_financing === false
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Não
-                </button>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Escriturado" name="written">
-                <button
-                  onClick={() => setFormState({ ...formState, written: true })}
-                  type="button"
-                  className={
-                    formState.written === true
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Sim
-                </button>
-                <button
-                  onClick={() => setFormState({ ...formState, written: false })}
-                  type="button"
-                  className={
-                    formState.written === false
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Não
-                </button>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Marca D'água" name="watermark">
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, watermark: true })
-                  }
-                  type="button"
-                  className={
-                    formState.watermark === true
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Sim
-                </button>
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, watermark: false })
-                  }
-                  type="button"
-                  className={
-                    formState.watermark === false
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Não
-                </button>
-              </Form.Item>
-            </Col>
-          </Row>
-          <h2 className="font-bold text-lg text-orange-400">Condominio</h2>
-          <Row gutter={16}>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Nome do condomínio" name="condominium_name">
-                <Input
-                  placeholder="Nome do condomínio"
+              <Form.Item label="Bloco-Quadra-Torre" name="section_address">
+               <Input
+                  placeholder="Bloco-Quadra-Torre"
                   onChange={handleInputChange}
-                  name="condominium_name"
+                  name="section_address"
                 />
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item
-                label="Total de unidades"
-                name="condominium_total_units"
-              >
+              <Form.Item label="Ap-Loja-Lote-Sala" name="store_address">
+                <Input
+                  placeholder="Ap-Loja-Lote-Sala"
+                  onChange={handleInputChange}
+                  name="store_address"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={24} md={12} xl={6}>
+              <Form.Item label="Nº do Andar" name="floor_number">
                 <Input
                   type="number"
-                  placeholder="Total de unidades"
+                  placeholder="Nº do Andar"
                   onChange={handleInputChange}
-                  name="condominium_total_units"
                 />
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item
-                label="Unidades por andar"
-                name="condominium_units_per_floor"
-              >
+              <Form.Item label="Nº da Residência" name="number">
                 <Input
                   type="number"
-                  placeholder="Unidades por andar"
+                  placeholder="Nº da Residência"
                   onChange={handleInputChange}
-                  name="condominium_units_per_floor"
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Pavimentação" name="condominium_flooring">
-                <Input
-                  type="number"
-                  placeholder="Pavimentação"
-                  onChange={handleInputChange}
-                  name="condominium_flooring"
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item
-                label="Número de torres"
-                name="condominium_number_towers"
-              >
-                <Input
-                  type="number"
-                  placeholder="Número de torres"
-                  onChange={handleInputChange}
-                  name="condominium_number_towers"
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item
-                label="Características"
-                name="condominium_caracteristics"
-              >
-                <Input
-                  placeholder="Características"
-                  onChange={handleInputChange}
-                  name="condominium_caracteristics"
                 />
               </Form.Item>
             </Col>
@@ -1391,11 +2449,21 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            <Col xs={12} sm={8} md={6} xl={4}>
-              <Form.Item label="Quartos" name="bedroom">
+            <Col xs={12} sm={8} md={6} xl={8}>
+              <Form.Item label="Cobertura das Garagens" name="covered_garage">
                 <Input
                   type="number"
-                  placeholder="Quartos"
+                  placeholder="Cobertura das Garagens"
+                  onChange={handleInputChange}
+                  name="covered_garagem"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={12} sm={8} md={6} xl={4}>
+              <Form.Item label="Dormitórios" name="bedroom">
+                <Input
+                  type="number"
+                  placeholder="Dormitórios"
                   onChange={handleInputChange}
                   name="bedroom"
                 />
@@ -1491,384 +2559,14 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-          </Row>
-          <h2 className="font-bold text-lg text-orange-400">Situação</h2>
-          <Row gutter={16}>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Perfil do Imóvel" name="profile">
-                <Input
-                  placeholder="Sala de TV"
-                  onChange={handleInputChange}
-                  name="profile"
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Situação" name="situation">
-                <Select
-                  placeholder="Situação"
-                  onChange={(value) => handleSelectChange(value, "situation")}
-                  showSearch
-                  allowClear
-                  options={[
-                    { label: "Novo", value: "Novo" },
-                    { label: "Usado", value: "Usado" },
-                    { label: "Em construção", value: "Em construção" },
-                    {
-                      label: "Pronto para construir",
-                      value: "Pronto para construir",
-                    },
-                    { label: "Pronto para morar", value: "Pronto para morar" },
-                    { label: "Área de Plantio", value: "Área de Plantio" },
-                    { label: "Indefinido", value: "Indefinido" },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Tipo de IPTU" name="iptu_type">
-                <Select
-                  placeholder="Tipo de IPTU"
-                  onChange={(value) => handleSelectChange(value, "iptu_type")}
-                  showSearch
-                  allowClear
-                  options={[
-                    { label: "Nenhum", value: null },
-                    { label: "Anual", value: "anual" },
-                    { label: "Mensal", value: "mensal" },
-                    { label: "Trimestral", value: "trimestral" },
-                    { label: "Semestral", value: "semestral" },
-                    { label: "Indefinido", value: "indefinido" },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <h2 className="font-bold text-lg text-orange-400">Área do Imóvel</h2>
-          <Row gutter={16}>
-            <Col xs={24} sm={12} md={8} xl={4}>
-              <Form.Item label="Área privativa" name="area_privative">
+            <Col xs={12} sm={8} md={6} xl={4}>
+              <Form.Item label="Varandas" name="balcony">
                 <Input
                   type="number"
-                  placeholder="Área privativa"
+                  placeholder="Varandas"
                   onChange={handleInputChange}
-                  name="area_privative"
+                  name="balcony"
                 />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={4}>
-              <Form.Item label="Unidade" name="area_privative_unit">
-                <Select
-                  placeholder="Unidade"
-                  onChange={(value) =>
-                    handleSelectChange(value, "area_privative_unit")
-                  }
-                  showSearch
-                  allowClear
-                  options={[
-                    { label: "m²", value: "m²" },
-                    { label: "ha", value: "ha" },
-                    { label: "km²", value: "km²" },
-                    { label: "ac", value: "ac" },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={4}>
-              <Form.Item label="Área construída" name="area_built">
-                <Input
-                  type="number"
-                  placeholder="Área construída"
-                  onChange={handleInputChange}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={4}>
-              <Form.Item label="Unidade" name="area_built_unit">
-                <Select
-                  placeholder="Unidade"
-                  onChange={(value) =>
-                    handleSelectChange(value, "area_built_unit")
-                  }
-                  showSearch
-                  allowClear
-                  options={[
-                    { label: "m²", value: "m²" },
-                    { label: "ha", value: "ha" },
-                    { label: "km²", value: "km²" },
-                    { label: "ac", value: "ac" },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={4}>
-              <Form.Item label="Área total" name="area_total">
-                <Input
-                  type="number"
-                  placeholder="Área total"
-                  onChange={handleInputChange}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={4}>
-              <Form.Item label="Unidade" name="area_total_unit">
-                <Select
-                  placeholder="Unidade"
-                  onChange={(value) =>
-                    handleSelectChange(value, "area_total_unit")
-                  }
-                  showSearch
-                  allowClear
-                  options={[
-                    { label: "m²", value: "m²" },
-                    { label: "ha", value: "ha" },
-                    { label: "km²", value: "km²" },
-                    { label: "ac", value: "ac" },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={4}>
-              <Form.Item label="Área do terreno" name="area_terrain_total">
-                <Input
-                  type="number"
-                  placeholder="Área do terreno"
-                  onChange={handleInputChange}
-                />
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={4}>
-              <Form.Item label="Unidade" name="area_terrain_total_unit">
-                <Select
-                  placeholder="Unidade"
-                  onChange={(value) =>
-                    handleSelectChange(value, "area_terrain_total_unit")
-                  }
-                  showSearch
-                  allowClear
-                  options={[
-                    { label: "m²", value: "m²" },
-                    { label: "ha", value: "ha" },
-                    { label: "km²", value: "km²" },
-                    { label: "ac", value: "ac" },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <h2 className="font-bold text-lg text-orange-400">
-            Visibilidade e Destaque
-          </h2>
-          <Row gutter={16}>
-            {/*CRIAR 2 CHECKBOX*/}
-            <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Visível para todos?" name="visivel">
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, published_website: true })
-                  }
-                  type="button"
-                  className={
-                    formState.published_website === true
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Sim
-                </button>
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, published_website: false })
-                  }
-                  type="button"
-                  className={
-                    formState.published_website === false
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Não
-                </button>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Destacar na pagina inicial?" name="destaque">
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, highlight_website: true })
-                  }
-                  type="button"
-                  className={
-                    formState.highlight_website === true
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Sim
-                </button>
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, highlight_website: false })
-                  }
-                  type="button"
-                  className={
-                    formState.highlight_website === false
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Não
-                </button>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Publicar na Rede" name="published_network">
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, published_network: true })
-                  }
-                  type="button"
-                  className={
-                    formState.published_network === true
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Sim
-                </button>
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, published_network: false })
-                  }
-                  type="button"
-                  className={
-                    formState.published_network === false
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Não
-                </button>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Mostrar Bairro" name="show_neighborhood">
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, show_neighborhood: true })
-                  }
-                  type="button"
-                  className={
-                    formState.show_neighborhood === true
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Sim
-                </button>
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, show_neighborhood: false })
-                  }
-                  type="button"
-                  className={
-                    formState.show_neighborhood === false
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Não
-                </button>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Mostrar Rua" name="show_street">
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, show_street: true })
-                  }
-                  type="button"
-                  className={
-                    formState.show_street === true
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Sim
-                </button>
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, show_street: false })
-                  }
-                  type="button"
-                  className={
-                    formState.show_street === false
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Não
-                </button>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Mostrar Condominio" name="show_condominium">
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, show_condominium: true })
-                  }
-                  type="button"
-                  className={
-                    formState.show_condominium === true
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Sim
-                </button>
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, show_condominium: false })
-                  }
-                  type="button"
-                  className={
-                    formState.show_condominium === false
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Não
-                </button>
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Mostrar Preço" name="show_price">
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, show_price: true })
-                  }
-                  type="button"
-                  className={
-                    formState.show_price === true
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Sim
-                </button>
-                <button
-                  onClick={() =>
-                    setFormState({ ...formState, show_price: false })
-                  }
-                  type="button"
-                  className={
-                    formState.show_price === false
-                      ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
-                      : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
-                  }
-                >
-                  Não
-                </button>
               </Form.Item>
             </Col>
           </Row>
@@ -1911,7 +2609,9 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               </Form.Item>
             </Col>
           </Row>
-          <h2 className="font-bold text-lg text-orange-400">Proprietário</h2>
+          <h2 className="font-bold text-lg text-orange-400">
+            Proprietário / Responsável pelo imóvel
+          </h2>
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8} xl={6}>
               <Form.Item label="Nome" name="owner_name">
@@ -1931,21 +2631,77 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 />
               </Form.Item>
             </Col>
-            {/* <Col span={6}>
-                            <Form.Item label="Telefone" name="owner_phone">
-                                <Input 
-                                    placeholder="Telefone"
-                                    onChange={handleInputChange}
-                                />
-                            </Form.Item>
-                        </Col> */}
+            <Col xs={24} sm={12} md={8} xl={6}>
+              <Form.Item label="Fone" name="owner_phone">
+                <Input
+                  placeholder="Phone"
+                  onChange={handleInputChange}
+                  name="owner_phone"
+                />
+              </Form.Item>
+            </Col>
           </Row>
-          {/* <Dragger {...props}>
-                        <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">Clique ou arraste as imagens para o campo de Upload</p>
-                    </Dragger> */}
+          <Row gutter={16}>
+            <Col xs={24} sm={12} md={8} xl={6}>
+              <Form.Item label="Nome" name="sec_owner_name">
+                <Input
+                  placeholder="Nome"
+                  onChange={handleInputChange}
+                  name="sec_owner_name"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={8} xl={6}>
+              <Form.Item label="E-mail" name="sec_owner_email">
+                <Input
+                  placeholder="E-mail"
+                  onChange={handleInputChange}
+                  name="sec_owner_email"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={8} xl={6}>
+              <Form.Item label="Fone" name="sec_owner_phone">
+                <Input
+                  placeholder="Phone"
+                  onChange={handleInputChange}
+                  name="sec_owner_phone"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <h2 className="font-bold text-lg text-orange-400">
+            Responsável pela Chave
+          </h2>
+          <Row gutter={16}>
+            <Col xs={24} sm={12} md={8} xl={6}>
+              <Form.Item label="Nome" name="key_responsible_name">
+                <Input
+                  placeholder="Nome"
+                  onChange={handleInputChange}
+                  name="key_responsible_name"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={8} xl={6}>
+              <Form.Item label="E-mail" name="key_responsible_email">
+                <Input
+                  placeholder="E-mail"
+                  onChange={handleInputChange}
+                  name="key_responsible_email"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={8} xl={6}>
+              <Form.Item label="Fone" name="key_responsible_phone">
+                <Input
+                  placeholder="Phone"
+                  onChange={handleInputChange}
+                  name="key_responsible_phone"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
           <Form.Item name="images">
             <Upload
               name="images"
@@ -2004,16 +2760,35 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               </Form.Item>
             </Col>
           </Row>
-          {/* <Row gutter={16}>
-                        <Col span={6}>
-                            <Form.Item label="Título formatado" name="tituloFormatado">
-                                <Input 
-                                    placeholder="Título formatado"
-                                    onChange={handleInputChange}
-                                />
-                            </Form.Item>
-                        </Col>
-                    </Row> */}
+          <Row gutter={16}>
+          <Col xs={24} sm={12} md={8} xl={8}>
+              <Form.Item label="Link de Captação" name="capture_link">
+                <Input
+                  placeholder="Link de Captação"
+                  onChange={handleInputChange}
+                  name="capture_link"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={8} xl={8}>
+              <Form.Item label="Link do Site" name="site_link">
+                <Input
+                  placeholder="Link do Site"
+                  onChange={handleInputChange}
+                  name="site_link"
+                />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12} md={8} xl={8}>
+              <Form.Item label="Link da OLX" name="olx_link">
+                <Input
+                  placeholder="Link da OLX"
+                  onChange={handleInputChange}
+                  name="olx_link"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
           <Row>
             <button
               type="submit"

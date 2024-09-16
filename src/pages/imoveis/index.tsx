@@ -1,8 +1,24 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { propertiesService } from "@/services/properties.service";
-import { Button, Col, Form, Image, Input, Modal, Row, Select, Table } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Col,
+  Form,
+  Image,
+  Input,
+  Modal,
+  Row,
+  Select,
+  Table,
+} from "antd";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/router";
+import PropertyCard from "@/components/PropertyCard";
 
 export default function Imoveis() {
   const [properties, setProperties] = useState<any[]>([]);
@@ -15,22 +31,20 @@ export default function Imoveis() {
   const [tipoImovel, setTipoImovel] = useState("");
   const [referencia, setReferencia] = useState("");
   const [titulo, setTitulo] = useState("");
-  const [valorMin, setValorMin] = useState<string | null>(null)
-  const [valorMax, setValorMax] = useState<string | null>(null)
+  const [valorMin, setValorMin] = useState<string | null>(null);
+  const [valorMax, setValorMax] = useState<string | null>(null);
 
   const [cities, setCities] = useState<Record<string, string[]>>({});
-  const [neighborhoods, setNeighborhoods] = useState<string[]>([])
-  const [condominiums, setCondominiums] = useState<string[]>([])
-  const [types, setTypes] = useState<string[]>([])
-  const [cidade, setCidade] = useState<string>("")
-  const [bairro, setBairro] = useState<string>("")
-  const [negocio, setNegocio] = useState<string>("")
-  const [status, setStatus] = useState<string>("")
-  const [tipo, setTipo] = useState<string>("")
-  const [condominios, setCondominios] = useState<string>("")
-  const [origem, setOrigem] = useState<string>("")
-
-  
+  const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
+  const [condominiums, setCondominiums] = useState<string[]>([]);
+  const [types, setTypes] = useState<string[]>([]);
+  const [cidade, setCidade] = useState<string>("");
+  const [bairro, setBairro] = useState<string>("");
+  const [negocio, setNegocio] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [tipo, setTipo] = useState<string>("");
+  const [condominios, setCondominios] = useState<string>("");
+  const [origem, setOrigem] = useState<string>("");
 
   const router = useRouter();
 
@@ -38,26 +52,33 @@ export default function Imoveis() {
     let filterBy = "";
     let filterValue = "";
     let filterType = "";
-  
+
     if (valorMax !== null || valorMin !== null) {
-      let valorMinFormatado = valorMin?.replace(/[^\d]/g, "").replace(/0{2}$/, "");
-      let valorMaxFormatado = valorMax?.replace(/[^\d]/g, "").replace(/0{2}$/, "");
-  
+      let valorMinFormatado = valorMin
+        ?.replace(/[^\d]/g, "")
+        .replace(/0{2}$/, "");
+      let valorMaxFormatado = valorMax
+        ?.replace(/[^\d]/g, "")
+        .replace(/0{2}$/, "");
+
       if (valorMaxFormatado === "0" || valorMaxFormatado === null) {
         valorMaxFormatado = "999999999";
       }
-  
+
       if (valorMinFormatado === "0" && valorMaxFormatado === "0") {
-        filterBy = "";      // Remover o filtro por completo
+        filterBy = ""; // Remover o filtro por completo
         filterValue = "";
         filterType = "";
       } else {
         filterBy += filterBy === "" ? "price" : ",price";
-        filterValue += filterValue === "" ? `${valorMinFormatado}|${valorMaxFormatado}` : `,${valorMinFormatado}|${valorMaxFormatado}`;
+        filterValue +=
+          filterValue === ""
+            ? `${valorMinFormatado}|${valorMaxFormatado}`
+            : `,${valorMinFormatado}|${valorMaxFormatado}`;
         filterType += filterType === "" ? "btw_price" : ",btw_price";
       }
     }
-  
+
     if (!!tipoImovel) {
       filterBy += filterBy === "" ? "subtype" : ",subtype";
       filterValue += filterValue === "" ? `${tipoImovel}` : `,${tipoImovel}`;
@@ -65,15 +86,15 @@ export default function Imoveis() {
     }
 
     if (!!referencia) {
-        filterBy += filterBy === "" ? "reference" : ",reference";
-        filterValue += filterValue === "" ? `${referencia}` : `,${referencia}`;
-        filterType += filterType === "" ? "ilike" : ",ilike";
+      filterBy += filterBy === "" ? "reference" : ",reference";
+      filterValue += filterValue === "" ? `${referencia}` : `,${referencia}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
     }
 
-    if(!!titulo) {
-        filterBy += filterBy === "" ? "meta_title" : ",meta_title";
-        filterValue += filterValue === "" ? `${titulo}` : `,${titulo}`;
-        filterType += filterType === "" ? "ilike" : ",ilike";
+    if (!!titulo) {
+      filterBy += filterBy === "" ? "meta_title" : ",meta_title";
+      filterValue += filterValue === "" ? `${titulo}` : `,${titulo}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
     }
 
     if (!!cidade) {
@@ -131,81 +152,145 @@ export default function Imoveis() {
     } catch (error: any) {
       console.log("error", error);
     }
-  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, status, tipo, condominios, origem]);
-  
+  }, [
+    page,
+    limit,
+    valorMax,
+    valorMin,
+    tipoImovel,
+    referencia,
+    titulo,
+    cidade,
+    bairro,
+    negocio,
+    status,
+    tipo,
+    condominios,
+    origem,
+  ]);
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, valorMax, valorMin, tipoImovel, referencia, titulo, cidade, bairro, negocio, status, tipo, condominios, origem, fetchData]);
+  }, [
+    page,
+    limit,
+    valorMax,
+    valorMin,
+    tipoImovel,
+    referencia,
+    titulo,
+    cidade,
+    bairro,
+    negocio,
+    status,
+    tipo,
+    condominios,
+    origem,
+    fetchData,
+  ]);
 
   const getNeighborhoods = useCallback(async () => {
-    await propertiesService.getNeighborhoodsByCity(
-      cidade
-    )
-    .then((response: any) => {
-      // const data = response.data.neighborhoods.filter((neighborhood: string) =>  neighborhood !== "Não Informado")
-      setNeighborhoods(response.data.neighborhoods.neighborhoods)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  } , [cidade])
+    await propertiesService
+      .getNeighborhoodsByCity(cidade)
+      .then((response: any) => {
+        // const data = response.data.neighborhoods.filter((neighborhood: string) =>  neighborhood !== "Não Informado")
+        setNeighborhoods(response.data.neighborhoods.neighborhoods);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [cidade]);
 
   useEffect(() => {
-    getNeighborhoods()
-  }, [getNeighborhoods, cidade])
+    getNeighborhoods();
+  }, [getNeighborhoods, cidade]);
 
   const getCities = useCallback(async () => {
-    await propertiesService.getCities()
-    .then((response: any) => {
-      setCities(response.data.cities_states.result)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  } , [])
+    await propertiesService
+      .getCities()
+      .then((response: any) => {
+        setCities(response.data.cities_states.result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   useEffect(() => {
-    getCities()
-  }, [getCities])
+    getCities();
+  }, [getCities]);
 
   const getCondominiums = useCallback(async () => {
-    await propertiesService.getCondominiums()
-    .then((response: any) => {
-      const data = response.data.condominiums.filter((condominium: string) =>  condominium !== "Não Informado")
-      setCondominiums(data)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  } , [])
+    await propertiesService
+      .getCondominiums()
+      .then((response: any) => {
+        const data = response.data.condominiums.filter(
+          (condominium: string) => condominium !== "Não Informado"
+        );
+        setCondominiums(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   useEffect(() => {
-    getCondominiums()
-  }, [getCondominiums])
+    getCondominiums();
+  }, [getCondominiums]);
 
   const getTypes = useCallback(async () => {
-    await propertiesService.getTypes()
-    .then((response: any) => {
-      console.log(response.data.types)
-      const data = response.data.types.map((type: string) => {
-        if (type?.includes("Pavilhão/Galpão")) {
-          return type?.replace("Pavilhão/Galpão", "Galpão")
-        }
-        return type
-      })
+    await propertiesService
+      .getTypes()
+      .then((response: any) => {
+        console.log(response.data.types);
+        const data = response.data.types.map((type: string) => {
+          if (type?.includes("Pavilhão/Galpão")) {
+            return type?.replace("Pavilhão/Galpão", "Galpão");
+          }
+          return type;
+        });
 
-      const removeNull = data.filter((type: string) => type !== null)
-      setTypes(removeNull)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  } , [])
+        const removeNull = data.filter((type: string) => type !== null);
+        setTypes(removeNull);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   useEffect(() => {
-    getTypes()
-  }, [getTypes])
+    getTypes();
+  }, [getTypes]);
+
+  const [filters, setFilters] = useState([{ field: "", value: "" }]);
+
+  const handleAddFilter = () => {
+    setFilters([...filters, { field: "", value: "" }]);
+  };
+
+  const handleRemoveFilter = (index: number) => {
+    const updatedFilters = filters.filter((_, i) => i !== index);
+    setFilters(updatedFilters);
+  };
+
+  const handleFieldChange = (index: number, field: string) => {
+    const updatedFilters = filters.map((filter, i) =>
+      i === index ? { ...filter, field } : filter
+    );
+    setFilters(updatedFilters);
+  };
+
+  const handleValueChange = (index: number, value: string) => {
+    const updatedFilters = filters.map((filter, i) =>
+      i === index ? { ...filter, value } : filter
+    );
+    setFilters(updatedFilters);
+  };
+
+  const handleSubmit = () => {
+    // Lógica para submissão do formulário com os filtros
+    console.log(filters);
+  };
 
   return (
     <div>
@@ -226,328 +311,472 @@ export default function Imoveis() {
             </button>
           </div>
           <div className="mb-4 w-full">
-            <Form 
-                layout="vertical"
-                fields={[
-                    {
-                        name: ['tipoImovel'],
-                        value: tipoImovel,
-                    },
-                    {
-                        name: ['referencia'],
-                        value: referencia,
-                    },
-                    {
-                        name: ['titulo'],
-                        value: titulo,
-                    },
-                    {
-                        name: ['valor_min'],
-                        value: valorMin,
-                    },
-                    {
-                        name: ['valor_max'],
-                        value: valorMax,
-                    },
-                    {
-                        name: ['negocio'],
-                        value: negocio,
-                    },
-                    {
-                        name: ['tipo_imovel'],
-                        value: tipo,
-                    },
-                    {
-                        name: ['cidade'],
-                        value: cidade,
-                    },
-                    {
-                        name: ['bairro'],
-                        value: bairro,
-                    },
-                    {
-                        name: ['condominios'],
-                        value: condominios,
-                    },
-                    {
-                        name: ['status'],
-                        value: status,
-                    },
-                    {
-                        name: ['origem'],
-                        value: origem,
-                    },
-                ]}
+            <Form
+              layout="vertical"
+              fields={[
+                {
+                  name: ["tipoImovel"],
+                  value: tipoImovel,
+                },
+                {
+                  name: ["referencia"],
+                  value: referencia,
+                },
+                {
+                  name: ["titulo"],
+                  value: titulo,
+                },
+                {
+                  name: ["valor_min"],
+                  value: valorMin,
+                },
+                {
+                  name: ["valor_max"],
+                  value: valorMax,
+                },
+                {
+                  name: ["negocio"],
+                  value: negocio,
+                },
+                {
+                  name: ["tipo_imovel"],
+                  value: tipo,
+                },
+                {
+                  name: ["cidade"],
+                  value: cidade,
+                },
+                {
+                  name: ["bairro"],
+                  value: bairro,
+                },
+                {
+                  name: ["condominios"],
+                  value: condominios,
+                },
+                {
+                  name: ["status"],
+                  value: status,
+                },
+                {
+                  name: ["origem"],
+                  value: origem,
+                },
+              ]}
             >
-                <Row
-                    gutter={16}
-                >
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                        <Form.Item label={<span className="font-bold">Referência</span>} name="referencia">
-                            <Input
-                            placeholder="AP0001"
-                            onChange={(e) => setReferencia(e.target.value)}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                        <Form.Item label={<span className="font-bold">Título</span>} name="titulo">
-                            <Input
-                            placeholder="Ex: Apartamento em Copacabana..."
-                            onChange={(e) => setTitulo(e.target.value)}
-                            />
-                        </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                    <Form.Item label={<span className="font-bold">Valor Mínimo</span>} name="valor_min">
-                      <Input
-                        placeholder="Digite o valor mínimo"
-                        onChange={(e) => {
-                          const inputValue = e.target.value.replace(/\D/g, '');
-                          const formatted = new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            minimumFractionDigits: 2,
-                          }).format(Number(inputValue) / 100);
-                          setValorMin(formatted);
-                        }}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col xs={24} sm={12} md={8} xl={6}>
-                    <Form.Item label={<span className="font-bold">Valor Máximo</span>} name="valor_max">
-                      <Input
-                        placeholder="Digite o valor máximo"
-                        onChange={(e) => {
-                          const inputValue = e.target.value.replace(/\D/g, '');
-                          const formatted = new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL',
-                            minimumFractionDigits: 2,
-                          }).format(Number(inputValue) / 100);
-                          setValorMax(formatted);
-                        }}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-                <Row
-                    gutter={16}
-                >
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                      <Form.Item label={<span className="font-bold">Negócio</span>} name="negocio">
-                        <Select
-                          placeholder="Selecione"
-                          allowClear
-                          onChange={(value) => {
-                            setNegocio(value)
-                          }}
-                          showSearch
-                          filterOption={(input, option: any) =>
-                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                          } 
-                        >
-                          <Select.Option value="Venda">Comprar</Select.Option>
-                          <Select.Option value="Aluguel">Alugar</Select.Option>
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                      <Form.Item label={<span className="font-bold">Status</span>} name="status">
-                        <Select
-                          placeholder="Selecione"
-                          allowClear
-                          onChange={(value) => {
-                            setStatus(value)
-                          }}
-                          showSearch
-                          filterOption={(input, option: any) =>
-                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                          } 
-                        >
-                          <Select.Option value="Disponível">Disponível</Select.Option>
-                          <Select.Option value="Excluído">Excluído</Select.Option>
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                      <Form.Item label={<span className="font-bold">Tipo de Imóvel</span>} name="tipo_imovel">
-                        <Select
-                          placeholder="Selecione"
-                          allowClear
-                          
-                          onChange={(value) => {
-                            setTipo(value)
-                          }}
-                          showSearch
-                          filterOption={(input, option: any) =>
-                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                          } 
-                        >
-                          {types.map((type) => (
-                            <Select.Option key={type} value={type}>{type}</Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                      <Form.Item label={<span className="font-bold">Cidade</span>} name="cidade">
+              <Row gutter={16}>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Referência</span>}
+                    name="referencia"
+                  >
+                    <Input
+                      placeholder="AP0001"
+                      onChange={(e) => setReferencia(e.target.value)}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Título</span>}
+                    name="titulo"
+                  >
+                    <Input
+                      placeholder="Ex: Apartamento em Copacabana..."
+                      onChange={(e) => setTitulo(e.target.value)}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Valor Mínimo</span>}
+                    name="valor_min"
+                  >
+                    <Input
+                      placeholder="Digite o valor mínimo"
+                      onChange={(e) => {
+                        const inputValue = e.target.value.replace(/\D/g, "");
+                        const formatted = new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                        }).format(Number(inputValue) / 100);
+                        setValorMin(formatted);
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Valor Máximo</span>}
+                    name="valor_max"
+                  >
+                    <Input
+                      placeholder="Digite o valor máximo"
+                      onChange={(e) => {
+                        const inputValue = e.target.value.replace(/\D/g, "");
+                        const formatted = new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 2,
+                        }).format(Number(inputValue) / 100);
+                        setValorMax(formatted);
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Negócio</span>}
+                    name="negocio"
+                  >
+                    <Select
+                      placeholder="Selecione"
+                      allowClear
+                      onChange={(value) => {
+                        setNegocio(value);
+                      }}
+                      showSearch
+                      filterOption={(input, option: any) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      <Select.Option value="Venda">Comprar</Select.Option>
+                      <Select.Option value="Aluguel">Alugar</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Status</span>}
+                    name="status"
+                  >
+                    <Select
+                      placeholder="Selecione"
+                      allowClear
+                      onChange={(value) => {
+                        setStatus(value);
+                      }}
+                      showSearch
+                      filterOption={(input, option: any) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      <Select.Option value="Disponível">
+                        Disponível
+                      </Select.Option>
+                      <Select.Option value="Excluído">Excluído</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Tipo de Imóvel</span>}
+                    name="tipo_imovel"
+                  >
+                    <Select
+                      placeholder="Selecione"
+                      allowClear
+                      onChange={(value) => {
+                        setTipo(value);
+                      }}
+                      showSearch
+                      filterOption={(input, option: any) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {types.map((type) => (
+                        <Select.Option key={type} value={type}>
+                          {type}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Cidade</span>}
+                    name="cidade"
+                  >
                     {cities.PE && (
-                        <Select
-                          placeholder="Selecione"
-                          allowClear
-                          onChange={(value) => {
-                            setCidade(value)
-                          }}
-                          options={[
-                            {
-                              label: <span className="font-bold text-sm text-black">Pernambuco</span>,
-                              options: cities.PE.map((city) => ({
-                                label: city,
-                                value: city,
-                              })),
-                            },
-                            {
-                              label: <span className="font-bold text-sm text-black">Paraíba</span>,
-                              options: cities.PB.map((city) => ({
-                                label: city,
-                                value: city,
-                              })),
-                            },
-                            {
-                              label: <span className="font-bold text-sm text-black">Alagoas</span>,
-                              options: cities.AL.map((city) => ({
-                                label: city,
-                                value: city,
-                              })),
-                            }
-                          ]}
-                          showSearch
-                          filterOption={(input, option: any) =>
-                            option?.value?.toLowerCase()?.indexOf(input?.toLowerCase()) >= 0
-                          } 
-                          >
-                            
-                            {/* {cities.PE.map((city) => (
+                      <Select
+                        placeholder="Selecione"
+                        allowClear
+                        onChange={(value) => {
+                          setCidade(value);
+                        }}
+                        options={[
+                          {
+                            label: (
+                              <span className="font-bold text-sm text-black">
+                                Pernambuco
+                              </span>
+                            ),
+                            options: cities.PE.map((city) => ({
+                              label: city,
+                              value: city,
+                            })),
+                          },
+                          {
+                            label: (
+                              <span className="font-bold text-sm text-black">
+                                Paraíba
+                              </span>
+                            ),
+                            options: cities.PB.map((city) => ({
+                              label: city,
+                              value: city,
+                            })),
+                          },
+                          {
+                            label: (
+                              <span className="font-bold text-sm text-black">
+                                Alagoas
+                              </span>
+                            ),
+                            options: cities.AL.map((city) => ({
+                              label: city,
+                              value: city,
+                            })),
+                          },
+                        ]}
+                        showSearch
+                        filterOption={(input, option: any) =>
+                          option?.value
+                            ?.toLowerCase()
+                            ?.indexOf(input?.toLowerCase()) >= 0
+                        }
+                      >
+                        {/* {cities.PE.map((city) => (
                               <Select.Option key={city} value={city}>{city}</Select.Option>
                             ))} */}
-                          </Select>
+                      </Select>
                     )}
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                      <Form.Item label={<span className="font-bold">Bairro</span>} name="bairro">
-                        <Select
-                          placeholder="Selecione"
-                          allowClear
-                          
-                          onChange={(value) => {
-                            setBairro(value)
-                          }}
-
-                          showSearch
-                          filterOption={(input, option: any) =>
-                            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                          } 
-                        >
-                          {neighborhoods.map((neighborhood) => (
-                            <Select.Option key={neighborhood} value={neighborhood}>{neighborhood}</Select.Option>
-                          ))}
-                          </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                      <Form.Item label={<span className="font-bold">Condomínios</span>} name="condominios">
-                        <Select
-                          placeholder="Selecione"
-                          allowClear
-                          
-                          onChange={(value) => {
-                            setCondominios(value)
-                          }}
-                          showSearch
-                          filterOption={(input, option: any) =>
-                            option.children
-                              ?.normalize('NFD')
-                              .replace(/[\u0300-\u036f]/g, '')
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Bairro</span>}
+                    name="bairro"
+                  >
+                    <Select
+                      placeholder="Selecione"
+                      allowClear
+                      onChange={(value) => {
+                        setBairro(value);
+                      }}
+                      showSearch
+                      filterOption={(input, option: any) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {neighborhoods.map((neighborhood) => (
+                        <Select.Option key={neighborhood} value={neighborhood}>
+                          {neighborhood}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Condomínios</span>}
+                    name="condominios"
+                  >
+                    <Select
+                      placeholder="Selecione"
+                      allowClear
+                      onChange={(value) => {
+                        setCondominios(value);
+                      }}
+                      showSearch
+                      filterOption={(input, option: any) =>
+                        option.children
+                          ?.normalize("NFD")
+                          .replace(/[\u0300-\u036f]/g, "")
+                          .toLowerCase()
+                          .indexOf(
+                            input
+                              ?.normalize("NFD")
+                              .replace(/[\u0300-\u036f]/g, "")
                               .toLowerCase()
-                              .indexOf(
-                                input
-                                  ?.normalize('NFD')
-                                  .replace(/[\u0300-\u036f]/g, '')
-                                  .toLowerCase()
-                              ) >= 0
-                          }
-                        >
-                          {condominiums.map((condominium) => (
-                            <Select.Option key={condominium} value={condominium}>{condominium}</Select.Option>
-                          ))}
-                          </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                      <Form.Item label={<span className="font-bold">Condomínios</span>} name="condominios">
-                        <Select
-                          placeholder="Selecione"
-                          allowClear
-                          
-                          onChange={(value) => {
-                            setCondominios(value)
-                          }}
-                          showSearch
-                          filterOption={(input, option: any) =>
-                            option.children
-                              ?.normalize('NFD')
-                              .replace(/[\u0300-\u036f]/g, '')
+                          ) >= 0
+                      }
+                    >
+                      {condominiums.map((condominium) => (
+                        <Select.Option key={condominium} value={condominium}>
+                          {condominium}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={<span className="font-bold">Origem</span>}
+                    name="origem"
+                  >
+                    <Select
+                      placeholder="Selecione"
+                      allowClear
+                      onChange={(value) => {
+                        setOrigem(value);
+                      }}
+                      showSearch
+                      filterOption={(input, option: any) =>
+                        option.children
+                          ?.normalize("NFD")
+                          .replace(/[\u0300-\u036f]/g, "")
+                          .toLowerCase()
+                          .indexOf(
+                            input
+                              ?.normalize("NFD")
+                              .replace(/[\u0300-\u036f]/g, "")
                               .toLowerCase()
-                              .indexOf(
-                                input
-                                  ?.normalize('NFD')
-                                  .replace(/[\u0300-\u036f]/g, '')
-                                  .toLowerCase()
-                              ) >= 0
-                          }
-                        >
-                          {condominiums.map((condominium) => (
-                            <Select.Option key={condominium} value={condominium}>{condominium}</Select.Option>
-                          ))}
-                          </Select>
-                      </Form.Item>
-                    </Col>
-                    <Col xs={24} sm={12} md={8} xl={6}>
-                      <Form.Item label={<span className="font-bold">Origem</span>} name="origem">
-                        <Select
-                          placeholder="Selecione"
-                          allowClear
-                          onChange={(value) => {
-                            setOrigem(value)
-                          }}
-                          showSearch
-                          filterOption={(input, option: any) =>
-                            option.children
-                              ?.normalize('NFD')
-                              .replace(/[\u0300-\u036f]/g, '')
-                              .toLowerCase()
-                              .indexOf(
-                                input
-                                  ?.normalize('NFD')
-                                  .replace(/[\u0300-\u036f]/g, '')
-                                  .toLowerCase()
-                              ) >= 0
-                          }
-                        >
-                          <Select.Option value="grego">Grego Imoveis</Select.Option>
-                          <Select.Option value="liberato">Imobiliaria Liberato</Select.Option>
-                          <Select.Option value="amancio">Imobiliaria Amancio</Select.Option>
-                          </Select>
-                      </Form.Item>
-                    </Col>
-                </Row>
+                          ) >= 0
+                      }
+                    >
+                      <Select.Option value="grego">Grego Imoveis</Select.Option>
+                      <Select.Option value="liberato">
+                        Imobiliaria Liberato
+                      </Select.Option>
+                      <Select.Option value="amancio">
+                        Imobiliaria Amancio
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12} md={8} xl={6}>
+                  <Form.Item
+                    label={
+                      <span className="font-bold">Filtros Personalizados</span>
+                    }
+                    name="tipoImovel"
+                  >
+                    <button
+                      className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => setVisible(true)}
+                    >
+                      Abrir Filtros
+                    </button>
+                  </Form.Item>
+                </Col>
+              </Row>
             </Form>
           </div>
         </div>
-        <div className="">
-          <Table
+        <div className="grid justify-items-center grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 xl:-mx-8">
+          {properties.map((property) => (
+            <PropertyCard
+              id={property?.id}
+              key={property?.id}
+              meta_title={property?.meta_title}
+              images={property?.images}
+              price={property?.price}
+              transaction={property?.transaction}
+              bedroom={property?.bedroom}
+              garage={property?.garage}
+              suites={property?.suites}
+              url={property?.url}
+              reference={property?.reference}
+            />
+          ))}
+        </div>
+        <Modal
+          title="Filtros Personalizados"
+          visible={visible}
+          width={"90%"}
+          onCancel={() => setVisible(false)}
+          centered
+          footer={
+            <Button type="primary" onClick={() => setVisible(false)}>
+              Fechar
+            </Button>
+          }
+        >
+          {filters.map((filter, index) => (
+            <Row gutter={16} key={index}>
+              <Col xs={24} sm={8}>
+                <Form.Item label={`Campo de Filtro #${index + 1}`}>
+                  <Select
+                    placeholder="Selecione o campo"
+                    onChange={(value) => handleFieldChange(index, value)}
+                    showSearch
+                    allowClear
+                  >
+                    <Select.Option value="referencia">Referência</Select.Option>
+                    <Select.Option value="titulo">Título</Select.Option>
+                    <Select.Option value="valor_min">
+                      Valor Mínimo
+                    </Select.Option>
+                    <Select.Option value="valor_max">
+                      Valor Máximo
+                    </Select.Option>
+                    {/* Adicione outras opções de campo conforme necessário */}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={8}>
+                <Form.Item label="Valor">
+                  <Input
+                    placeholder="Digite o valor"
+                    value={filter.value}
+                    onChange={(e) => handleValueChange(index, e.target.value)}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={8}>
+                <MinusCircleOutlined
+                  onClick={() => handleRemoveFilter(index)}
+                  className="dynamic-delete-button"
+                />
+              </Col>
+            </Row>
+          ))}
+          <Form.Item>
+            <Button
+              type="dashed"
+              onClick={handleAddFilter}
+              icon={<PlusOutlined />}
+            >
+              Adicionar Filtro
+            </Button>
+          </Form.Item>
+          <div className="flex gap-4">
+            <button
+              className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handleSubmit}
+            >
+              Filtrar
+            </button>
+            <button
+              className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => {
+                setFilters([]);
+                setVisible(false);
+              }}
+            >
+              Limpar
+            </button>
+          </div>
+        </Modal>
+      </div>
+    </div>
+  );
+}
+
+{
+  /* <Table
             columns={[
               {
                 title: "Status",
@@ -668,8 +897,10 @@ export default function Imoveis() {
                 setLimit(pageSize || 10);
               },
             }}
-          />
-          <Modal
+          /> */
+}
+{
+  /* <Modal
             title="Fotos do Imovel"
             visible={visible}
             width={"80%"}
@@ -694,9 +925,5 @@ export default function Imoveis() {
               ))}
             </Image.PreviewGroup>
             )}
-          </Modal>
-        </div>
-      </div>
-    </div>
-  );
+          </Modal> */
 }
