@@ -138,6 +138,13 @@ export default function Imoveis() {
       filterValue += filterValue === "" ? `${origem}` : `,${origem}`;
       filterType += filterType === "" ? "ilike" : ",ilike";
     }
+    
+    //adicionar filtro para buscar só oq tiver images
+
+    
+
+
+
 
     try {
       const res = await propertiesService.getAll(
@@ -147,7 +154,14 @@ export default function Imoveis() {
         filterValue,
         filterType
       );
-      setProperties(res.data.properties.result);
+
+      //remover properties sem imagens
+
+      const data = res.data.properties.result.filter(
+        (property: any) => property.images.length > 0
+      );
+
+      setProperties(data);
       setTotal(res.data.properties.total);
     } catch (error: any) {
       console.log("error", error);

@@ -1,6 +1,7 @@
 import { CardMenu } from '@/components/MenuItem'
 import MenuImagem from '@/assets/corretor-de-imoveis.jpg'
 import CadastroImagem from '@/assets/cadastro.png'
+import AnaliseExcel from '@/assets/analise-excel.png'
 
 
 export default function Home() {
@@ -19,6 +20,12 @@ export default function Home() {
           descricao="Cadastrar um novo imóvel"
           imagem={CadastroImagem}
           rota="/imoveis/cadastro"
+        />
+        <CardMenu
+          nome="Analisar Excel"
+          descricao="Analisar planilha com links e preços de imóveis"
+          imagem={AnaliseExcel}
+          rota="/excel/analise"
         />
       </div>
     </main>

@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import { BsFillHouseDoorFill, BsListUl, BsFillHouseAddFill } from 'react-icons/bs';
 import { BiSolidDashboard } from 'react-icons/bi';
+import { SiMicrosoftexcel } from "react-icons/si";
 import type { MenuProps } from 'antd';
 import { useAuthStore } from '@/context/auth';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
@@ -78,6 +79,9 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
                         Cadastro
                     </Menu.Item>
                 </SubMenu>
+                <Menu.Item key="2" icon={<SiMicrosoftexcel />} onClick={() => route.push('/excel/analise')}>
+                    Analisar Excel
+                </Menu.Item>
                 <Menu.Item key="10" icon={<LogoutOutlined />} onClick={logout}>
                     Sair
                 </Menu.Item>

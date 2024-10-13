@@ -113,102 +113,122 @@ interface Imovel {
 }
 
 const ImovelCadastro = React.memo(function ImovelCadastro() {
-  const [formState, setFormState] = useState<Imovel>({
-    price: null,
-    transaction: "aluguel",
-    reference: null,
-    status: null,
-    garage: 0,
-    bathroom: 0,
-    bedroom: 0,
-    kitchen: 0,
-    dinning_room: 0,
-    living_room: 0,
-    service_area: 0,
-    tv_room: 0,
-    office: 0,
-    closet: 0,
-    suites: 0,
-    profile: null,
-    situation: null,
-    area_privative: null,
-    area_privative_unit: null,
-    area_built: null,
-    area_built_unit: null,
-    area_total: null,
-    area_total_unit: null,
-    area_terrain_total: null,
-    area_terrain_total_unit: null,
-    state: null,
-    city: null,
-    neighborhood: null,
-    cep: null,
-    street: null,
-    number: null,
-    complement: null,
-    iptu_type: null,
-    description: null,
-    title: null,
-    meta_title: null,
-    meta_description: null,
-    published_website: false,
-    published_network: false,
-    show_neighborhood: false,
-    show_street: false,
-    show_condominium: false,
-    show_price: false,
-    watermark: false,
-    stripe_color: null,
-    broker_name: null,
-    broker_email: null,
-    broker_creci: null,
-    broker_phone: null,
-    condominium_name: null,
-    condominium_total_units: null,
-    condominium_units_per_floor: null,
-    condominium_flooring: null,
-    condominium_number_towers: null,
-    condominium_caracteristics: null,
-    nearby: null,
-    highlight_website: false,
-    written: false,
-    accept_financing: false,
-    type: null,
-    subtype: null,
-    images: [],
-    images_old_links: [],
-    owner_name: null,
-    owner_id: null,
-    owner_email: null,
-    owner_phone: null,
-
-    is_condominium: false,
-    accept_goods: null,
-    has_financing: null,
-    balcony: null,
-    exclusivity: null,
-    commission: null,
-    tax_value: null,
-    tax_description: null,
-    sales_conditions: null,
-    iptu_value: null,
-    sun_position: null,
-    corner_property: null,
-    condominium_value: null,
-    sec_owner_name: null,
-    sec_owner_id: null,
-    sec_owner_email: null,
-    sec_owner_phone: null,
-    is_busy: null,
-    rent_conditions: null,
-
-    capture_link: null,
-    site_link: null,
-    olx_link: null,
-
-  });
+  const [price, setPrice] = useState<string | null>(null);
+  const [transaction, setTransaction] = useState<string>("aluguel");
+  const [reference, setReference] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const [garage, setGarage] = useState<number>(0);
+  const [coveredGarage, setCoveredGarage] = useState<number>(0);
+  const [bathroom, setBathroom] = useState<number>(0);
+  const [bedroom, setBedroom] = useState<number>(0);
+  const [kitchen, setKitchen] = useState<number>(0);
+  const [dinningRoom, setDinningRoom] = useState<number>(0);
+  const [livingRoom, setLivingRoom] = useState<number>(0);
+  const [serviceArea, setServiceArea] = useState<number>(0);
+  const [tvRoom, setTvRoom] = useState<number>(0);
+  const [office, setOffice] = useState<number>(0);
+  const [closet, setCloset] = useState<number>(0);
+  const [suites, setSuites] = useState<number>(0);
+  const [profile, setProfile] = useState<string | null>(null);
+  const [situation, setSituation] = useState<string | null>(null);
+  const [areaPrivative, setAreaPrivative] = useState<number | null>(null);
+  const [areaPrivativeUnit, setAreaPrivativeUnit] = useState<string | null>(
+    null
+  );
+  const [areaBuilt, setAreaBuilt] = useState<number | null>(null);
+  const [areaBuiltUnit, setAreaBuiltUnit] = useState<string | null>(null);
+  const [areaTotal, setAreaTotal] = useState<number | null>(null);
+  const [areaTotalUnit, setAreaTotalUnit] = useState<string | null>(null);
+  const [areaTerrainTotal, setAreaTerrainTotal] = useState<number | null>(null);
+  const [areaTerrainTotalUnit, setAreaTerrainTotalUnit] = useState<
+    string | null
+  >(null);
+  const [state, setState] = useState<string | null>(null);
+  const [city, setCity] = useState<string | null>(null);
+  const [neighborhood, setNeighborhood] = useState<string | null>(null);
+  const [cep, setCep] = useState<string | null>(null);
+  const [street, setStreet] = useState<string | null>(null);
+  const [number, setNumber] = useState<string | null>(null);
+  const [complement, setComplement] = useState<string | null>(null);
+  const [iptuType, setIptuType] = useState<string | null>(null);
+  const [description, setDescription] = useState<string | null>(null);
+  const [title, setTitle] = useState<string | null>(null);
+  const [metaTitle, setMetaTitle] = useState<string | null>(null);
+  const [metaDescription, setMetaDescription] = useState<string | null>(null);
+  const [publishedWebsite, setPublishedWebsite] = useState<boolean>(false);
+  const [publishedNetwork, setPublishedNetwork] = useState<boolean>(false);
+  const [showNeighborhood, setShowNeighborhood] = useState<boolean>(false);
+  const [showStreet, setShowStreet] = useState<boolean>(false);
+  const [showCondominium, setShowCondominium] = useState<boolean>(false);
+  const [showPrice, setShowPrice] = useState<boolean>(false);
+  const [watermark, setWatermark] = useState<boolean>(false);
+  const [stripeColor, setStripeColor] = useState<string | null>(null);
+  const [brokerName, setBrokerName] = useState<string | null>(null);
+  const [brokerEmail, setBrokerEmail] = useState<string | null>(null);
+  const [brokerCreci, setBrokerCreci] = useState<string | null>(null);
+  const [brokerPhone, setBrokerPhone] = useState<string | null>(null);
+  const [condominiumName, setCondominiumName] = useState<string | null>(null);
+  const [condominiumTotalUnits, setCondominiumTotalUnits] = useState<
+    number | null
+  >(null);
+  const [condominiumUnitsPerFloor, setCondominiumUnitsPerFloor] = useState<
+    number | null
+  >(null);
+  const [condominiumFlooring, setCondominiumFlooring] = useState<string | null>(
+    null
+  );
+  const [condominiumNumberTowers, setCondominiumNumberTowers] = useState<
+    number | null
+  >(null);
+  const [condominiumCaracteristics, setCondominiumCaracteristics] = useState<
+    string | null
+  >(null);
+  const [nearby, setNearby] = useState<string | null>(null);
+  const [highlightWebsite, setHighlightWebsite] = useState<boolean>(false);
+  const [written, setWritten] = useState<boolean>(false);
+  const [acceptFinancing, setAcceptFinancing] = useState<boolean>(false);
+  const [type, setType] = useState<string | null>(null);
+  const [subtype, setSubtype] = useState<string | null>(null);
+  // const [images, setImages] = useState<string[]>([]);
+  const [imagesOldLinks, setImagesOldLinks] = useState<string[]>([]);
+  const [ownerName, setOwnerName] = useState<string | null>(null);
+  const [ownerId, setOwnerId] = useState<string | null>(null);
+  const [ownerEmail, setOwnerEmail] = useState<string | null>(null);
+  const [ownerPhone, setOwnerPhone] = useState<string | null>(null);
+  const [isCondominium, setIsCondominium] = useState<boolean>(false);
+  const [acceptGoods, setAcceptGoods] = useState<boolean | null>(null);
+  const [hasFinancing, setHasFinancing] = useState<boolean | null>(null);
+  const [balcony, setBalcony] = useState<number | null>(null);
+  const [exclusivity, setExclusivity] = useState<boolean | null>(null);
+  const [commission, setCommission] = useState<string | null>(null);
+  const [taxValue, setTaxValue] = useState<string | null>(null);
+  const [taxDescription, setTaxDescription] = useState<string | null>(null);
+  const [salesConditions, setSalesConditions] = useState<string | null>(null);
+  const [iptuValue, setIptuValue] = useState<string | null>(null);
+  const [sunPosition, setSunPosition] = useState<string | null>(null);
+  const [cornerProperty, setCornerProperty] = useState<boolean | null>(null);
+  const [condominiumValue, setCondominiumValue] = useState<string | null>(null);
+  const [secOwnerName, setSecOwnerName] = useState<string | null>(null);
+  const [secOwnerId, setSecOwnerId] = useState<string | null>(null);
+  const [secOwnerEmail, setSecOwnerEmail] = useState<string | null>(null);
+  const [secOwnerPhone, setSecOwnerPhone] = useState<string | null>(null);
+  const [isBusy, setIsBusy] = useState<boolean | null>(null);
+  const [rentConditions, setRentConditions] = useState<string | null>(null);
+  const [captureLink, setCaptureLink] = useState<string | null>(null);
+  const [siteLink, setSiteLink] = useState<string | null>(null);
+  const [olxLink, setOlxLink] = useState<string | null>(null);
+  const [proximitySea, setProximitySea] = useState<string | null>(null);
+  const [keyResponsibleName, setKeyResponsibleName] = useState<string | null>(null);
+  const [keyResponsibleId, setKeyResponsibleId] = useState<string | null>(null);
+  const [keyResponsibleEmail, setKeyResponsibleEmail] = useState<string | null>(null);
+  const [keyResponsiblePhone, setKeyResponsiblePhone] = useState<string | null>(null);
+  const [sectionAddress, setSectionAddress] = useState<string | null>(null);
+  const [storeAddress, setStoreAddress] = useState<string | null>(null);
+  const [floorNumber, setFloorNumber] = useState<number | null>(null);
 
   const [invalidOrRemovedImages, setInvalidOrRemovedImages] = useState<
+
+
     string[]
   >([]);
   const [images, setImages] = useState<
@@ -217,176 +237,126 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
 
   const router = useRouter();
 
-  const handleInputChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setFormState((formState) => ({
-        ...formState,
-        [event.target.name]: event.target.value,
-      }));
-    },
-    []
-  );
-
-  const handleSelectChange = useCallback((value: string, fieldName: string) => {
-    setFormState((formState) => ({
-      ...formState,
-      [fieldName]: value,
-    }));
-  }, []);
-
-  const handleCheckboxChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setFormState((formState) => ({
-        ...formState,
-        [event.target.name]: event.target.checked,
-      }));
-    },
-    []
-  );
-
-  const handleArrayChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setFormState((formState) => ({
-        ...formState,
-        [event.target.name]: event.target.value.split(","),
-      }));
-    },
-    []
-  );
-
-  const handleDescricaoChange = useCallback((value: string) => {
-    setFormState((formState: any) => ({
-      ...formState,
-      description: value,
-    }));
-  }, []);
-
   const submitForm = async (values: any) => {
-      await propertiesService
-        .create(formState)
-        .then(async (response) => {
-          try {
-            for (const image of images) {
-              const formData = new FormData();
+    await propertiesService
+      .create(values)
+      .then(async (response) => {
+        try {
 
-              if (image.file) {
-                formData.append("image", image.file, image.name);
-                await propertiesService.uploadImages(
-                  response.data.properties.id,
-                  formData
-                );
-              }
+          for (const image of images) {
+            const formData = new FormData();
+
+            if (image.file) {
+              formData.append("image", image.file, image.name);
+              await propertiesService.uploadImages(
+                response.data.properties.id,
+                formData
+              );
             }
-          } catch (error) {
-            console.log(error);
           }
+        } catch (error) {
+          console.log(error);
+        }
 
-          if(response.status === 201) {
-            notification.success({
-              message: "Imóvel cadastrado com sucesso!",
-            });
-            setFormState({
-              price: null,
-              transaction: "aluguel",
-              reference: null,
-              status: null,
-              garage: 0,
-              bathroom: 0,
-              bedroom: 0,
-              kitchen: 0,
-              dinning_room: 0,
-              living_room: 0,
-              service_area: 0,
-              tv_room: 0,
-              office: 0,
-              closet: 0,
-              suites: 0,
-              profile: null,
-              situation: null,
-              area_privative: null,
-              area_privative_unit: null,
-              area_built: null,
-              area_built_unit: null,
-              area_total: null,
-              area_total_unit: null,
-              area_terrain_total: null,
-              area_terrain_total_unit: null,
-              state: null,
-              city: null,
-              neighborhood: null,
-              cep: null,
-              street: null,
-              number: null,
-              complement: null,
-              iptu_type: null,
-              description: null,
-              title: null,
-              meta_title: null,
-              meta_description: null,
-              published_website: false,
-              published_network: false,
-              show_neighborhood: false,
-              show_street: false,
-              show_condominium: false,
-              show_price: false,
-              watermark: false,
-              stripe_color: null,
-              broker_name: null,
-              broker_email: null,
-              broker_creci: null,
-              broker_phone: null,
-              condominium_name: null,
-              condominium_total_units: null,
-              condominium_units_per_floor: null,
-              condominium_flooring: null,
-              condominium_number_towers: null,
-              condominium_caracteristics: null,
-              nearby: null,
-              highlight_website: false,
-              written: false,
-              accept_financing: false,
-              type: null,
-              subtype: null,
-              images: [],
-              images_old_links: [],
-              owner_name: null,
-              owner_id: null,
-              owner_email: null,
-              owner_phone: null,
-          
-              is_condominium: false,
-              accept_goods: null,
-              has_financing: null,
-              balcony: null,
-              exclusivity: null,
-              commission: null,
-              tax_value: null,
-              tax_description: null,
-              sales_conditions: null,
-              iptu_value: null,
-              sun_position: null,
-              corner_property: null,
-              condominium_value: null,
-              sec_owner_name: null,
-              sec_owner_id: null,
-              sec_owner_email: null,
-              sec_owner_phone: null,
-              is_busy: null,
-              rent_conditions: null,
-          
-              capture_link: null,
-              site_link: null,
-              olx_link: null,
-          
-            });
-            setImages([]);
-          }}
-        )
-        .catch((error) => {
-          notification.error({
-            message: "Erro ao cadastrar o imóvel",
+        if (response.status === 201) {
+          notification.success({
+            message: "Imóvel cadastrado com sucesso!",
           });
+          setPrice(null);
+          setTransaction("aluguel");
+          setReference(null);
+          setStatus(null);
+          setGarage(0);
+          setBathroom(0);
+          setBedroom(0);
+          setKitchen(0);
+          setDinningRoom(0);
+          setLivingRoom(0);
+          setServiceArea(0);
+          setTvRoom(0);
+          setOffice(0);
+          setCloset(0);
+          setSuites(0);
+          setProfile(null);
+          setSituation(null);
+          setAreaPrivative(null);
+          setAreaPrivativeUnit(null);
+          setAreaBuilt(null);
+          setAreaBuiltUnit(null);
+          setAreaTotal(null);
+          setAreaTotalUnit(null);
+          setAreaTerrainTotal(null);
+          setAreaTerrainTotalUnit(null);
+          setState(null);
+          setCity(null);
+          setNeighborhood(null);
+          setCep(null);
+          setStreet(null);
+          setNumber(null);
+          setComplement(null);
+          setIptuType(null);
+          setDescription(null);
+          setTitle(null);
+          setMetaTitle(null);
+          setMetaDescription(null);
+          setPublishedWebsite(false);
+          setPublishedNetwork(false);
+          setShowNeighborhood(false);
+          setShowStreet(false);
+          setShowCondominium(false);
+          setShowPrice(false);
+          setWatermark(false);
+          setStripeColor(null);
+          setBrokerName(null);
+          setBrokerEmail(null);
+          setBrokerCreci(null);
+          setBrokerPhone(null);
+          setCondominiumName(null);
+          setCondominiumTotalUnits(null);
+          setCondominiumUnitsPerFloor(null);
+          setCondominiumFlooring(null);
+          setCondominiumNumberTowers(null);
+          setCondominiumCaracteristics(null);
+          setNearby(null);
+          setHighlightWebsite(false);
+          setWritten(false);
+          setAcceptFinancing(false);
+          setType(null);
+          setSubtype(null);
+          setOwnerName(null);
+          setOwnerId(null);
+          setOwnerEmail(null);
+          setOwnerPhone(null);
+          setIsCondominium(false);
+          setAcceptGoods(null);
+          setHasFinancing(null);
+          setBalcony(null);
+          setExclusivity(null);
+          setCommission(null);
+          setTaxValue(null);
+          setTaxDescription(null);
+          setSalesConditions(null);
+          setIptuValue(null);
+          setSunPosition(null);
+          setCornerProperty(null);
+          setCondominiumValue(null);
+          setSecOwnerName(null);
+          setSecOwnerId(null);
+          setSecOwnerEmail(null);
+          setSecOwnerPhone(null);
+          setIsBusy(null);
+          setRentConditions(null);
+          setCaptureLink(null);
+          setSiteLink(null);
+          setOlxLink(null);
+          setImages([]);
+        }
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Erro ao cadastrar o imóvel",
         });
+      });
   };
 
   return (
@@ -397,249 +367,120 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
           layout="vertical"
           onFinish={submitForm}
           fields={[
-            {
-              name: "title",
-              value: formState.title,
-            },
-            {
-              name: "meta_title",
-              value: formState.meta_title,
-            },
-            {
-              name: "price",
-              value: formState.price,
-            },
-            {
-              name: "reference",
-              value: formState.reference,
-            },
-            {
-              name: "cep",
-              value: formState.cep,
-            },
-            {
-              name: "street",
-              value: formState.street,
-            },
-            {
-              name: "neighborhood",
-              value: formState.neighborhood,
-            },
-            {
-              name: "city",
-              value: formState.city,
-            },
-            {
-              name: "state",
-              value: formState.state,
-            },
-            {
-              name: "complement",
-              value: formState.complement,
-            },
-            {
-              name: "type",
-              value: formState.type,
-            },
-            {
-              name: "subtype",
-              value: formState.subtype,
-            },
-            {
-              name: "nearby",
-              value: formState.nearby || undefined,
-            },
-            {
-              name: "transaction",
-              value: formState.transaction,
-            },
-            {
-              name: "accept_financing",
-              value: formState.accept_financing,
-            },
-            {
-              name: "written",
-              value: formState.written,
-            },
-            {
-              name: "watermark",
-              value: formState.watermark,
-            },
-            {
-              name: "images",
-              value: formState.images,
-            },
-            {
-              name: "owner_name",
-              value: formState.owner_name,
-            },
-            {
-              name: "owner_id",
-              value: formState.owner_id,
-            },
-            {
-              name: "owner_email",
-              value: formState.owner_email,
-            },
-            {
-              name: "profile",
-              value: formState.profile,
-            },
-            {
-              name: "status",
-              value: formState.status,
-            },
-            {
-              name: "garage",
-              value: formState.garage,
-            },
-            {
-              name: "bathroom",
-              value: formState.bathroom,
-            },
-            {
-              name: "bedroom",
-              value: formState.bedroom,
-            },
-            {
-              name: "kitchen",
-              value: formState.kitchen,
-            },
-            {
-              name: "dinning_room",
-              value: formState.dinning_room,
-            },
-            {
-              name: "living_room",
-              value: formState.living_room,
-            },
-            {
-              name: "suite",
-              value: formState.suites,
-            },
-            {
-              name: "area_built",
-              value: formState.area_built,
-            },
-            {
-              name: "area_built_unit",
-              value: formState.area_built_unit,
-            },
-            {
-              name: "area_total",
-              value: formState.area_total,
-            },
-            {
-              name: "area_total_unit",
-              value: formState.area_total_unit,
-            },
-            {
-              name: "area_privative",
-              value: formState.area_privative,
-            },
-            {
-              name: "area_privative_unit",
-              value: formState.area_privative_unit,
-            },
-            {
-              name: "area_terrain_total",
-              value: formState.area_terrain_total,
-            },
-            {
-              name: "area_terrain_total_unit",
-              value: formState.area_terrain_total_unit,
-            },
-            {
-              name: "condominium_name",
-              value: formState.condominium_name,
-            },
-            {
-              name: "condominium_flooring",
-              value: formState.condominium_flooring,
-            },
-            {
-              name: "condominium_number_towers",
-              value: formState.condominium_number_towers,
-            },
-            {
-              name: "condominium_total_units",
-              value: formState.condominium_total_units,
-            },
-            {
-              name: "condominium_units_per_floor",
-              value: formState.condominium_units_per_floor,
-            },
-            {
-              name: "condominium_caracteristics",
-              value: formState.condominium_caracteristics || undefined,
-            },
-            {
-              name: "highlight_website",
-              value: formState.highlight_website,
-            },
-            {
-              name: "description",
-              value: formState.description,
-            },
-            {
-              name: "meta_description",
-              value: formState.meta_description,
-            },
-            {
-              name: "published_website",
-              value: formState.published_website,
-            },
-            {
-              name: "published_network",
-              value: formState.published_network,
-            },
-            {
-              name: "show_neighborhood",
-              value: formState.show_neighborhood,
-            },
-            {
-              name: "show_street",
-              value: formState.show_street,
-            },
-            {
-              name: "show_condominium",
-              value: formState.show_condominium,
-            },
-            {
-              name: "show_price",
-              value: formState.show_price,
-            },
-            {
-              name: "stripe_color",
-              value: formState.stripe_color,
-            },
-            {
-              name: "broker_name",
-              value: formState.broker_name,
-            },
-            {
-              name: "broker_email",
-              value: formState.broker_email,
-            },
-            {
-              name: "broker_creci",
-              value: formState.broker_creci,
-            },
-            {
-              name: "broker_phone",
-              value: formState.broker_phone,
-            },
+            { name: "title", value: title },
+            { name: "meta_title", value: metaTitle },
+            { name: "price", value: price },
+            { name: "reference", value: reference },
+            { name: "cep", value: cep },
+            { name: "street", value: street },
+            { name: "neighborhood", value: neighborhood },
+            { name: "city", value: city },
+            { name: "state", value: state },
+            { name: "complement", value: complement },
+            { name: "type", value: type },
+            { name: "subtype", value: subtype },
+            { name: "nearby", value: nearby || undefined },
+            { name: "transaction", value: transaction },
+            { name: "accept_financing", value: acceptFinancing },
+            { name: "written", value: written },
+            { name: "watermark", value: watermark },
+            { name: "images", value: images },
+            { name: "owner_name", value: ownerName },
+            { name: "owner_id", value: ownerId },
+            { name: "owner_email", value: ownerEmail },
+            { name: "profile", value: profile },
+            { name: "status", value: status },
+            { name: "garage", value: garage },
+            { name: "bathroom", value: bathroom },
+            { name: "bedroom", value: bedroom },
+            { name: "kitchen", value: kitchen },
+            { name: "dinning_room", value: dinningRoom },
+            { name: "living_room", value: livingRoom },
+            { name: "suite", value: suites },
+            { name: "area_built", value: areaBuilt },
+            { name: "area_built_unit", value: areaBuiltUnit },
+            { name: "area_total", value: areaTotal },
+            { name: "area_total_unit", value: areaTotalUnit },
+            { name: "area_privative", value: areaPrivative },
+            { name: "area_privative_unit", value: areaPrivativeUnit },
+            { name: "area_terrain_total", value: areaTerrainTotal },
+            { name: "area_terrain_total_unit", value: areaTerrainTotalUnit },
+            { name: "condominium_name", value: condominiumName },
+            { name: "condominium_flooring", value: condominiumFlooring },
+            { name: "condominium_number_towers", value: condominiumNumberTowers },
+            { name: "condominium_total_units", value: condominiumTotalUnits },
+            { name: "condominium_units_per_floor", value: condominiumUnitsPerFloor },
+            { name: "condominium_caracteristics", value: condominiumCaracteristics || undefined },
+            { name: "highlight_website", value: highlightWebsite },
+            { name: "description", value: description },
+            { name: "meta_description", value: metaDescription },
+            { name: "published_website", value: publishedWebsite },
+            { name: "published_network", value: publishedNetwork },
+            { name: "show_neighborhood", value: showNeighborhood },
+            { name: "show_street", value: showStreet },
+            { name: "show_condominium", value: showCondominium },
+            { name: "show_price", value: showPrice },
+            { name: "stripe_color", value: stripeColor },
+            { name: "broker_name", value: brokerName },
+            { name: "broker_email", value: brokerEmail },
+            { name: "broker_creci", value: brokerCreci },
+            { name: "broker_phone", value: brokerPhone },
+            { name: "section_address", value: sectionAddress },
+            { name: "store_address", value: storeAddress },
+            { name: "floor_number", value: floorNumber },
+            { name: "number", value: number },
+            { name: "iptu_type", value: iptuType },
+            { name: "iptu_value", value: iptuValue },
+            { name: "sun_position", value: sunPosition },
+            { name: "corner_property", value: cornerProperty },
+            { name: "condominium_value", value: condominiumValue },
+            { name: "sec_owner_name", value: secOwnerName },
+            { name: "sec_owner_id", value: secOwnerId },
+            { name: "sec_owner_email", value: secOwnerEmail },
+            { name: "sec_owner_phone", value: secOwnerPhone },
+            { name: "is_busy", value: isBusy },
+            { name: "rent_conditions", value: rentConditions },
+            { name: "capture_link", value: captureLink },
+            { name: "site_link", value: siteLink },
+            { name: "olx_link", value: olxLink },
+            { name: "proximity_sea", value: proximitySea },
+            { name: "key_responsible_name", value: keyResponsibleName },
+            { name: "key_responsible_id", value: keyResponsibleId },
+            { name: "key_responsible_email", value: keyResponsibleEmail },
+            { name: "key_responsible_phone", value: keyResponsiblePhone },
+            { name: "invalid_or_removed_images", value: invalidOrRemovedImages },
+            { name: "images_old_links", value: imagesOldLinks },
+            { name: "has_financing", value: hasFinancing },
+            { name: "balcony", value: balcony },
+            { name: "exclusivity", value: exclusivity },
+            { name: "commission", value: commission },
+            { name: "tax_value", value: taxValue },
+            { name: "tax_description", value: taxDescription },
+            { name: "sales_conditions", value: salesConditions },
+            { name: "service_area", value: serviceArea },
+            { name: "tv_room", value: tvRoom },
+            { name: "closet", value: closet },
+            { name: "situation", value: situation },
+            { name: "covered_garage", value: coveredGarage },
+            { name: "office", value: office },
+            { name: "owner_phone", value: ownerPhone },
           ]}
+
+
+
+
         >
+
+
           <h2 className="font-bold text-lg text-orange-400">
             Informações do Imóvel
           </h2>
           <Row gutter={16}>
-          <Col xs={24} sm={24} md={12} xl={6}>
+            <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Titulo do imóvel" name="title">
                 <Input
                   placeholder="Titulo do imóvel"
-                  onChange={handleInputChange}
+                  onChange={(e) => setTitle(e.target.value)}
                   name="title"
                 />
               </Form.Item>
@@ -648,7 +489,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Referência" name="reference">
                 <Input
                   placeholder="Referência"
-                  onChange={handleInputChange}
+                  onChange={(e) => setReference(e.target.value)}
                   name="reference"
                 />
               </Form.Item>
@@ -657,7 +498,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Tipo do imóvel" name="type">
                 <Select
                   placeholder="Tipo do imóvel"
-                  onChange={(value) => handleSelectChange(value, "type")}
+                  onChange={(value) => setType(value)}
                   showSearch
                   allowClear
                   options={[
@@ -958,12 +799,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Disponivel" name="status">
                 <button
-                  onClick={() =>
-                    setFormState({ ...formState, status: "Disponível" })
-                  }
+                  onClick={() => setStatus("Disponível")}
                   type="button"
                   className={
-                    formState.status === "Disponível"
+                    status === "Disponível"
                       ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                       : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                   }
@@ -971,12 +810,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   Sim
                 </button>
                 <button
-                  onClick={() =>
-                    setFormState({ ...formState, status: "Excluído" })
-                  }
+                  onClick={() => setStatus("Excluído")}
                   type="button"
                   className={
-                    formState.status === "Excluído"
+                    status === "Excluído"
                       ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                       : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                   }
@@ -988,12 +825,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Transação" name="transaction">
                 <button
-                  onClick={() =>
-                    setFormState({ ...formState, transaction: "venda" })
-                  }
+                  onClick={() => setTransaction("venda")}
                   type="button"
                   className={
-                    formState.transaction === "venda"
+                    transaction === "venda"
                       ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                       : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                   }
@@ -1001,12 +836,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   Venda
                 </button>
                 <button
-                  onClick={() =>
-                    setFormState({ ...formState, transaction: "aluguel" })
-                  }
+                  onClick={() => setTransaction("aluguel")}
                   type="button"
                   className={
-                    formState.transaction === "aluguel"
+                    transaction === "aluguel"
                       ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                       : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                   }
@@ -1044,7 +877,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               </Form.Item>
             </Col> */}
           </Row>
-          {formState.transaction === "venda" && (
+          {transaction === "venda" && (
             <>
               <h2 className="font-bold text-lg text-orange-400">
                 Informações adicionais para Venda
@@ -1061,7 +894,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                           currency: "BRL",
                           minimumFractionDigits: 2,
                         }).format(Number(inputValue) / 100);
-                        setFormState({ ...formState, price: formatted });
+                        setPrice(formatted);
                       }}
                     />
                   </Form.Item>
@@ -1069,20 +902,18 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Col xs={24} sm={24} md={12} xl={6}>
                   <Form.Item label="Condições da Venda" name="sales_conditions">
                     <Select
-                        placeholder="Condições da Venda"
-                        onChange={(value) =>
-                            handleSelectChange(value, "sales_conditions")
-                        }
-                        showSearch
-                        allowClear
-                        mode="tags"
-                        options={[
-                            { label: "Nenhum", value: null },
-                            { label: "À vista", value: "a-vista" },
-                            { label: "Financiado", value: "financiado" },
-                            { label: "Permuta", value: "permuta" },
-                            { label: "Outros", value: "outros" },
-                        ]}
+                      placeholder="Condições da Venda"
+                      onChange={(value) => setSalesConditions(value)}
+                      showSearch
+                      allowClear
+                      mode="tags"
+                      options={[
+                        { label: "Nenhum", value: null },
+                        { label: "À vista", value: "a-vista" },
+                        { label: "Financiado", value: "financiado" },
+                        { label: "Permuta", value: "permuta" },
+                        { label: "Outros", value: "outros" },
+                      ]}
                     />
                   </Form.Item>
                 </Col>
@@ -1090,9 +921,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   <Form.Item label="Período do IPTU" name="iptu_type">
                     <Select
                       placeholder="Período do IPTU"
-                      onChange={(value) =>
-                        handleSelectChange(value, "iptu_type")
-                      }
+                      onChange={(value) => setIptuType(value)}
                       showSearch
                       allowClear
                       options={[
@@ -1106,7 +935,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     />
                   </Form.Item>
                 </Col>
-                {formState.iptu_type !== null && (
+                {iptuType !== null && (
                   <Col xs={24} sm={24} md={12} xl={6}>
                     <Form.Item label="Valor do IPTU" name="iptu_value">
                       <Input
@@ -1118,7 +947,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                             currency: "BRL",
                             minimumFractionDigits: 2,
                           }).format(Number(inputValue) / 100);
-                          setFormState({ ...formState, iptu_value: formatted });
+                          setIptuValue(formatted);
                         }}
                       />
                     </Form.Item>
@@ -1135,7 +964,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                           currency: "BRL",
                           minimumFractionDigits: 2,
                         }).format(Number(inputValue) / 100);
-                        setFormState({ ...formState, tax_value: formatted });
+                        setTaxValue(formatted);
                       }}
                     />
                   </Form.Item>
@@ -1147,10 +976,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       name="tax_description"
                       //quando escrever mudar o state
                       onChange={(e) => {
-                        setFormState({
-                          ...formState,
-                          tax_description: e.target.value,
-                        });
+                        setTaxDescription(e.target.value);
                       }}
                     />
                   </Form.Item>
@@ -1159,12 +985,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Col xs={24} sm={24} md={12} xl={6}>
                   <Form.Item label="Escriturado" name="written">
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, written: true })
-                      }
+                      onClick={() => setWritten(true)}
                       type="button"
                       className={
-                        formState.written === true
+                        written === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1172,12 +996,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, written: false })
-                      }
+                      onClick={() => setWritten(false)}
                       type="button"
                       className={
-                        formState.written === false
+                        written === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1193,12 +1015,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     name="accept_goods"
                   >
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, accept_goods: true })
-                      }
+                      onClick={() => setAcceptGoods(true)}
                       type="button"
                       className={
-                        formState.accept_goods === true
+                        acceptGoods === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1206,12 +1026,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, accept_goods: false })
-                      }
+                      onClick={() => setAcceptGoods(false)}
                       type="button"
                       className={
-                        formState.accept_goods === false
+                        acceptGoods === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1223,12 +1041,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Col xs={24} sm={24} md={12} xl={6}>
                   <Form.Item label="Tem Financiamento?" name="has_financing">
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, has_financing: true })
-                      }
+                      onClick={() => setHasFinancing(true)}
                       type="button"
                       className={
-                        formState.has_financing === true
+                        hasFinancing === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1236,12 +1052,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, has_financing: false })
-                      }
+                      onClick={() => setHasFinancing(false)}
                       type="button"
                       className={
-                        formState.has_financing === false
+                        hasFinancing === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1256,12 +1070,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     name="accept_financing"
                   >
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, accept_financing: true })
-                      }
+                      onClick={() => setAcceptFinancing(true)}
                       type="button"
                       className={
-                        formState.accept_financing === true
+                        acceptFinancing === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1269,12 +1081,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, accept_financing: false })
-                      }
+                      onClick={() => setAcceptFinancing(false)}
                       type="button"
                       className={
-                        formState.accept_financing === false
+                        acceptFinancing === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1284,17 +1094,12 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={24} md={12} xl={6}>
-                  <Form.Item
-                    label="Está Ocupado?"
-                    name="is_busy"
-                  >
+                  <Form.Item label="Está Ocupado?" name="is_busy">
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, is_busy: true })
-                      }
+                      onClick={() => setIsBusy(true)}
                       type="button"
                       className={
-                        formState.is_busy === true
+                        isBusy === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1302,12 +1107,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, is_busy: false })
-                      }
+                      onClick={() => setIsBusy(false)}
                       type="button"
                       className={
-                        formState.is_busy === false
+                        isBusy === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1319,12 +1122,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Col xs={24} sm={24} md={12} xl={6}>
                   <Form.Item label="Imóvel de Esquina" name="corner_property">
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, corner_property: true })
-                      }
+                      onClick={() => setCornerProperty(true)}
                       type="button"
                       className={
-                        formState.corner_property === true
+                        cornerProperty === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1332,12 +1133,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, corner_property: false })
-                      }
+                      onClick={() => setCornerProperty(false)}
                       type="button"
                       className={
-                        formState.corner_property === false
+                        cornerProperty === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1351,7 +1150,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     <Select
                       placeholder="Posição Solar"
                       onChange={(value) =>
-                        handleSelectChange(value, "sun_position")
+                        setSunPosition(value)
                       }
                       showSearch
                       allowClear
@@ -1371,7 +1170,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               </Row>
             </>
           )}
-          {formState.transaction === "aluguel" && (
+          {transaction === "aluguel" && (
             <>
               <h2 className="font-bold text-lg text-orange-400">
                 Informações adicionais para Aluguel
@@ -1388,7 +1187,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                           currency: "BRL",
                           minimumFractionDigits: 2,
                         }).format(Number(inputValue) / 100);
-                        setFormState({ ...formState, price: formatted });
+                        setPrice(formatted);
                       }}
                     />
                   </Form.Item>
@@ -1399,17 +1198,17 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     name="rent_conditions"
                   >
                     <Select
-                        placeholder="Condições de Aluguel"
-                        onChange={(value) => handleSelectChange(value, "rent_conditions")}
-                        showSearch
-                        allowClear
-                        value={formState.rent_conditions || undefined}
-                        >
-                        <Select.Option value="mensal">Mensal</Select.Option>
-                        <Select.Option value="anual">Anual</Select.Option>
-                        <Select.Option value="temporada">Temporada</Select.Option>
-                        <Select.Option value="diaria">Diária</Select.Option>
-                        <Select.Option value="semestral">Semestral</Select.Option>
+                      placeholder="Condições de Aluguel"
+                      onChange={(value) => setRentConditions(value)}
+                      showSearch
+                      allowClear
+                      value={rentConditions || undefined}
+                    >
+                      <Select.Option value="mensal">Mensal</Select.Option>
+                      <Select.Option value="anual">Anual</Select.Option>
+                      <Select.Option value="temporada">Temporada</Select.Option>
+                      <Select.Option value="diaria">Diária</Select.Option>
+                      <Select.Option value="semestral">Semestral</Select.Option>
                     </Select>
                   </Form.Item>
                 </Col>
@@ -1417,9 +1216,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   <Form.Item label="Período do IPTU" name="iptu_type">
                     <Select
                       placeholder="Período do IPTU"
-                      onChange={(value) =>
-                        handleSelectChange(value, "iptu_type")
-                      }
+                      onChange={(value) => setIptuType(value)}
                       showSearch
                       allowClear
                       options={[
@@ -1433,7 +1230,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     />
                   </Form.Item>
                 </Col>
-                {formState.iptu_type !== null && (
+                {iptuType !== null && (
                   <Col xs={24} sm={24} md={12} xl={6}>
                     <Form.Item label="Valor do IPTU" name="iptu_value">
                       <Input
@@ -1445,7 +1242,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                             currency: "BRL",
                             minimumFractionDigits: 2,
                           }).format(Number(inputValue) / 100);
-                          setFormState({ ...formState, iptu_value: formatted });
+                          setIptuValue(formatted);
                         }}
                       />
                     </Form.Item>
@@ -1462,7 +1259,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                           currency: "BRL",
                           minimumFractionDigits: 2,
                         }).format(Number(inputValue) / 100);
-                        setFormState({ ...formState, tax_value: formatted });
+                        setTaxValue(formatted);
                       }}
                     />
                   </Form.Item>
@@ -1471,14 +1268,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   <Form.Item label="Descrição das Taxas" name="tax_description">
                     <Input.TextArea
                       placeholder="Descreva as taxas"
-                      name="tax_description"
-                      //quando escrever mudar o state
-                      onChange={(e) => {
-                        setFormState({
-                          ...formState,
-                          tax_description: e.target.value,
-                        });
-                      }}
+                      onChange={(e) => setTaxDescription(e.target.value)}
                     />
                   </Form.Item>
                 </Col>
@@ -1486,12 +1276,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Col xs={24} sm={24} md={12} xl={6}>
                   <Form.Item label="Escriturado" name="written">
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, written: true })
-                      }
+                      onClick={() => setWritten(true)}
                       type="button"
                       className={
-                        formState.written === true
+                        written === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1499,12 +1287,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, written: false })
-                      }
+                      onClick={() => setWritten(false)}
                       type="button"
                       className={
-                        formState.written === false
+                        written === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1520,12 +1306,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     name="accept_goods"
                   >
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, accept_goods: true })
-                      }
+                      onClick={() => setAcceptGoods(true)}
                       type="button"
                       className={
-                        formState.accept_goods === true
+                        acceptGoods === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1533,12 +1317,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, accept_goods: false })
-                      }
+                      onClick={() => setAcceptGoods(false)}
                       type="button"
                       className={
-                        formState.accept_goods === false
+                        acceptGoods === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1550,12 +1332,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Col xs={24} sm={24} md={12} xl={6}>
                   <Form.Item label="Tem Financiamento?" name="has_financing">
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, has_financing: true })
-                      }
+                      onClick={() => setHasFinancing(true)}
                       type="button"
                       className={
-                        formState.has_financing === true
+                        hasFinancing === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1563,12 +1343,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, has_financing: false })
-                      }
+                      onClick={() => setHasFinancing(false)}
                       type="button"
                       className={
-                        formState.has_financing === false
+                        hasFinancing === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1583,12 +1361,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     name="accept_financing"
                   >
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, accept_financing: true })
-                      }
+                      onClick={() => setAcceptFinancing(true)}
                       type="button"
                       className={
-                        formState.accept_financing === true
+                        acceptFinancing === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1596,12 +1372,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, accept_financing: false })
-                      }
+                      onClick={() => setAcceptFinancing(false)}
                       type="button"
                       className={
-                        formState.accept_financing === false
+                        acceptFinancing === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1611,17 +1385,12 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={24} md={12} xl={6}>
-                  <Form.Item
-                    label="Está Ocupado?"
-                    name="is_busy"
-                  >
+                  <Form.Item label="Está Ocupado?" name="is_busy">
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, is_busy: true })
-                      }
+                      onClick={() => setIsBusy(true)}
                       type="button"
                       className={
-                        formState.is_busy === true
+                        isBusy === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1629,12 +1398,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, is_busy: false })
-                      }
+                      onClick={() => setIsBusy(false)}
                       type="button"
                       className={
-                        formState.is_busy === false
+                        isBusy === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1646,12 +1413,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Col xs={24} sm={24} md={12} xl={6}>
                   <Form.Item label="Imóvel de Esquina" name="corner_property">
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, corner_property: true })
-                      }
+                      onClick={() => setCornerProperty(true)}
                       type="button"
                       className={
-                        formState.corner_property === true
+                        cornerProperty === true
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1659,12 +1424,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       Sim
                     </button>
                     <button
-                      onClick={() =>
-                        setFormState({ ...formState, corner_property: false })
-                      }
+                      onClick={() => setCornerProperty(false)}
                       type="button"
                       className={
-                        formState.corner_property === false
+                        cornerProperty === false
                           ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                           : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                       }
@@ -1677,9 +1440,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   <Form.Item label="Posição Solar" name="sun_position">
                     <Select
                       placeholder="Posição Solar"
-                      onChange={(value) =>
-                        handleSelectChange(value, "sun_position")
-                      }
+                      onChange={(value) => setSunPosition(value)}
                       showSearch
                       allowClear
                       options={[
@@ -1700,17 +1461,15 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               </Row>
             </>
           )}
-          <hr className="my-4"/>
+          <hr className="my-4" />
           <Row gutter={16}>
             <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="É Condominio?" name="is_condominium">
                 <button
-                  onClick={() =>
-                    setFormState({ ...formState, is_condominium: true })
-                  }
+                  onClick={() => setIsCondominium(true)}
                   type="button"
                   className={
-                    formState.is_condominium === true
+                    isCondominium === true
                       ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                       : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                   }
@@ -1718,12 +1477,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   Sim
                 </button>
                 <button
-                  onClick={() =>
-                    setFormState({ ...formState, is_condominium: false })
-                  }
+                  onClick={() => setIsCondominium(false)}
                   type="button"
                   className={
-                    formState.is_condominium === false
+                    isCondominium === false
                       ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                       : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                   }
@@ -1733,7 +1490,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               </Form.Item>
             </Col>
           </Row>
-          {formState.is_condominium && (
+          {isCondominium && (
             <>
               <h2 className="font-bold text-lg text-orange-400">Condomínio</h2>
               <Row gutter={16}>
@@ -1741,7 +1498,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   <Form.Item label="Nome do condomínio" name="condominium_name">
                     <Input
                       placeholder="Nome do condomínio"
-                      onChange={handleInputChange}
+                      onChange={(e) => setCondominiumName(e.target.value)}
                       name="condominium_name"
                     />
                   </Form.Item>
@@ -1760,10 +1517,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                           currency: "BRL",
                           minimumFractionDigits: 2,
                         }).format(Number(inputValue) / 100);
-                        setFormState({
-                          ...formState,
-                          condominium_value: formatted,
-                        });
+                        setCondominiumValue(formatted);
                       }}
                     />
                   </Form.Item>
@@ -1776,8 +1530,9 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     <Input
                       type="number"
                       placeholder="Total de unidades"
-                      onChange={handleInputChange}
-                      name="condominium_total_units"
+                      onChange={(e) =>
+                        setCondominiumTotalUnits(Number(e.target.value))
+                      }
                     />
                   </Form.Item>
                 </Col>
@@ -1789,18 +1544,17 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     <Input
                       type="number"
                       placeholder="Unidades por andar"
-                      onChange={handleInputChange}
-                      name="condominium_units_per_floor"
+                      onChange={(e) =>
+                        setCondominiumUnitsPerFloor(Number(e.target.value))
+                      }
                     />
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={24} md={12} xl={6}>
                   <Form.Item label="Pavimentação" name="condominium_flooring">
                     <Input
-                      type="number"
                       placeholder="Pavimentação"
-                      onChange={handleInputChange}
-                      name="condominium_flooring"
+                      onChange={(e) => setCondominiumFlooring(e.target.value)}
                     />
                   </Form.Item>
                 </Col>
@@ -1812,8 +1566,9 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     <Input
                       type="number"
                       placeholder="Número de torres"
-                      onChange={handleInputChange}
-                      name="condominium_number_towers"
+                      onChange={(e) =>
+                        setCondominiumNumberTowers(Number(e.target.value))
+                      }
                     />
                   </Form.Item>
                 </Col>
@@ -1823,13 +1578,11 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     name="condominium_caracteristics"
                   >
                     <Select
-                        mode="tags"
-                        placeholder="Características"
-                        onChange={(value) =>
-                            handleSelectChange(value, "condominium_caracteristics")
-                        }
-                        showSearch
-                        allowClear
+                      mode="tags"
+                      placeholder="Características"
+                      onChange={(value) => setCondominiumCaracteristics(value)}
+                      showSearch
+                      allowClear
                     />
                   </Form.Item>
                 </Col>
@@ -1842,7 +1595,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Subtipo do imóvel" name="subtype">
                 <Select
                   placeholder="Subtipo do imóvel"
-                  onChange={(value) => handleSelectChange(value, "subtype")}
+                  onChange={(value) => setSubtype(value)}
                   showSearch
                   allowClear
                   options={[
@@ -2144,7 +1897,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Perfil do Imóvel" name="profile">
                 <Input
                   placeholder="Ex.: Residencial em Condomínio"
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    setProfile(inputValue);
+                  }}
                   name="profile"
                 />
               </Form.Item>
@@ -2153,7 +1909,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Situação" name="situation">
                 <Select
                   placeholder="Situação"
-                  onChange={(value) => handleSelectChange(value, "situation")}
+                  onChange={(value) => setSituation(value)}
                   showSearch
                   allowClear
                   options={[
@@ -2175,7 +1931,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Proximidade do Mar" name="proximity_sea">
                 <Input
                   placeholder="Proximidade do Mar"
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    setProximitySea(inputValue);
+                  }}
                   name="proximity_sea"
                 />
               </Form.Item>
@@ -2184,7 +1943,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Proximidades" name="nearby">
                 <Select
                   placeholder="Selecione ou Escreva"
-                  onChange={(value) => handleSelectChange(value, "nearby")}
+                  onChange={(value) => setNearby(value)}
                   showSearch
                   allowClear
                   mode="tags"
@@ -2250,7 +2009,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                       currency: "BRL",
                       minimumFractionDigits: 2,
                     }).format(Number(inputValue) / 100);
-                    setFormState({ ...formState, commission: formatted });
+                    setCommission(formatted);
                   }}
                 />
               </Form.Item>
@@ -2260,7 +2019,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Área total"
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    const inputValue = Number(e.target.value);
+                    setAreaTotal(inputValue);
+                  }}
                 />
               </Form.Item>
             </Col>
@@ -2268,9 +2030,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Unidade" name="area_total_unit">
                 <Select
                   placeholder="Unidade"
-                  onChange={(value) =>
-                    handleSelectChange(value, "area_total_unit")
-                  }
+                  onChange={(value) => setAreaTotalUnit(value)}
                   showSearch
                   allowClear
                   options={[
@@ -2285,12 +2045,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Exclusividade" name="exclusivity">
                 <button
-                  onClick={() =>
-                    setFormState({ ...formState, exclusivity: true })
-                  }
+                  onClick={() => setExclusivity(true)}
                   type="button"
                   className={
-                    formState.exclusivity === true
+                    exclusivity === true
                       ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                       : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                   }
@@ -2298,12 +2056,10 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                   Sim
                 </button>
                 <button
-                  onClick={() =>
-                    setFormState({ ...formState, exclusivity: false })
-                  }
+                  onClick={() => setExclusivity(false)}
                   type="button"
                   className={
-                    formState.exclusivity === false
+                    exclusivity === false
                       ? "bg-orange-400 text-white font-bold py-2 px-4 rounded"
                       : "bg-white text-orange-400 font-bold py-2 px-4 rounded"
                   }
@@ -2334,14 +2090,11 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                     const cep = event.target.value;
                     await ApiCep(cep)
                       .then((response) => {
-                        setFormState((formState: any) => ({
-                          ...formState,
-                          state: response.state,
-                          city: response.city,
-                          neighborhood: response.neighborhood,
-                          street: response.street,
-                          cep: response.cep,
-                        }));
+                        setState(response.state);
+                        setCity(response.city);
+                        setNeighborhood(response.neighborhood);
+                        setStreet(response.street);
+                        setCep(response.cep);
                       })
                       .catch((error) => {
                         notification.error({
@@ -2357,65 +2110,72 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Rua" name="street">
                 <Input
                   placeholder="Ex: rua, avenida, etc"
-                  onChange={handleInputChange}
+                  onChange={(e) => setStreet(e.target.value)}
                   name="street"
                 />
+
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Bairro" name="neighborhood">
                 <Input
                   placeholder="Bairro"
-                  onChange={handleInputChange}
+                  onChange={(e) => setNeighborhood(e.target.value)}
                   name="neighborhood"
                 />
+
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Cidade" name="city">
                 <Input
                   placeholder="Cidade"
-                  onChange={handleInputChange}
+                  onChange={(e) => setCity(e.target.value)}
                   name="city"
                 />
+
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Estado" name="state">
                 <Input
                   placeholder="Estado"
-                  onChange={handleInputChange}
+                  onChange={(e) => setState(e.target.value)}
                   name="state"
                 />
+
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={8} xl={4}>
               <Form.Item label="Complemento" name="complement">
                 <Input
                   placeholder="Complemento"
-                  onChange={handleInputChange}
+                  onChange={(e) => setComplement(e.target.value)}
                   name="complement"
                 />
+
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Bloco-Quadra-Torre" name="section_address">
-               <Input
+                <Input
                   placeholder="Bloco-Quadra-Torre"
-                  onChange={handleInputChange}
+                  onChange={(e) => setSectionAddress(e.target.value)}
                   name="section_address"
                 />
+
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Ap-Loja-Lote-Sala" name="store_address">
                 <Input
                   placeholder="Ap-Loja-Lote-Sala"
-                  onChange={handleInputChange}
+                  onChange={(e) => setStoreAddress(e.target.value)}
                   name="store_address"
                 />
+
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12} xl={6}>
@@ -2423,16 +2183,16 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Nº do Andar"
-                  onChange={handleInputChange}
+                  onChange={(e) => setFloorNumber(Number(e.target.value))}
                 />
+
               </Form.Item>
             </Col>
             <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Nº da Residência" name="number">
                 <Input
-                  type="number"
                   placeholder="Nº da Residência"
-                  onChange={handleInputChange}
+                  onChange={(e) => setNumber(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2444,8 +2204,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Garagem"
-                  onChange={handleInputChange}
-                  name="garage"
+                  onChange={(e) => setGarage(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2454,8 +2213,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Cobertura das Garagens"
-                  onChange={handleInputChange}
-                  name="covered_garagem"
+                  onChange={(e) => setCoveredGarage(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2464,8 +2222,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Dormitórios"
-                  onChange={handleInputChange}
-                  name="bedroom"
+                  onChange={(e) => setBedroom(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2474,8 +2231,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Suítes"
-                  onChange={handleInputChange}
-                  name="suites"
+                  onChange={(e) => setSuites(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2484,8 +2240,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Closets"
-                  onChange={handleInputChange}
-                  name="closet"
+                  onChange={(e) => setCloset(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2494,8 +2249,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Cozinha"
-                  onChange={handleInputChange}
-                  name="kitchen"
+                  onChange={(e) => setKitchen(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2504,8 +2258,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Sala de jantar"
-                  onChange={handleInputChange}
-                  name="dinning_room"
+                  onChange={(e) => setDinningRoom(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2514,8 +2267,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Sala de estar"
-                  onChange={handleInputChange}
-                  name="living_room"
+                  onChange={(e) => setLivingRoom(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2524,8 +2276,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Área de serviço"
-                  onChange={handleInputChange}
-                  name="service_area"
+                  onChange={(e) => setServiceArea(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2534,8 +2285,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Banheiros"
-                  onChange={handleInputChange}
-                  name="bathroom"
+                  onChange={(e) => setBathroom(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2544,8 +2294,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Escritórios"
-                  onChange={handleInputChange}
-                  name="office"
+                  onChange={(e) => setOffice(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2554,8 +2303,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Sala de TV"
-                  onChange={handleInputChange}
-                  name="tv_room"
+                  onChange={(e) => setTvRoom(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2564,8 +2312,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 <Input
                   type="number"
                   placeholder="Varandas"
-                  onChange={handleInputChange}
-                  name="balcony"
+                  onChange={(e) => setBalcony(Number(e.target.value))}
                 />
               </Form.Item>
             </Col>
@@ -2576,8 +2323,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Nome" name="broker_name">
                 <Input
                   placeholder="Nome"
-                  onChange={handleInputChange}
-                  name="broker_name"
+                  onChange={(e) => setBrokerName(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2585,8 +2331,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="CRECI" name="broker_creci">
                 <Input
                   placeholder="CRECI"
-                  onChange={handleInputChange}
-                  name="broker_creci"
+                  onChange={(e) => setBrokerCreci(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2594,8 +2339,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="E-mail" name="broker_email">
                 <Input
                   placeholder="E-mail"
-                  onChange={handleInputChange}
-                  name="broker_email"
+                  onChange={(e) => setBrokerEmail(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2603,8 +2347,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Telefone" name="broker_phone">
                 <Input
                   placeholder="Telefone"
-                  onChange={handleInputChange}
-                  name="broker_phone"
+                  onChange={(e) => setBrokerPhone(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2617,8 +2360,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Nome" name="owner_name">
                 <Input
                   placeholder="Nome"
-                  onChange={handleInputChange}
-                  name="owner_name"
+                  onChange={(e) => setOwnerName(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2626,46 +2368,41 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="E-mail" name="owner_email">
                 <Input
                   placeholder="E-mail"
-                  onChange={handleInputChange}
-                  name="owner_email"
+                  onChange={(e) => setOwnerEmail(e.target.value)}
                 />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Fone" name="owner_phone">
+              <Form.Item label="Telefone" name="owner_phone">
                 <Input
-                  placeholder="Phone"
-                  onChange={handleInputChange}
-                  name="owner_phone"
+                  placeholder="Telefone"
+                  onChange={(e) => setOwnerPhone(e.target.value)}
                 />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Nome" name="sec_owner_name">
+              <Form.Item label="Nome (Secundário)" name="sec_owner_name">
                 <Input
                   placeholder="Nome"
-                  onChange={handleInputChange}
-                  name="sec_owner_name"
+                  onChange={(e) => setSecOwnerName(e.target.value)}
                 />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="E-mail" name="sec_owner_email">
+              <Form.Item label="E-mail (Secundário)" name="sec_owner_email">
                 <Input
                   placeholder="E-mail"
-                  onChange={handleInputChange}
-                  name="sec_owner_email"
+                  onChange={(e) => setSecOwnerEmail(e.target.value)}
                 />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Fone" name="sec_owner_phone">
+              <Form.Item label="Telefone (Secundário)" name="sec_owner_phone">
                 <Input
-                  placeholder="Phone"
-                  onChange={handleInputChange}
-                  name="sec_owner_phone"
+                  placeholder="Telefone"
+                  onChange={(e) => setSecOwnerPhone(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2678,8 +2415,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Nome" name="key_responsible_name">
                 <Input
                   placeholder="Nome"
-                  onChange={handleInputChange}
-                  name="key_responsible_name"
+                  onChange={(e) => setKeyResponsibleName(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2687,17 +2423,15 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="E-mail" name="key_responsible_email">
                 <Input
                   placeholder="E-mail"
-                  onChange={handleInputChange}
-                  name="key_responsible_email"
+                  onChange={(e) => setKeyResponsibleEmail(e.target.value)}
                 />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} md={8} xl={6}>
-              <Form.Item label="Fone" name="key_responsible_phone">
+              <Form.Item label="Telefone" name="key_responsible_phone">
                 <Input
-                  placeholder="Phone"
-                  onChange={handleInputChange}
-                  name="key_responsible_phone"
+                  placeholder="Telefone"
+                  onChange={(e) => setKeyResponsiblePhone(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2754,19 +2488,18 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
             <Col span={24}>
               <Form.Item label="Descrição do imóvel">
                 <ReactQuill
-                  value={formState?.description ?? ""}
-                  onChange={handleDescricaoChange}
+                  value={description ?? ""}
+                  onChange={(value) => setDescription(value)}
                 />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
-          <Col xs={24} sm={12} md={8} xl={8}>
+            <Col xs={24} sm={12} md={8} xl={8}>
               <Form.Item label="Link de Captação" name="capture_link">
                 <Input
                   placeholder="Link de Captação"
-                  onChange={handleInputChange}
-                  name="capture_link"
+                  onChange={(e) => setCaptureLink(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2774,8 +2507,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Link do Site" name="site_link">
                 <Input
                   placeholder="Link do Site"
-                  onChange={handleInputChange}
-                  name="site_link"
+                  onChange={(e) => setSiteLink(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -2783,8 +2515,7 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
               <Form.Item label="Link da OLX" name="olx_link">
                 <Input
                   placeholder="Link da OLX"
-                  onChange={handleInputChange}
-                  name="olx_link"
+                  onChange={(e) => setOlxLink(e.target.value)}
                 />
               </Form.Item>
             </Col>

@@ -40,6 +40,14 @@ const uploadImages = async (id:string, data: any) => await api.post(`/properties
   }
 });
 
+const uploadExcel = async (data: any) => await api.post(`/properties/upload-excel`, data ,{
+  headers: {
+    "Content-Type": "multipart/form-data"
+  }
+});
+
+
+
 export const propertiesService = {
   getAll,
   getByUrl,
@@ -52,4 +60,5 @@ export const propertiesService = {
   getCities,
   getCondominiums,
   getTypes,
+  uploadExcel
 };
