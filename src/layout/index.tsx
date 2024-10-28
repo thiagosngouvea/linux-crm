@@ -82,6 +82,9 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
                 <Menu.Item key="2" icon={<SiMicrosoftexcel />} onClick={() => route.push('/excel/analise')}>
                     Analisar Excel
                 </Menu.Item>
+                <Menu.Item key="3" icon={<SiMicrosoftexcel />} onClick={() => route.push('/excel/dados')}>
+                    Dados de Captação
+                </Menu.Item>
                 <Menu.Item key="10" icon={<LogoutOutlined />} onClick={logout}>
                     Sair
                 </Menu.Item>
