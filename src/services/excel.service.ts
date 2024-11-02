@@ -27,11 +27,12 @@ const uploadExcel = async (data: any) => await api.post(`/excel/upload-excel`, d
   }
 });
 
-
+const remove = async (id: any) => await api.delete(`/excel/${id}`);
 
 export const excelService = {
   getAll,
   create,
   update,
-  uploadExcel
+  uploadExcel,
+  remove
 };

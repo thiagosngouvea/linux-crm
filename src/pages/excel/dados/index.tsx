@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Form, Row, Table, Tooltip, Input, Col, Select } from "antd";
+import { Form, Row, Table, Tooltip, Input, Col, Select, Modal, Button } from "antd";
 import { NumericFormat } from 'react-number-format';
 import { excelService } from "@/services/excel.service";
 import moment from "moment";
+import { EditOutlined } from "@ant-design/icons";
 
 interface DadosExcelProps {
+    id?: string;
     reference: string;
     capture_link: string;
     capture_link_situation: string;
@@ -26,6 +28,9 @@ const DadosExcel = React.memo(function DadosExcel() {
     const [site_link_situation, setSiteLinkSituation] = useState<string>("");
     const [site_link_price, setSiteLinkPrice] = useState<string>("");
     const [comparison, setComparison] = useState<string>("");
+
+    const [visible, setVisible] = useState<boolean>(false);
+    const [editData, setEditData] = useState<DadosExcelProps | null>(null);
 
     const fetchData = useCallback(async () => {
         let filterBy = "";
@@ -62,7 +67,7 @@ const DadosExcel = React.memo(function DadosExcel() {
             filterType = "eq";
         }
 
-        if (comparison) {
+        if (comparison && comparison !== "Preço Divergente e Disponível") {
             filterBy = "comparison";
             filterValue = comparison;
             filterType = "eq";
@@ -76,6 +81,11 @@ const DadosExcel = React.memo(function DadosExcel() {
                 filterValue,
                 filterType
             );
+            if(comparison === "Preço Divergente e Disponível") {
+                const data = response?.data?.excel?.result.filter((item: any) => (item?.capture_link_price?.replace(',00', '') !== item?.site_link_price?.replace(',00', '')) && ((item?.capture_link_situation && item?.site_link_situation) === 'Disponível'))
+                setData(data)
+                return;
+            }
             setData(response?.data?.excel?.result)
         } catch (error) {
             console.log(error)
@@ -86,11 +96,11 @@ const DadosExcel = React.memo(function DadosExcel() {
         fetchData()
     }, [fetchData, reference, capture_link_situation, capture_link_price, site_link_situation, site_link_price, comparison]);
 
+
     return (
         <>
             <Form
                 layout="vertical"
-                onFinish={() => fetchData()}
             >
                 <Row gutter={[16,16]}>
                     <Col span={8}>
@@ -168,6 +178,7 @@ const DadosExcel = React.memo(function DadosExcel() {
                                 <Select.Option value="Diferença de disponibilidade">Diferença de disponibilidade</Select.Option>
                                 <Select.Option value="Indisponível em ambos">Indisponível em ambos</Select.Option>
                                 <Select.Option value="Disponível em ambos">Disponível em ambos</Select.Option>
+                                <Select.Option value="Preço Divergente e Disponível">Preço Divergente e Disponível</Select.Option>
                             </Select>
                         </Form.Item>
                     </Col>
@@ -179,12 +190,15 @@ const DadosExcel = React.memo(function DadosExcel() {
                         title: "Referência",
                         dataIndex: "reference",
                         key: "reference",
+                        width: 150,
+                        fixed: "left",
                         render: (text: string) => <a>{text}</a>,
                     },
                     {
                         title: "Link de Captação",
                         dataIndex: "capture_link",
                         key: "capture_link",
+                        width: 200,
                         render: (text: string) => {
                             return (
                                 <Tooltip title={text}>
@@ -203,6 +217,7 @@ const DadosExcel = React.memo(function DadosExcel() {
                         title: "Situacao do Link de Captação",
                         dataIndex: "capture_link_situation",
                         key: "capture_link_situation",
+                        width: 200,
                         render: (text: string, record: any) => {
                             return (
                                 <span className={`${record.capture_link_situation === record.site_link_situation ? 'bg-green-600 ' : 'bg-red-600'} flex text-white font-bold w-32 justify-center`}>
@@ -215,6 +230,7 @@ const DadosExcel = React.memo(function DadosExcel() {
                         title: "Preço do Link de Captação",
                         dataIndex: "capture_link_price",
                         key: "capture_link_price",
+                        width: 200,
                         render: (text: string, record: any) => {
                                 return (
                                     <span className={`${record.capture_link_price === record.site_link_price ? 'bg-green-600 ' : 'bg-red-600'} flex text-white font-bold w-32 justify-center`}>
@@ -227,6 +243,7 @@ const DadosExcel = React.memo(function DadosExcel() {
                         title: "Link do Site",
                         dataIndex: "site_link",
                         key: "site_link",
+                        width: 200,
                         render: (text: string) => {
                             return (
                                 <Tooltip title={text}>
@@ -245,6 +262,7 @@ const DadosExcel = React.memo(function DadosExcel() {
                         title: "Situação do Link do Site",
                         dataIndex: "site_link_situation",
                         key: "site_link_situation",
+                        width: 200,
                         render: (text: string, record: any) => {
                             return (
                                 <span className={`${record.site_link_situation === record.capture_link_situation  ? 'bg-green-600 ' : 'bg-red-600'} flex text-white font-bold w-32 justify-center`}>
@@ -257,6 +275,7 @@ const DadosExcel = React.memo(function DadosExcel() {
                         title: "Preço do Link do Site",
                         dataIndex: "site_link_price",
                         key: "site_link_price",
+                        width: 200,
                         render: (text: string, record: any) => {
                             return (
                                 <span className={`${record.site_link_price === record.capture_link_price ? 'bg-green-600 ' : 'bg-red-600'} flex text-white font-bold w-32 justify-center`}>
@@ -269,16 +288,39 @@ const DadosExcel = React.memo(function DadosExcel() {
                         title: "Comparação de Disponibilidade",
                         dataIndex: "comparison",
                         key: "comparison",
+                        width: 300,
                     },
                     {
                         title: "Última Checagem",
                         dataIndex: "updated_at",
                         key: "updated_at",
+                        width: 300,
                         render: (text: string) => {
                             return (
                                 <span>
                                     {moment(text).format("DD/MM/YYYY HH:mm:ss")}
                                 </span>
+                            )
+                        }
+                    },
+                    {
+                        title: "Ações",
+                        dataIndex: "actions",
+                        key: "actions",
+                        align: "center",
+                        fixed: "right",
+                        width: 100,
+                        render: (text, record) => {
+                            return (
+                                <div 
+                                    className="text-orange-400 text-lg cursor-pointer" 
+                                    onClick={() => {
+                                            setVisible(true)
+                                            setEditData(record)
+                                        } }
+                                    >
+                                    <EditOutlined size={30}/>
+                                </div>
                             )
                         }
                     }
@@ -293,6 +335,118 @@ const DadosExcel = React.memo(function DadosExcel() {
                 }}
 
             />
+            <Modal
+                title="Editar Dados"
+                open={visible}
+                okButtonProps={{ 
+                    disabled: !editData,
+                    color: "primary"
+                }}
+                onCancel={() => {
+                    setVisible(false)
+                    setEditData(null)
+                }}
+                footer={[
+                    <Button key="back" onClick={() => {
+                        setVisible(false)
+                        setEditData(null)
+                      }}>
+                        Cancelar
+                      </Button>,
+                      <Button  key="submit" type="primary" onClick={async () => {
+                        await excelService.update(editData?.id, {
+                            reference: editData?.reference,
+                            capture_link_situation: editData?.capture_link_situation,
+                            capture_link_price: editData?.capture_link_price,
+                            site_link_situation: editData?.site_link_situation,
+                            site_link_price: editData?.site_link_price,
+                            comparison: editData?.comparison,
+                        })
+                        setVisible(false)
+                        setEditData(null)
+                      }}>
+                        Aceitar
+                      </Button>,
+                ]}
+            >
+                <Form
+                    layout="vertical"
+                    fields={[
+                        { name: ['reference'], value: editData?.reference },
+                        { name: ['capture_link_situation'], value: editData?.capture_link_situation },
+                        { name: ['capture_link_price'], value: editData?.capture_link_price },
+                        { name: ['site_link_situation'], value: editData?.site_link_situation },
+                        { name: ['site_link_price'], value: editData?.site_link_price },
+                        { name: ['comparison'], value: editData?.comparison },
+                    ]}
+                >
+                    <Row gutter={[16,16]}>
+                        <Col span={12}>
+                            <Form.Item label="Referência" name='reference'>
+                                <Input
+                                    type="text"
+                                    onChange={(e) => setEditData(editData ? {...editData, reference: e.target.value} : null)}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Situação do Link de Captação" name='capture_link_situation'>
+                                <Select
+                                    onChange={(value) => setEditData(editData ? {...editData, capture_link_situation: value} : null)}
+                                    allowClear
+                                >
+                                    <Select.Option value="Disponível">Disponível</Select.Option>
+                                    <Select.Option value="Indisponível">Indisponível</Select.Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row gutter={[16,16]}>
+                        <Col span={12}>
+                            <Form.Item label="Preço do Link de Captação" name='capture_link_price'>
+                                <Input
+                                    type="text"
+                                    onChange={(e) => setEditData(editData ? {...editData, capture_link_price: e.target.value} : null)}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Situação do Link do Site" name='site_link_situation'>
+                                <Select
+                                    onChange={(value) => setEditData(editData ? {...editData, site_link_situation: value} : null)}
+                                    allowClear
+                                >
+                                    <Select.Option value="Disponível">Disponível</Select.Option>
+                                    <Select.Option value="Indisponível">Indisponível</Select.Option>
+                                </Select>
+                            </Form.Item>   
+                        </Col>
+                    </Row>
+                    <Row gutter={[16,16]}>
+                        <Col span={12}>
+                            <Form.Item label="Preço do Link do Site" name='site_link_price'>
+                                <Input
+                                    type="text"
+                                    onChange={(e) => setEditData(editData ? {...editData, site_link_price: e.target.value} : null)}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Comparação" name='comparison'>
+                                <Select
+                                    onChange={(value) => setEditData(editData ? {...editData, comparison: value} : null)}
+                                    allowClear
+                                >
+                                    <Select.Option value="Diferença de disponibilidade">Diferença de disponibilidade</Select.Option>
+                                    <Select.Option value="Indisponível em ambos">Indisponível em ambos</Select.Option>
+                                    <Select.Option value="Disponível em ambos">Disponível em ambos</Select.Option>
+                                    <Select.Option value="Preço Divergente e Disponível">Preço Divergente e Disponível</Select.Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Form>
+            </Modal>
         </>
     )
 })
