@@ -1,3 +1,4 @@
+import axios from "axios";
 import api from "./api.service";
 
 
@@ -46,7 +47,11 @@ const uploadExcel = async (data: any) => await api.post(`/properties/upload-exce
   }
 });
 
-
+const getInTecimobByReference = async (reference: string, token: string) => await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/properties?sort=-calculated_price&filter%5Breference%5D=${reference}&limit=50&offset=1&count=deals&with_grouped_condos=true`, {
+  headers: {
+    "Authorization": `Bearer ${token}`
+  }
+});
 
 export const propertiesService = {
   getAll,
@@ -60,5 +65,6 @@ export const propertiesService = {
   getCities,
   getCondominiums,
   getTypes,
-  uploadExcel
+  uploadExcel,
+  getInTecimobByReference
 };

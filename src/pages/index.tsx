@@ -27,6 +27,12 @@ export default function Home() {
           imagem={AnaliseExcel}
           rota="/excel/analise"
         />
+        <CardMenu
+          nome="Vincular ao Tecimob"
+          descricao="Ao vincular, o dispositivo atualmente logado será desconectado."
+          imagem={AnaliseExcel}
+          rota="/tecimob"
+        />
       </div>
     </main>
   )
