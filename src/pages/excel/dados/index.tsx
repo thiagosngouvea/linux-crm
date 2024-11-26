@@ -13,9 +13,10 @@ import {
 import { NumericFormat } from "react-number-format";
 import { excelService } from "@/services/excel.service";
 import moment from "moment";
-import { EditOutlined, SyncOutlined } from "@ant-design/icons";
+import { EditOutlined, SwapOutlined, SyncOutlined } from "@ant-design/icons";
 import { propertiesService } from "@/services/properties.service";
 import { parseCookies } from "nookies";
+import { tecimobService } from "@/services/tecimob.service";
 
 interface DadosExcelProps {
   id?: string;
@@ -451,48 +452,52 @@ const DadosExcel = React.memo(function DadosExcel({
               setSyncData(null);
             }}
           >
-            Cancelar
-          </Button>,
-          <Button
-            key="submit"
-            type="default"
-            onClick={async () => {
-              await excelService.update(editData?.id, {
-                reference: syncData?.reference,
-                capture_link_situation: syncData?.capture_link_situation,
-                capture_link_price: syncData?.capture_link_price,
-                site_link_situation: syncData?.site_link_situation,
-                site_link_price: syncData?.site_link_price,
-                comparison: syncData?.comparison,
-              });
-              setModalSync(false);
-              setSyncData(null);
-            }}
-          >
-            Aceitar
+            Fechar
           </Button>,
         ]}
       >
         <div>
           <div className="flex">
-            <div className="w-1/2">
-              <h1 className="font-bold text-lg">Valor Atual</h1>
-              <p>{syncData?.calculated_price}</p>
-            </div>
-            <div className="w-1/2">
-              <h1 className="font-bold text-lg">Novo Valor</h1>
-              <p>{editData?.capture_link_price}</p>
-            </div>
+              <div className="w-1/2">
+                <h1 className="font-bold text-lg">Valor Atual</h1>
+                <p>{syncData?.calculated_price ? syncData?.calculated_price : 'Sem informações'}</p>
+              </div>
+              <div className="w-1/2">
+                <h1 className="font-bold text-lg">Novo Valor</h1>
+                <p>{editData?.capture_link_price ? editData?.capture_link_price : 'Sem informações'}</p>
+              </div>
+              <Tooltip title="Sincronizar com Tecimob">
+                <SwapOutlined 
+                  size={60}
+                  className="cursor-pointer"
+                />
+              </Tooltip>
           </div>
           <div className="flex">
-            <div className="w-1/2">
-              <h1 className="font-bold text-lg">Status Atual</h1>
-              <p>{syncData?.status}</p>
-            </div>
-            <div className="w-1/2">
-              <h1 className="font-bold text-lg">Novo Status</h1>
-              <p>{editData?.capture_link_situation}</p>
-            </div>
+              <div className="w-1/2">
+                <h1 className="font-bold text-lg">Status Atual</h1>
+                <p>{syncData?.status ?? 'Sem informações'}</p>
+              </div>
+            {editData?.capture_link_situation && (
+              <div className="w-1/2">
+                <h1 className="font-bold text-lg">Novo Status</h1>
+                <p>{editData?.capture_link_situation ?? 'Sem informações'}</p>
+              </div>
+            )}
+            <Tooltip title="Sincronizar com Tecimob">
+              <SwapOutlined 
+                size={60}
+                className="cursor-pointer"
+                onClick={async () => {
+                  if(editData?.capture_link_situation === 'Indisponível'){ 
+                    await tecimobService.inativarImovel(syncData?.id, token);
+                  }
+                  if(editData?.capture_link_situation === 'Disponível'){
+                    await tecimobService.ativarImovel(syncData?.id, token);
+                  }}
+                }
+              />
+            </Tooltip>
           </div>
         </div>
       </Modal>
@@ -521,14 +526,7 @@ const DadosExcel = React.memo(function DadosExcel({
             key="submit"
             type="primary"
             onClick={async () => {
-              await excelService.update(editData?.id, {
-                reference: editData?.reference,
-                capture_link_situation: editData?.capture_link_situation,
-                capture_link_price: editData?.capture_link_price,
-                site_link_situation: editData?.site_link_situation,
-                site_link_price: editData?.site_link_price,
-                comparison: editData?.comparison,
-              });
+              await tecimobService.inativarImovel(syncData?.id, token);
               setVisible(false);
               setEditData(null);
             }}
