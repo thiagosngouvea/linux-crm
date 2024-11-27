@@ -29,7 +29,7 @@ const adicionarNotaImovel = async (id: string, token: string, note: string) => {
 }
   
 const ativarImovel = async (id: string, token: string) => {
-  return await axios.put(`https://api.gerenciarimoveis-cf.com.br/api/properties/${id}`, null, {
+  return await axios.post(`https://api.gerenciarimoveis-cf.com.br/api/properties/${id}`, null, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
