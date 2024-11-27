@@ -36,11 +36,75 @@ const ativarImovel = async (id: string, token: string) => {
   });
 }
 
+const getPrecoImovel = async (id: string, token: string) => {
+  return await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/financial/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+const alterarPrecoImovel = async (id: string, token: string, data: any) => {
+  return await axios.patch(`https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/financial`, {
+    ...data,
+  }
+  ,{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+const getDescricaoImovel = async (id: string, token: string) => {
+  return await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/description/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+const alterarDescricaoImovel = async (id: string, token: string, data: any) => {
+  return await axios.patch(`https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/description`, {
+    data,
+  }
+  ,{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+const getPublicacaoImovel = async (id: string, token: string) => {
+  return await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/publish/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+const alterarPublicacaoImovel = async (id: string, token: string, data: any) => {
+  return await axios.patch(`https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/publish`, {
+    ...data,
+  }
+  ,{
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+
 
 export const tecimobService = { 
   login,
   inativarImovel,
   adicionarNotaImovel,
-  ativarImovel
+  ativarImovel,
+  alterarPrecoImovel,
+  getPrecoImovel,
+  getDescricaoImovel,
+  alterarDescricaoImovel,
+  getPublicacaoImovel,
+  alterarPublicacaoImovel
 };
   

@@ -9,11 +9,12 @@ import {
   Select,
   Modal,
   Button,
+  notification,
 } from "antd";
 import { NumericFormat } from "react-number-format";
 import { excelService } from "@/services/excel.service";
 import moment from "moment";
-import { EditOutlined, SwapOutlined, SyncOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, SwapOutlined, SyncOutlined } from "@ant-design/icons";
 import { propertiesService } from "@/services/properties.service";
 import { parseCookies } from "nookies";
 import { tecimobService } from "@/services/tecimob.service";
@@ -422,6 +423,17 @@ const DadosExcel = React.memo(function DadosExcel({
                       <SyncOutlined size={30} />
                     </div>
                   </Tooltip>
+                  <Tooltip title='Deletar Registro'>
+                    <div
+                      className="text-red-400 text-lg cursor-pointer"
+                      onClick={async () => {
+                        await excelService.remove(record.id);
+                        fetchData();
+                      }}
+                    >
+                      <DeleteOutlined size={30} />
+                    </div>
+                  </Tooltip>
                 </div>
               );
             },
@@ -470,6 +482,82 @@ const DadosExcel = React.memo(function DadosExcel({
                 <SwapOutlined 
                   size={60}
                   className="cursor-pointer"
+                  onClick={async () => {
+                    await tecimobService
+                    .getPrecoImovel(syncData?.id, token)
+                    .then(async (response) => {
+
+                      await tecimobService
+                      .alterarPrecoImovel(syncData?.id, token, {
+                        ...response?.data?.data,
+                        price: editData?.capture_link_price,
+                      })
+                      .then(async () => {
+                        notification.success({
+                          message: "Preço atualizado com sucesso!",
+                        });
+                      })
+                      .catch((error: any) => {
+                        notification.error({
+                          message: "Erro ao Atualizar preço!",
+                          description: error,
+                        });
+                      });
+                    })
+                    .catch((error) => {
+                      notification.error({
+                        message: "Erro ao Buscar preço!",
+                        description: error,
+                      });
+                    });
+
+
+
+                    await tecimobService
+                    .getDescricaoImovel(syncData?.id, token)
+                    .then(async (response) => {
+
+                      await tecimobService
+                      .alterarDescricaoImovel(syncData?.id, token, {
+                        ...response.data.data,
+                        description: response.data.data.description.replace(`${syncData?.calculated_price.replace('R$', '')}`,`${editData?.capture_link_price.replace('R$', '')}`),
+                      })
+                      .then(async () => {
+                        notification.success({
+                          message: "Descrição atualizada com sucesso!",
+                        });
+                      })
+                      .catch((error: any) => {
+                        notification.error({
+                          message: "Erro ao Atualizar descrição!",
+                          description: error,
+                        });
+                      });
+                    })
+
+                    await tecimobService
+                    .getPublicacaoImovel(syncData?.id, token)
+                    .then(async (response) => {
+                      const data = {
+                        ...response.data.data,
+                        meta_title: response.data.data.meta_title.replace(`${syncData?.calculated_price.replace('R$', '')}`,`${editData?.capture_link_price.replace('R$', '')}`),
+                      };
+
+                      await tecimobService
+                      .alterarPublicacaoImovel(syncData?.id, token, data)
+                      .then(async () => {
+                        notification.success({
+                          message: "Publicação atualizada com sucesso!",
+                        });
+                      })
+                      .catch((error: any) => {
+                        notification.error({
+                          message: "Erro ao Atualizar publicação!",
+                          description: error,
+                        });
+                      });
+                    })
+                  }}
                 />
               </Tooltip>
           </div>
@@ -490,10 +578,34 @@ const DadosExcel = React.memo(function DadosExcel({
                 className="cursor-pointer"
                 onClick={async () => {
                   if(editData?.capture_link_situation === 'Indisponível'){ 
-                    await tecimobService.inativarImovel(syncData?.id, token);
+                    await tecimobService
+                    .inativarImovel(syncData?.id, token)
+                    .then(async () => {
+                      notification.success({
+                        message: "Imóvel inativado com sucesso!",
+                      });
+                    })
+                    .catch((error) => {
+                      notification.error({
+                        message: "Erro ao inativar imóvel!",
+                        description: error,
+                      });
+                    });
                   }
                   if(editData?.capture_link_situation === 'Disponível'){
-                    await tecimobService.ativarImovel(syncData?.id, token);
+                    await tecimobService
+                    .ativarImovel(syncData?.id, token)
+                    .then(async () => {
+                      notification.success({
+                        message: "Imóvel ativado com sucesso!",
+                      });
+                    })
+                    .catch((error) => {
+                      notification.error({
+                        message: "Erro ao ativar imóvel!",
+                        description: error,
+                      });
+                    });
                   }}
                 }
               />
