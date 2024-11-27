@@ -10,14 +10,17 @@ import {
   Modal,
   Button,
   notification,
+  Upload,
+  message,
 } from "antd";
 import { NumericFormat } from "react-number-format";
 import { excelService } from "@/services/excel.service";
 import moment from "moment";
-import { DeleteOutlined, EditOutlined, SwapOutlined, SyncOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, SwapOutlined, SyncOutlined, UploadOutlined } from "@ant-design/icons";
 import { propertiesService } from "@/services/properties.service";
 import { parseCookies } from "nookies";
 import { tecimobService } from "@/services/tecimob.service";
+import type { UploadProps } from 'antd';
 
 interface DadosExcelProps {
   id?: string;
@@ -69,6 +72,33 @@ const DadosExcel = React.memo(function DadosExcel({
   const [successStatus, setSuccessStatus] = useState<boolean>(false);
 
   const [visibleAdd, setVisibleAdd] = useState<boolean>(false);
+
+  const props: UploadProps = {
+    name: 'file',
+    accept: '.xlsx',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    beforeUpload: async (file) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      await excelService.uploadExcel(formData)
+      .then(async () => {
+        await fetchData();
+      })
+      return true;
+    },
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} upload concluido com sucesso.`);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} upload falhou.`);
+      }
+    },
+  };
 
   const fetchData = useCallback(async () => {
     let filterBy = "";
@@ -278,6 +308,9 @@ const DadosExcel = React.memo(function DadosExcel({
         >
           Adicionar Captação
         </button>
+        <Upload {...props}>
+          <Button icon={<UploadOutlined />}>Selecione o arquivo para upload</Button>
+        </Upload>
       </div>
       <Table
         columns={[
@@ -359,7 +392,7 @@ const DadosExcel = React.memo(function DadosExcel({
                     href={text}
                     target="_blank"
                   >
-                    {text.length > 20 ? `${text.substring(0, 20)}...` : text}
+                    {text?.length > 20 ? `${text?.substring(0, 20)}...` : text}
                   </a>
                 </Tooltip>
               );
