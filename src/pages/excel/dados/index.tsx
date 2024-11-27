@@ -486,9 +486,20 @@ const DadosExcel = React.memo(function DadosExcel({
                     <div
                       className="text-red-400 text-lg cursor-pointer"
                       onClick={async () => {
-                        await excelService.remove(record.id);
-                        fetchData();
-                      }}
+                        await excelService.remove(record.id)
+                        .then(async () => {
+                          notification.success({
+                            message: "Registro deletado com sucesso!",
+                          });
+                          await fetchData();
+                        })
+                        .catch((error) => {
+                          notification.error({
+                            message: "Erro ao deletar registro!",
+                            description: error,
+                          });
+                        });
+                        }}
                     >
                       <DeleteOutlined size={30} />
                     </div>
