@@ -12,11 +12,12 @@ import {
   notification,
   Upload,
   message,
+  Popconfirm,
 } from "antd";
 import { NumericFormat } from "react-number-format";
 import { excelService } from "@/services/excel.service";
 import moment from "moment";
-import { DeleteOutlined, EditOutlined, SwapOutlined, SyncOutlined, UploadOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, QuestionCircleOutlined, SwapOutlined, SyncOutlined, UploadOutlined } from "@ant-design/icons";
 import { propertiesService } from "@/services/properties.service";
 import { parseCookies } from "nookies";
 import { tecimobService } from "@/services/tecimob.service";
@@ -483,26 +484,37 @@ const DadosExcel = React.memo(function DadosExcel({
                     </div>
                   </Tooltip>
                   <Tooltip title='Deletar Registro'>
+                  <Popconfirm
+                    title="Deletar Registro"
+                    description="Você tem certeza?"
+                    icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                    onConfirm={async () => {
+                      await excelService.remove(record.id)
+                      .then(async () => {
+                        notification.success({
+                          message: "Registro deletado com sucesso!",
+                        });
+                        await fetchData();
+                      })
+                      .catch((error) => {
+                        notification.error({
+                          message: "Erro ao deletar registro!",
+                          description: error,
+                        });
+                      });
+                      }}
+                      okButtonProps={{
+                        danger: true,
+                        title: 'Deletar',
+                      }}
+                      okText="Deletar"
+                  >
                     <div
                       className="text-red-400 text-lg cursor-pointer"
-                      onClick={async () => {
-                        await excelService.remove(record.id)
-                        .then(async () => {
-                          notification.success({
-                            message: "Registro deletado com sucesso!",
-                          });
-                          await fetchData();
-                        })
-                        .catch((error) => {
-                          notification.error({
-                            message: "Erro ao deletar registro!",
-                            description: error,
-                          });
-                        });
-                        }}
                     >
                       <DeleteOutlined size={30} />
                     </div>
+                    </Popconfirm>
                   </Tooltip>
                 </div>
               );
