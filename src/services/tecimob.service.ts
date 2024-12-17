@@ -65,7 +65,7 @@ const getDescricaoImovel = async (id: string, token: string) => {
 
 const alterarDescricaoImovel = async (id: string, token: string, data: any) => {
   return await axios.patch(`https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/description`, {
-    data,
+    ...data,
   }
   ,{
     headers: {

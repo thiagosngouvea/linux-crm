@@ -40,6 +40,7 @@ const DadosExcel = React.memo(function DadosExcel({
 }: {
   token: string;
 }) {
+
   const [data, setData] = useState<DadosExcelProps[]>([]);
 
   const [reference, setReference] = useState<string>("");
@@ -190,7 +191,6 @@ const DadosExcel = React.memo(function DadosExcel({
     [reference, token]
   );
 
-  console.log("***syncData", syncData);
 
   useEffect(() => {
     let tokenTecimob;
@@ -206,6 +206,7 @@ const DadosExcel = React.memo(function DadosExcel({
     site_link_price,
     comparison,
   ]);
+  
 
   return (
     <>
@@ -589,8 +590,41 @@ const DadosExcel = React.memo(function DadosExcel({
 
                       const id = syncData?.id;
                       const price = editData?.capture_link_price?.replace('R$', '');
-                    
 
+                      
+                      await handleOperation(
+                        () =>
+                          tecimobService.getPublicacaoImovel(id, token).then((response) => {
+                            const data = {
+                              ...response.data.data,
+                              meta_title: response.data.data.meta_title.replace(
+                                syncData?.calculated_price.replace('R$', '').replace(',00', ''),
+                                price
+                              ),
+                            };
+                            return tecimobService.alterarPublicacaoImovel(id, token, {
+                              ...data
+                            });
+                          }),
+                        "Publicação atualizada com sucesso!",
+                        "Erro ao atualizar publicação"
+                      );
+
+                      await handleOperation(
+                        () =>
+                          tecimobService.getDescricaoImovel(id, token).then((response) =>
+                            tecimobService.alterarDescricaoImovel(id, token, {
+                              ...response.data.data,
+                              description: response.data.data.description.replace(
+                                syncData?.calculated_price.replace('R$', '').replace(',00', ''),
+                                price
+                              ),
+                            })
+                          ),
+                        "Descrição atualizada com sucesso!",
+                        "Erro ao atualizar descrição"
+                      );
+                    
                       await handleOperation(
                         () =>
                           tecimobService.getPrecoImovel(id, token).then((response) =>
@@ -603,36 +637,6 @@ const DadosExcel = React.memo(function DadosExcel({
                         "Erro ao atualizar preço"
                       );
 
-                      await handleOperation(
-                        () =>
-                          tecimobService.getDescricaoImovel(id, token).then((response) =>
-                            tecimobService.alterarDescricaoImovel(id, token, {
-                              ...response.data.data,
-                              description: response.data.data.description.replace(
-                                syncData?.calculated_price.replace('R$', ''),
-                                price
-                              ),
-                            })
-                          ),
-                        "Descrição atualizada com sucesso!",
-                        "Erro ao atualizar descrição"
-                      );
-
-                      await handleOperation(
-                        () =>
-                          tecimobService.getPublicacaoImovel(id, token).then((response) => {
-                            const data = {
-                              ...response.data.data,
-                              meta_title: response.data.data.meta_title.replace(
-                                syncData?.calculated_price.replace('R$', ''),
-                                price
-                              ),
-                            };
-                            return tecimobService.alterarPublicacaoImovel(id, token, data);
-                          }),
-                        "Publicação atualizada com sucesso!",
-                        "Erro ao atualizar publicação"
-                      );
 
                       if (errors.length) {
                         notification.error({
