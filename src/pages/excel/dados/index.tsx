@@ -17,11 +17,23 @@ import {
 import { NumericFormat } from "react-number-format";
 import { excelService } from "@/services/excel.service";
 import moment from "moment";
-import { DeleteOutlined, EditOutlined, QuestionCircleOutlined, SwapOutlined, SyncOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  QuestionCircleOutlined,
+  SwapOutlined,
+  SyncOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { propertiesService } from "@/services/properties.service";
 import { parseCookies } from "nookies";
 import { tecimobService } from "@/services/tecimob.service";
-import type { UploadProps } from 'antd';
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+
+import type { UploadProps } from "antd";
+
+
 
 interface DadosExcelProps {
   id?: string;
@@ -40,7 +52,6 @@ const DadosExcel = React.memo(function DadosExcel({
 }: {
   token: string;
 }) {
-
   const [data, setData] = useState<DadosExcelProps[]>([]);
 
   const [reference, setReference] = useState<string>("");
@@ -59,7 +70,8 @@ const DadosExcel = React.memo(function DadosExcel({
     useState<string>("");
   const [capture_link_priceAdd, setCaptureLinkPriceAdd] = useState<string>("");
   const [site_linkAdd, setSiteLinkAdd] = useState<string>("");
-  const [site_link_situationAdd, setSiteLinkSituationAdd] = useState<string>("");
+  const [site_link_situationAdd, setSiteLinkSituationAdd] =
+    useState<string>("");
   const [site_link_priceAdd, setSiteLinkPriceAdd] = useState<string>("");
   const [comparisonAdd, setComparisonAdd] = useState<string>("");
 
@@ -76,27 +88,26 @@ const DadosExcel = React.memo(function DadosExcel({
   const [visibleAdd, setVisibleAdd] = useState<boolean>(false);
 
   const props: UploadProps = {
-    name: 'file',
-    accept: '.xlsx',
+    name: "file",
+    accept: ".xlsx",
     headers: {
-      authorization: 'authorization-text',
+      authorization: "authorization-text",
     },
     beforeUpload: async (file) => {
       const formData = new FormData();
-      formData.append('file', file);
-      await excelService.uploadExcel(formData)
-      .then(async () => {
+      formData.append("file", file);
+      await excelService.uploadExcel(formData).then(async () => {
         await fetchData();
-      })
+      });
       return true;
     },
     onChange(info) {
-      if (info.file.status !== 'uploading') {
+      if (info.file.status !== "uploading") {
         console.log(info.file, info.fileList);
       }
-      if (info.file.status === 'done') {
+      if (info.file.status === "done") {
         message.success(`${info.file.name} upload concluido com sucesso.`);
-      } else if (info.file.status === 'error') {
+      } else if (info.file.status === "error") {
         message.error(`${info.file.name} upload falhou.`);
       }
     },
@@ -191,6 +202,78 @@ const DadosExcel = React.memo(function DadosExcel({
     [reference, token]
   );
 
+  function exportToExcel() {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Imóveis");
+  
+    // Adiciona cabeçalhos
+    worksheet.columns = [
+      { header: "Referência", key: "reference", width: 20 },
+      { header: "Link Captação", key: "capture_link", width: 30 },
+      { header: "Link Captação Situação", key: "capture_link_situation", width: 20 },
+      { header: "Link Captação Preço", key: "capture_link_price", width: 20 },
+      { header: "Link Site", key: "site_link", width: 30 },
+      { header: "Link Site Situação", key: "site_link_situation", width: 20 },
+      { header: "Link Site Preço", key: "site_link_price", width: 20 },
+      { header: "Comparação Disponibilidade", key: "comparison", width: 30 },
+    ];
+  
+    data.forEach((item) => worksheet.addRow(item));
+  
+    // Estilos para células específicas
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 1) {
+        const captureSituationCell = row.getCell("capture_link_situation");
+        const siteSituationCell = row.getCell("site_link_situation");
+        const capturePriceCell = row.getCell("capture_link_price");
+        const sitePriceCell = row.getCell("site_link_price");
+  
+        // Se "Indisponível", aplique cor vermelha
+        if (captureSituationCell.value === "Indisponível") {
+          captureSituationCell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFFF0000" },
+          };
+          captureSituationCell.font = { color: { argb: "FFFFFFFF" } };
+        }
+  
+        if (siteSituationCell.value === "Indisponível") {
+          siteSituationCell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFFF0000" },
+          };
+          siteSituationCell.font = { color: { argb: "FFFFFFFF" } };
+        }
+  
+        // Comparação de preços
+        if (capturePriceCell.value && sitePriceCell.value) {
+          if (capturePriceCell.value === sitePriceCell.value) {
+            capturePriceCell.fill = sitePriceCell.fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: "FF00FF00" },
+            };
+            capturePriceCell.font = sitePriceCell.font = { color: { argb: "FFFFFFFF" } };
+          } else {
+            capturePriceCell.fill = sitePriceCell.fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: "FFFF0000" },
+            };
+            capturePriceCell.font = sitePriceCell.font = { color: { argb: "FFFFFFFF" } };
+          }
+        }
+      }
+    });
+  
+    // Salva o arquivo
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], { type: "application/octet-stream" });
+      saveAs(blob, `Resultados_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    });
+  }
 
   useEffect(() => {
     let tokenTecimob;
@@ -206,7 +289,6 @@ const DadosExcel = React.memo(function DadosExcel({
     site_link_price,
     comparison,
   ]);
-  
 
   return (
     <>
@@ -302,6 +384,28 @@ const DadosExcel = React.memo(function DadosExcel({
         </Row>
       </Form>
       <div className="flex justify-end gap-4 mb-4">
+        <Popconfirm
+          title="Remover todos os dados"
+          description="Você tem certeza?"
+          icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+          onConfirm={async () => {
+            data.map(async (item) => {
+              await excelService.remove(item.id);
+            });
+            await fetchData();
+          }}
+          okButtonProps={{
+            danger: true,
+            title: "Deletar",
+          }}
+          okText="Deletar"
+        >
+        <button
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          >
+          Remover todos os registros
+        </button>
+        </Popconfirm>;
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           onClick={() => {
@@ -310,8 +414,18 @@ const DadosExcel = React.memo(function DadosExcel({
         >
           Adicionar Captação
         </button>
+        <button
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => {
+            exportToExcel();
+          }}
+        >
+          Exportar Excel
+        </button>
         <Upload {...props}>
-          <Button icon={<UploadOutlined />}>Selecione o arquivo para upload</Button>
+          <Button icon={<UploadOutlined />}>
+            Selecione o arquivo para upload
+          </Button>
         </Upload>
       </div>
       <Table
@@ -484,37 +598,36 @@ const DadosExcel = React.memo(function DadosExcel({
                       <SyncOutlined size={30} />
                     </div>
                   </Tooltip>
-                  <Tooltip title='Deletar Registro'>
-                  <Popconfirm
-                    title="Deletar Registro"
-                    description="Você tem certeza?"
-                    icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-                    onConfirm={async () => {
-                      await excelService.remove(record.id)
-                      .then(async () => {
-                        notification.success({
-                          message: "Registro deletado com sucesso!",
-                        });
-                        await fetchData();
-                      })
-                      .catch((error) => {
-                        notification.error({
-                          message: "Erro ao deletar registro!",
-                          description: error,
-                        });
-                      });
+                  <Tooltip title="Deletar Registro">
+                    <Popconfirm
+                      title="Deletar Registro"
+                      description="Você tem certeza?"
+                      icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+                      onConfirm={async () => {
+                        await excelService
+                          .remove(record.id)
+                          .then(async () => {
+                            notification.success({
+                              message: "Registro deletado com sucesso!",
+                            });
+                            await fetchData();
+                          })
+                          .catch((error) => {
+                            notification.error({
+                              message: "Erro ao deletar registro!",
+                              description: error,
+                            });
+                          });
                       }}
                       okButtonProps={{
                         danger: true,
-                        title: 'Deletar',
+                        title: "Deletar",
                       }}
                       okText="Deletar"
-                  >
-                    <div
-                      className="text-red-400 text-lg cursor-pointer"
                     >
-                      <DeleteOutlined size={30} />
-                    </div>
+                      <div className="text-red-400 text-lg cursor-pointer">
+                        <DeleteOutlined size={30} />
+                      </div>
                     </Popconfirm>
                   </Tooltip>
                 </div>
@@ -559,16 +672,24 @@ const DadosExcel = React.memo(function DadosExcel({
           <div className="flex">
             {!success && (
               <>
-                  <div className="w-1/2">
-                    <h1 className="font-bold text-lg">Valor Atual</h1>
-                    <p>{syncData?.calculated_price ? syncData?.calculated_price : 'Sem informações'}</p>
-                  </div>
-                  <div className="w-1/2">
-                    <h1 className="font-bold text-lg">Novo Valor</h1>
-                    <p>{editData?.capture_link_price ? editData?.capture_link_price : 'Sem informações'}</p>
-                  </div>
-                  <Tooltip title="Sincronizar com Tecimob">
-                  <SwapOutlined 
+                <div className="w-1/2">
+                  <h1 className="font-bold text-lg">Valor Atual</h1>
+                  <p>
+                    {syncData?.calculated_price
+                      ? syncData?.calculated_price
+                      : "Sem informações"}
+                  </p>
+                </div>
+                <div className="w-1/2">
+                  <h1 className="font-bold text-lg">Novo Valor</h1>
+                  <p>
+                    {editData?.capture_link_price
+                      ? editData?.capture_link_price
+                      : "Sem informações"}
+                  </p>
+                </div>
+                <Tooltip title="Sincronizar com Tecimob">
+                  <SwapOutlined
                     size={60}
                     className="cursor-pointer"
                     onClick={async () => {
@@ -584,70 +705,89 @@ const DadosExcel = React.memo(function DadosExcel({
                           await operation();
                           successes.push(successMessage);
                         } catch (error: any) {
-                          errors.push(`${errorMessage}: ${error.message || error}`);
+                          errors.push(
+                            `${errorMessage}: ${error.message || error}`
+                          );
                         }
                       };
 
                       const id = syncData?.id;
-                      const price = editData?.capture_link_price?.replace('R$', '');
+                      const price = editData?.capture_link_price?.replace(
+                        "R$",
+                        ""
+                      );
 
-                      
                       await handleOperation(
                         () =>
-                          tecimobService.getPublicacaoImovel(id, token).then((response) => {
-                            const data = {
-                              ...response.data.data,
-                              meta_title: response.data.data.meta_title.replace(
-                                syncData?.calculated_price.replace('R$', '').replace(',00', ''),
-                                price
-                              ),
-                            };
-                            return tecimobService.alterarPublicacaoImovel(id, token, {
-                              ...data
-                            });
-                          }),
+                          tecimobService
+                            .getPublicacaoImovel(id, token)
+                            .then((response) => {
+                              const data = {
+                                ...response.data.data,
+                                meta_title:
+                                  response.data.data.meta_title.replace(
+                                    syncData?.calculated_price
+                                      .replace("R$", "")
+                                      .replace(",00", ""),
+                                    price
+                                  ),
+                              };
+                              return tecimobService.alterarPublicacaoImovel(
+                                id,
+                                token,
+                                {
+                                  ...data,
+                                }
+                              );
+                            }),
                         "Publicação atualizada com sucesso!",
                         "Erro ao atualizar publicação"
                       );
 
                       await handleOperation(
                         () =>
-                          tecimobService.getDescricaoImovel(id, token).then((response) =>
-                            tecimobService.alterarDescricaoImovel(id, token, {
-                              ...response.data.data,
-                              description: response.data.data.description.replace(
-                                syncData?.calculated_price.replace('R$', '').replace(',00', ''),
-                                price
-                              ),
-                            })
-                          ),
+                          tecimobService
+                            .getDescricaoImovel(id, token)
+                            .then((response) =>
+                              tecimobService.alterarDescricaoImovel(id, token, {
+                                ...response.data.data,
+                                description:
+                                  response.data.data.description.replace(
+                                    syncData?.calculated_price
+                                      .replace("R$", "")
+                                      .replace(",00", ""),
+                                    price
+                                  ),
+                              })
+                            ),
                         "Descrição atualizada com sucesso!",
                         "Erro ao atualizar descrição"
                       );
-                    
+
                       await handleOperation(
                         () =>
-                          tecimobService.getPrecoImovel(id, token).then((response) =>
-                            tecimobService.alterarPrecoImovel(id, token, {
-                              ...response.data.data,
-                              price,
-                            })
-                          ),
+                          tecimobService
+                            .getPrecoImovel(id, token)
+                            .then((response) =>
+                              tecimobService.alterarPrecoImovel(id, token, {
+                                ...response.data.data,
+                                price,
+                              })
+                            ),
                         "Preço atualizado com sucesso!",
                         "Erro ao atualizar preço"
                       );
 
-
                       if (errors.length) {
                         notification.error({
                           message: "Ocorreram alguns erros",
-                          description: errors.join('\n'),
+                          description: errors.join("\n"),
                         });
                       } else {
                         setSuccess(true);
                         notification.success({
                           message: "Operações concluídas com sucesso!",
-                          description: 'teste',
+                          description: "teste",
                         });
 
                         await fetchData();
@@ -657,74 +797,76 @@ const DadosExcel = React.memo(function DadosExcel({
                 </Tooltip>
               </>
             )}
-              {success && (
-                <div className="w-full">
-                  <h1 className="font-bold text-lg">Sucesso</h1>
-                  <p>Operações de alteração de preço concluídas com sucesso!</p>
-                </div>
-              )}
+            {success && (
+              <div className="w-full">
+                <h1 className="font-bold text-lg">Sucesso</h1>
+                <p>Operações de alteração de preço concluídas com sucesso!</p>
+              </div>
+            )}
           </div>
           <div className="flex">
             {!successStatus && (
               <>
                 <div className="w-1/2">
                   <h1 className="font-bold text-lg">Status Atual</h1>
-                  <p>{syncData?.status ?? 'Sem informações'}</p>
+                  <p>{syncData?.status ?? "Sem informações"}</p>
                 </div>
-              {editData?.capture_link_situation && (
-                <div className="w-1/2">
-                  <h1 className="font-bold text-lg">Novo Status</h1>
-                  <p>{editData?.capture_link_situation ?? 'Sem informações'}</p>
-                </div>
-              )}
-              <Tooltip title="Sincronizar com Tecimob">
-                <SwapOutlined 
-                  size={60}
-                  className="cursor-pointer"
-                  onClick={async () => {
-                    if(editData?.capture_link_situation === 'Indisponível'){ 
-                      await tecimobService
-                      .inativarImovel(syncData?.id, token)
-                      .then(async () => {
-                        notification.success({
-                          message: "Imóvel inativado com sucesso!",
-                        });
-                        setSuccessStatus(true);
-                      })
-                      .catch((error) => {
-                        notification.error({
-                          message: "Erro ao inativar imóvel!",
-                          description: error,
-                        });
-                      });
-                    }
-                    if(editData?.capture_link_situation === 'Disponível'){
-                      await tecimobService
-                      .ativarImovel(syncData?.id, token)
-                      .then(async () => {
-                        notification.success({
-                          message: "Imóvel ativado com sucesso!",
-                        });
-                        setSuccessStatus(true);
-                      })
-                      .catch((error) => {
-                        notification.error({
-                          message: "Erro ao ativar imóvel!",
-                          description: error,
-                        });
-                      });
+                {editData?.capture_link_situation && (
+                  <div className="w-1/2">
+                    <h1 className="font-bold text-lg">Novo Status</h1>
+                    <p>
+                      {editData?.capture_link_situation ?? "Sem informações"}
+                    </p>
+                  </div>
+                )}
+                <Tooltip title="Sincronizar com Tecimob">
+                  <SwapOutlined
+                    size={60}
+                    className="cursor-pointer"
+                    onClick={async () => {
+                      if (editData?.capture_link_situation === "Indisponível") {
+                        await tecimobService
+                          .inativarImovel(syncData?.id, token)
+                          .then(async () => {
+                            notification.success({
+                              message: "Imóvel inativado com sucesso!",
+                            });
+                            setSuccessStatus(true);
+                          })
+                          .catch((error) => {
+                            notification.error({
+                              message: "Erro ao inativar imóvel!",
+                              description: error,
+                            });
+                          });
+                      }
+                      if (editData?.capture_link_situation === "Disponível") {
+                        await tecimobService
+                          .ativarImovel(syncData?.id, token)
+                          .then(async () => {
+                            notification.success({
+                              message: "Imóvel ativado com sucesso!",
+                            });
+                            setSuccessStatus(true);
+                          })
+                          .catch((error) => {
+                            notification.error({
+                              message: "Erro ao ativar imóvel!",
+                              description: error,
+                            });
+                          });
+                      }
                     }}
-                  }
-                />
-              </Tooltip>
+                  />
+                </Tooltip>
               </>
             )}
             {successStatus && (
-                <div className="w-full">
-                  <h1 className="font-bold text-lg">Sucesso</h1>
-                  <p>Operação de alteração de status concluida com sucesso!</p>
-                </div>
-              )}
+              <div className="w-full">
+                <h1 className="font-bold text-lg">Sucesso</h1>
+                <p>Operação de alteração de status concluida com sucesso!</p>
+              </div>
+            )}
           </div>
         </div>
       </Modal>
@@ -753,19 +895,20 @@ const DadosExcel = React.memo(function DadosExcel({
             key="submit"
             type="default"
             onClick={async () => {
-              await excelService.update(editData?.id, editData)
-              .then(async () => {
-                notification.success({
-                  message: "Registro atualizado com sucesso!",
+              await excelService
+                .update(editData?.id, editData)
+                .then(async () => {
+                  notification.success({
+                    message: "Registro atualizado com sucesso!",
+                  });
+                  await fetchData();
+                })
+                .catch((error) => {
+                  notification.error({
+                    message: "Erro ao atualizar registro!",
+                    description: error,
+                  });
                 });
-                await fetchData();
-              })
-              .catch((error) => {
-                notification.error({
-                  message: "Erro ao atualizar registro!",
-                  description: error,
-                });
-              });
               setVisible(false);
               setEditData(null);
             }}
@@ -954,29 +1097,30 @@ const DadosExcel = React.memo(function DadosExcel({
             key="submit"
             type="default"
             onClick={async () => {
-              await excelService.create({
-                reference: referenceAdd,
-                capture_link: capture_linkAdd,
-                capture_link_situation: capture_link_situationAdd,
-                capture_link_price: capture_link_priceAdd,
-                site_link: site_linkAdd,
-                site_link_situation: site_link_situationAdd,
-                site_link_price: site_link_priceAdd,
-                comparison: comparisonAdd,
-              })
-              .then(async () => {
-                notification.success({
-                  message: "Registro criado com sucesso!",
+              await excelService
+                .create({
+                  reference: referenceAdd,
+                  capture_link: capture_linkAdd,
+                  capture_link_situation: capture_link_situationAdd,
+                  capture_link_price: capture_link_priceAdd,
+                  site_link: site_linkAdd,
+                  site_link_situation: site_link_situationAdd,
+                  site_link_price: site_link_priceAdd,
+                  comparison: comparisonAdd,
+                })
+                .then(async () => {
+                  notification.success({
+                    message: "Registro criado com sucesso!",
+                  });
+                  setVisibleAdd(false);
+                  await fetchData();
+                })
+                .catch((error) => {
+                  notification.error({
+                    message: "Erro ao criar registro!",
+                    description: error,
+                  });
                 });
-                setVisibleAdd(false);
-                await fetchData();
-              })
-              .catch((error) => {
-                notification.error({
-                  message: "Erro ao criar registro!",
-                  description: error,
-                });
-              });
               setVisible(false);
               setEditData(null);
             }}
@@ -1012,9 +1156,7 @@ const DadosExcel = React.memo(function DadosExcel({
               <Form.Item label="Referência" name="reference">
                 <Input
                   type="text"
-                  onChange={(e) =>
-                    setReferenceAdd(e.target.value)
-                  }
+                  onChange={(e) => setReferenceAdd(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -1022,9 +1164,7 @@ const DadosExcel = React.memo(function DadosExcel({
               <Form.Item label="Link de Captação" name="capture_link">
                 <Input
                   type="text"
-                  onChange={(e) =>
-                    setCaptureLinkAdd(e.target.value)
-                  }
+                  onChange={(e) => setCaptureLinkAdd(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -1034,9 +1174,7 @@ const DadosExcel = React.memo(function DadosExcel({
                 name="capture_link_situation"
               >
                 <Select
-                  onChange={(value) =>
-                    setCaptureLinkSituationAdd(value)
-                  }
+                  onChange={(value) => setCaptureLinkSituationAdd(value)}
                   allowClear
                 >
                   <Select.Option value="Disponível">Disponível</Select.Option>
@@ -1053,9 +1191,7 @@ const DadosExcel = React.memo(function DadosExcel({
               >
                 <Input
                   type="text"
-                  onChange={(e) =>
-                    setCaptureLinkPriceAdd(e.target.value)
-                  }
+                  onChange={(e) => setCaptureLinkPriceAdd(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -1067,9 +1203,7 @@ const DadosExcel = React.memo(function DadosExcel({
                 name="site_link_situation"
               >
                 <Select
-                  onChange={(value) =>
-                    setSiteLinkSituationAdd(value)
-                  }
+                  onChange={(value) => setSiteLinkSituationAdd(value)}
                   allowClear
                 >
                   <Select.Option value="Disponível">Disponível</Select.Option>
@@ -1083,9 +1217,7 @@ const DadosExcel = React.memo(function DadosExcel({
               <Form.Item label="Link do Site" name="site_linkAdd">
                 <Input
                   type="text"
-                  onChange={(e) =>
-                    setSiteLinkAdd(e.target.value)
-                  }
+                  onChange={(e) => setSiteLinkAdd(e.target.value)}
                 />
               </Form.Item>
             </Col>
@@ -1095,18 +1227,14 @@ const DadosExcel = React.memo(function DadosExcel({
               <Form.Item label="Preço do Link do Site" name="site_link_price">
                 <Input
                   type="text"
-                  onChange={(e) =>
-                    setSiteLinkPriceAdd(e.target.value)
-                  }
+                  onChange={(e) => setSiteLinkPriceAdd(e.target.value)}
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="Comparação" name="comparison">
                 <Select
-                  onChange={(value) =>
-                    setComparisonAdd(value)
-                  }
+                  onChange={(value) => setComparisonAdd(value)}
                   allowClear
                 >
                   <Select.Option value="Diferença de disponibilidade">

@@ -19,6 +19,8 @@
     "cep-promise": "^4.4.0",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.13",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "js-cookie": "^3.0.5",
     "moment": "^2.29.4",
     "next": "13.4.13",
@@ -32,6 +34,11 @@
     "react-quill": "^2.0.0",
     "tailwindcss": "3.3.3",
     "typescript": "5.1.6",
+    "xlsx": "^0.18.5",
+    "xlsx-style": "^0.8.13",
     "zustand": "^4.4.1"
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2.0.7"
   }
 }
