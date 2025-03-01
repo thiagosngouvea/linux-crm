@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { propertiesService } from "@/services/properties.service";
+import { propertiesService } from "@/services/linux-properties.service";
 import {
   Button,
   Col,
@@ -18,7 +18,7 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
-import PropertyCard from "@/components/PropertyCard";
+import { FormRegister } from "@/components/FormRegister";
 
 export default function Imoveis() {
   const [properties, setProperties] = useState<any[]>([]);
@@ -45,6 +45,13 @@ export default function Imoveis() {
   const [tipo, setTipo] = useState<string>("");
   const [condominios, setCondominios] = useState<string>("");
   const [origem, setOrigem] = useState<string>("");
+
+  const [visibleRegisterModal, setVisibleRegisterModal] = useState(false);
+
+  const [dataToEdit, setDataToEdit] = useState<any>({});
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [informations, setInformations] = useState<any>({});
 
   const router = useRouter();
 
@@ -157,9 +164,7 @@ export default function Imoveis() {
 
       //remover properties sem imagens
 
-      const data = res.data.properties.result.filter(
-        (property: any) => property.images.length > 0
-      );
+      const data = res.data.properties.result
 
       setProperties(data);
       setTotal(res.data.properties.total);
@@ -203,78 +208,21 @@ export default function Imoveis() {
     fetchData,
   ]);
 
-  const getNeighborhoods = useCallback(async () => {
-    await propertiesService
-      .getNeighborhoodsByCity(cidade)
-      .then((response: any) => {
-        // const data = response.data.neighborhoods.filter((neighborhood: string) =>  neighborhood !== "Não Informado")
-        setNeighborhoods(response.data.neighborhoods.neighborhoods);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [cidade]);
+  const fetchInformations = useCallback(async () => {
+    try {
+      const res = await propertiesService.getFieldsInformations();
+      setInformations(res.data.fields);
+    } catch (error: any) {
+      console.log("error", error);
+    }
+  } , []);
 
   useEffect(() => {
-    getNeighborhoods();
-  }, [getNeighborhoods, cidade]);
+    fetchInformations();
+  }, [fetchInformations]);
 
-  const getCities = useCallback(async () => {
-    await propertiesService
-      .getCities()
-      .then((response: any) => {
-        setCities(response.data.cities_states.result);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  console.log('informations', informations)
 
-  useEffect(() => {
-    getCities();
-  }, [getCities]);
-
-  const getCondominiums = useCallback(async () => {
-    await propertiesService
-      .getCondominiums()
-      .then((response: any) => {
-        const data = response.data.condominiums.filter(
-          (condominium: string) => condominium !== "Não Informado"
-        );
-        setCondominiums(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
-  useEffect(() => {
-    getCondominiums();
-  }, [getCondominiums]);
-
-  const getTypes = useCallback(async () => {
-    await propertiesService
-      .getTypes()
-      .then((response: any) => {
-        console.log(response.data.types);
-        const data = response.data.types.map((type: string) => {
-          if (type?.includes("Pavilhão/Galpão")) {
-            return type?.replace("Pavilhão/Galpão", "Galpão");
-          }
-          return type;
-        });
-
-        const removeNull = data.filter((type: string) => type !== null);
-        setTypes(removeNull);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
-  useEffect(() => {
-    getTypes();
-  }, [getTypes]);
 
   const [filters, setFilters] = useState([{ field: "", value: "" }]);
 
@@ -318,12 +266,94 @@ export default function Imoveis() {
             <button
               className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
               onClick={() => {
-                router.push("/imoveis/cadastro");
+                // router.push("/imoveis/cadastro");
+                setVisibleRegisterModal(true);
+                setDataToEdit({
+                  reference: "",
+                  type: "",
+                  transaction: "",
+                  status: "",
+                  condominium_name: "",
+                  subtype: "",
+                  profile: "",
+                  situation: "",
+                  exclusive: "",
+                  commission: "",
+                  state: "",
+                  city: "",
+                  district: "",
+                  street: "",
+                  number: "",
+                  complement: "",
+                  area: "",
+                  measurement_unit: "",
+                  block_section_tower: "",
+                  apartment_store_lot_room: "",
+                  floor: "",
+                  bedrooms: "",
+                  suites: "",
+                  bathrooms: "",
+                  balconies: "",
+                  garages: "",
+                  covered_garages: "",
+                  blocks_sections_towers_in_condominium: "",
+                  units_in_condominium: "",
+                  units_per_floor_condominium: "",
+                  sale_price: "",
+                  sale_conditions: "",
+                  accepts_assets: "",
+                  condominium_fee: "",
+                  included_in_condominium: "",
+                  other_fees: "",
+                  fees_description: "",
+                  deeded: "",
+                  has_financing: "",
+                  financing_accepted: "",
+                  occupation: "",
+                  corner_property: "",
+                  solar_position: "",
+                  proximity_to_sea: "",
+                  role: "",
+                  responsible1: "",
+                  contact_responsible1: "",
+                  key_responsible: "",
+                  contact_key_responsible: "",
+                  responsible2: "",
+                  contact_responsible2: "",
+                  contact_link_responsible2: "",
+                  construction_year: "",
+                  delivery_forecast: "",
+                  builder: "",
+                  capture_link: "",
+                  site_link: "",
+                  olx_link: "",
+                  update_message: "",
+                  subtitle: "",
+                  property_description: "",
+                  condominium_description: "",
+                  notes: "",
+                });
+                setIsEditing(false)
               }}
             >
               Cadastrar
             </button>
           </div>
+          <Modal
+            title="Cadastrar Imóvel"
+            visible={visibleRegisterModal}
+            width={"90%"}
+            onCancel={() => setVisibleRegisterModal(false)}
+            centered
+            footer={null}
+          >
+            <FormRegister 
+              data={dataToEdit}
+              informations={informations}
+              isEditing={isEditing}
+              setVisibleRegisterModal={setVisibleRegisterModal}
+            />
+          </Modal>
           <div className="mb-4 w-full">
             <Form
               layout="vertical"
@@ -689,23 +719,6 @@ export default function Imoveis() {
             </Form>
           </div>
         </div>
-        <div className="grid justify-items-center grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 xl:-mx-8">
-          {properties.map((property) => (
-            <PropertyCard
-              id={property?.id}
-              key={property?.id}
-              meta_title={property?.meta_title}
-              images={property?.images}
-              price={property?.price}
-              transaction={property?.transaction}
-              bedroom={property?.bedroom}
-              garage={property?.garage}
-              suites={property?.suites}
-              url={property?.url}
-              reference={property?.reference}
-            />
-          ))}
-        </div>
         <Modal
           title="Filtros Personalizados"
           visible={visible}
@@ -785,17 +798,13 @@ export default function Imoveis() {
           </div>
         </Modal>
       </div>
-    </div>
-  );
-}
-
-{
-  /* <Table
+      <Table
             columns={[
+    
               {
-                title: "Status",
-                dataIndex: "status",
-                key: "status",
+                title: "Referência",
+                dataIndex: "reference",
+                key: "reference",
                 width: 100,
               },
               {
@@ -805,72 +814,96 @@ export default function Imoveis() {
                 width: 100,
               },
               {
-                title: "Referência",
-                dataIndex: "reference",
-                key: "reference",
+                title: "Status",
+                dataIndex: "status",
+                key: "status",
                 width: 100,
               },
               {
-                title: "Titulo",
-                dataIndex: "meta_title",
-                key: "meta_title",
-                width: 400,
+                title: "Tipo",
+                dataIndex: "type",
+                key: "type",
+                width: 130,
               },
               {
-                title: "Endereço",
-                dataIndex: "city",
-                key: "city",
-                render: (address: any, record: any) => {       
-                  return (
-                    <div>
-                      <p>{record?.neighborhood} - {address}</p>
-                    </div>
-                  );
-                },
-              },
-              {
-                title: "Preço",
-                dataIndex: "price",
-                key: "price",
-              },
-              {
-                title: "Imagens",
-                dataIndex: "images",
-                key: "images",
-                render: (images: any[], record: any) => {
-                  return (
-                    <button
-                      className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
-                      onClick={() => {
-                        setVisible(true);
-                        setImages(images ?? record?.images_old_links);
-                      }}
-                    >
-                      Ver Imagens
-                    </button>
-                  );
-                },
-              },
-              {
-                title: "Fonte dos Dados",
-                dataIndex: "url",
-                key: "url",
+                title: "Subtipo",
+                dataIndex: "subtype",
+                key: "subtype",
                 width: 100,
-                render: (url) => {
-                  console.log("url", url)
-                  if(url !== null && url !== "") {
-                    return (
-                      <a href={url} target="_black">
-                        Clique aqui
-                      </a>
-                    );
-                  } else {
-                    return (
-                      <p>Não Informado</p>
-                    )
-                  }
-                },
               },
+              {
+                title: "Perfil",
+                dataIndex: "profile",
+                key: "profile",
+                width: 300,
+              },
+              {
+                title: "Situação",
+                dataIndex: "situation",
+                key: "situation",
+                width: 300,
+              },
+              {
+                title: "Nome do Condominio",
+                dataIndex: "condominium_name",
+                key: "condominium_name",
+                width: 300,
+              },
+              {
+                title: "Bloco / Quadra / Torre",
+                dataIndex: "block_section_tower",
+                key: "block_section_tower",
+                width: 300,
+              },
+              {
+                title: "Ap / Loja / Lote / Sala",
+                dataIndex: "apartment_store_lot_room",
+                key: "apartment_store_lot_room",
+                width: 300,
+              },
+              // {
+              //   title: "Titulo",
+              //   dataIndex: "meta_title",
+              //   key: "meta_title",
+              //   width: 400,
+              // },
+              // {
+              //   title: "Endereço",
+              //   dataIndex: "city",
+              //   key: "city",
+              //   render: (address: any, record: any) => {       
+              //     return (
+              //       <div>
+              //         <p>{record?.neighborhood} - {address}</p>
+              //       </div>
+              //     );
+              //   },
+              // },
+              // {
+              //   title: "Preço",
+              //   dataIndex: "price",
+              //   key: "price",
+              // },
+              // {
+              //   title: "Fonte dos Dados",
+              //   dataIndex: "url",
+              //   key: "url",
+              //   width: 100,
+              //   render: (url) => {
+              //     console.log("url", url)
+              //     if(url !== null && url !== "") {
+              //       return (
+              //         <a href={url} target="_black">
+              //           Clique aqui
+              //         </a>
+              //       );
+              //     } else {
+              //       return (
+              //         <p>Não Informado</p>
+              //       )
+              //     }
+              //   },
+              // },
               {
                 title: "Ações",
                 dataIndex: "actions",
@@ -885,15 +918,17 @@ export default function Imoveis() {
                       <EditOutlined
                         className="text-orange-500 hover:text-orange-700 text-xl"
                         onClick={() => {
-                          router.push(`/imoveis/editar/${record.id}`);
+                          setVisibleRegisterModal(true);
+                          setDataToEdit(record);
+                          setIsEditing(true);
                         }}
                       />
-                      <DeleteOutlined
+                      {/* <DeleteOutlined
                         className="text-orange-500 hover:text-orange-700 text-xl"
                         onClick={() => {
                           router.push(`/imoveis/excluir/${record.url}`);
                         }}
-                      />
+                      /> */}
                     </div>
                   );
                 },
@@ -911,33 +946,7 @@ export default function Imoveis() {
                 setLimit(pageSize || 10);
               },
             }}
-          /> */
-}
-{
-  /* <Modal
-            title="Fotos do Imovel"
-            visible={visible}
-            width={"80%"}
-            onCancel={() => setVisible(false)}
-            centered
-            footer={
-              <Button type="primary" onClick={() => setVisible(false)}>
-                Fechar
-              </Button>
-            }
-          >
-            {!!images && images.length > 0 && (
-            <Image.PreviewGroup>
-              {images.map((image, index) => (
-                <Image
-                  key={index}
-                  width={200}
-                  height={120}
-                  src={image.includes("http") ? image : "https://" + image}
-                  alt="foto-imovel"
-                />
-              ))}
-            </Image.PreviewGroup>
-            )}
-          </Modal> */
+          /> 
+    </div>
+  );
 }

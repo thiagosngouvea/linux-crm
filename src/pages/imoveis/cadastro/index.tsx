@@ -1984,20 +1984,6 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </Select>
               </Form.Item>
             </Col>
-
-            {/* <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Comissão" name="commission">
-                <Select
-                  placeholder="Selecione ou Escreva"
-                  onChange={(value) => handleSelectChange(value, "commission")}
-                  showSearch
-                  allowClear
-                  mode="multiple"
-                >
-                  <Select.Option value="Academia">Academia</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col> */}
             <Col xs={24} sm={24} md={12} xl={6}>
               <Form.Item label="Comissão" name="commission">
                 <Input
@@ -2068,16 +2054,6 @@ const ImovelCadastro = React.memo(function ImovelCadastro() {
                 </button>
               </Form.Item>
             </Col>
-
-            {/* <Col xs={24} sm={24} md={12} xl={6}>
-              <Form.Item label="Cor da faixa" name="stripe_color">
-                <Input
-                  type="color"
-                  onChange={handleInputChange}
-                  name="stripe_color"
-                />
-              </Form.Item>
-            </Col> */}
           </Row>
           <h2 className="font-bold text-lg text-orange-400">Endereço</h2>
           <Row gutter={16}>

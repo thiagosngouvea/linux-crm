@@ -1,5 +1,4 @@
 import '@/styles/globals.css'
-// import '@/styles/variables.less'
 import type { AppProps } from 'next/app'
 
 import { useEffect } from "react";
@@ -15,6 +14,7 @@ import { ConfigProvider } from "antd";
 import LayoutSidebar from '@/layout';
 import theme from '@/utils/themeConfig';
 import "react-quill/dist/quill.snow.css";
+
 
 export default function App({ Component, pageProps }: AppProps) {
 
