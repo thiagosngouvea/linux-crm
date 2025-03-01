@@ -16,6 +16,7 @@ import {
   DeleteOutlined,
   MinusCircleOutlined,
   PlusOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { FormRegister } from "@/components/FormRegister";
@@ -72,12 +73,14 @@ export default function Imoveis() {
         valorMaxFormatado = "999999999";
       }
 
+      console.log("valorMinFormatado", valorMinFormatado);
+      console.log("valorMaxFormatado", valorMaxFormatado);
       if (valorMinFormatado === "0" && valorMaxFormatado === "0") {
         filterBy = ""; // Remover o filtro por completo
         filterValue = "";
         filterType = "";
       } else {
-        filterBy += filterBy === "" ? "price" : ",price";
+        filterBy += filterBy === "" ? "sale_price" : ",sale_price";
         filterValue +=
           filterValue === ""
             ? `${valorMinFormatado}|${valorMaxFormatado}`
@@ -99,7 +102,7 @@ export default function Imoveis() {
     }
 
     if (!!titulo) {
-      filterBy += filterBy === "" ? "meta_title" : ",meta_title";
+      filterBy += filterBy === "" ? "subtitle" : ",subtitle";
       filterValue += filterValue === "" ? `${titulo}` : `,${titulo}`;
       filterType += filterType === "" ? "ilike" : ",ilike";
     }
@@ -111,7 +114,7 @@ export default function Imoveis() {
     }
 
     if (!!bairro) {
-      filterBy += filterBy === "" ? "neighborhood" : ",neighborhood";
+      filterBy += filterBy === "" ? "district" : ",district";
       filterValue += filterValue === "" ? `${bairro}` : `,${bairro}`;
       filterType += filterType === "" ? "ilike" : ",ilike";
     }
@@ -140,19 +143,6 @@ export default function Imoveis() {
       filterType += filterType === "" ? "ilike" : ",ilike";
     }
 
-    if (!!origem) {
-      filterBy += filterBy === "" ? "url" : ",url";
-      filterValue += filterValue === "" ? `${origem}` : `,${origem}`;
-      filterType += filterType === "" ? "ilike" : ",ilike";
-    }
-    
-    //adicionar filtro para buscar só oq tiver images
-
-    
-
-
-
-
     try {
       const res = await propertiesService.getAll(
         page,
@@ -164,7 +154,7 @@ export default function Imoveis() {
 
       //remover properties sem imagens
 
-      const data = res.data.properties.result
+      const data = res.data.properties.result;
 
       setProperties(data);
       setTotal(res.data.properties.total);
@@ -215,14 +205,13 @@ export default function Imoveis() {
     } catch (error: any) {
       console.log("error", error);
     }
-  } , []);
+  }, []);
 
   useEffect(() => {
     fetchInformations();
   }, [fetchInformations]);
 
-  console.log('informations', informations)
-
+  console.log("informations", informations);
 
   const [filters, setFilters] = useState([{ field: "", value: "" }]);
 
@@ -333,7 +322,7 @@ export default function Imoveis() {
                   condominium_description: "",
                   notes: "",
                 });
-                setIsEditing(false)
+                setIsEditing(false);
               }}
             >
               Cadastrar
@@ -347,7 +336,7 @@ export default function Imoveis() {
             centered
             footer={null}
           >
-            <FormRegister 
+            <FormRegister
               data={dataToEdit}
               informations={informations}
               isEditing={isEditing}
@@ -402,10 +391,6 @@ export default function Imoveis() {
                   name: ["status"],
                   value: status,
                 },
-                {
-                  name: ["origem"],
-                  value: origem,
-                },
               ]}
             >
               <Row gutter={16}>
@@ -422,7 +407,7 @@ export default function Imoveis() {
                 </Col>
                 <Col xs={24} sm={12} md={8} xl={6}>
                   <Form.Item
-                    label={<span className="font-bold">Título</span>}
+                    label={<span className="font-bold">Subtitulo</span>}
                     name="titulo"
                   >
                     <Input
@@ -437,7 +422,8 @@ export default function Imoveis() {
                     name="valor_min"
                   >
                     <Input
-                      placeholder="Digite o valor mínimo"
+                      disabled
+                      placeholder="Temporariamente desabilitado"
                       onChange={(e) => {
                         const inputValue = e.target.value.replace(/\D/g, "");
                         const formatted = new Intl.NumberFormat("pt-BR", {
@@ -456,7 +442,8 @@ export default function Imoveis() {
                     name="valor_max"
                   >
                     <Input
-                      placeholder="Digite o valor máximo"
+                      disabled
+                      placeholder="Temporariamente desabilitado"
                       onChange={(e) => {
                         const inputValue = e.target.value.replace(/\D/g, "");
                         const formatted = new Intl.NumberFormat("pt-BR", {
@@ -464,6 +451,7 @@ export default function Imoveis() {
                           currency: "BRL",
                           minimumFractionDigits: 2,
                         }).format(Number(inputValue) / 100);
+                        console.log("formatted", formatted);
                         setValorMax(formatted);
                       }}
                     />
@@ -473,7 +461,7 @@ export default function Imoveis() {
               <Row gutter={16}>
                 <Col xs={24} sm={12} md={8} xl={6}>
                   <Form.Item
-                    label={<span className="font-bold">Negócio</span>}
+                    label={<span className="font-bold">Transação</span>}
                     name="negocio"
                   >
                     <Select
@@ -489,8 +477,14 @@ export default function Imoveis() {
                           .indexOf(input.toLowerCase()) >= 0
                       }
                     >
-                      <Select.Option value="Venda">Comprar</Select.Option>
-                      <Select.Option value="Aluguel">Alugar</Select.Option>
+                      <Select.Option value="Venda">Venda</Select.Option>
+                      <Select.Option value="Aluguel">Aluguel</Select.Option>
+                      <Select.Option value="Venda/Aluguel">
+                        Venda/Aluguel
+                      </Select.Option>
+                      <Select.Option value="Venda Repasse">
+                        Venda Repasse
+                      </Select.Option>
                     </Select>
                   </Form.Item>
                 </Col>
@@ -537,9 +531,9 @@ export default function Imoveis() {
                           .indexOf(input.toLowerCase()) >= 0
                       }
                     >
-                      {types.map((type) => (
-                        <Select.Option key={type} value={type}>
-                          {type}
+                      {informations?.type?.map((item: any) => (
+                        <Select.Option key={item} value={item}>
+                          {item}
                         </Select.Option>
                       ))}
                     </Select>
@@ -550,60 +544,25 @@ export default function Imoveis() {
                     label={<span className="font-bold">Cidade</span>}
                     name="cidade"
                   >
-                    {cities.PE && (
-                      <Select
-                        placeholder="Selecione"
-                        allowClear
-                        onChange={(value) => {
-                          setCidade(value);
-                        }}
-                        options={[
-                          {
-                            label: (
-                              <span className="font-bold text-sm text-black">
-                                Pernambuco
-                              </span>
-                            ),
-                            options: cities.PE.map((city) => ({
-                              label: city,
-                              value: city,
-                            })),
-                          },
-                          {
-                            label: (
-                              <span className="font-bold text-sm text-black">
-                                Paraíba
-                              </span>
-                            ),
-                            options: cities.PB.map((city) => ({
-                              label: city,
-                              value: city,
-                            })),
-                          },
-                          {
-                            label: (
-                              <span className="font-bold text-sm text-black">
-                                Alagoas
-                              </span>
-                            ),
-                            options: cities.AL.map((city) => ({
-                              label: city,
-                              value: city,
-                            })),
-                          },
-                        ]}
-                        showSearch
-                        filterOption={(input, option: any) =>
-                          option?.value
-                            ?.toLowerCase()
-                            ?.indexOf(input?.toLowerCase()) >= 0
-                        }
-                      >
-                        {/* {cities.PE.map((city) => (
-                              <Select.Option key={city} value={city}>{city}</Select.Option>
-                            ))} */}
-                      </Select>
-                    )}
+                    <Select
+                      placeholder="Selecione"
+                      allowClear
+                      onChange={(value) => {
+                        setCidade(value);
+                      }}
+                      showSearch
+                      filterOption={(input, option: any) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {informations?.cities?.map((city: any) => (
+                        <Select.Option key={city} value={city}>
+                          {city}
+                        </Select.Option>
+                      ))}
+                    </Select>
                   </Form.Item>
                 </Col>
                 <Col xs={24} sm={12} md={8} xl={6}>
@@ -624,9 +583,9 @@ export default function Imoveis() {
                           .indexOf(input.toLowerCase()) >= 0
                       }
                     >
-                      {neighborhoods.map((neighborhood) => (
-                        <Select.Option key={neighborhood} value={neighborhood}>
-                          {neighborhood}
+                      {informations?.district?.map((item: any) => (
+                        <Select.Option key={item} value={item}>
+                          {item}
                         </Select.Option>
                       ))}
                     </Select>
@@ -657,50 +616,15 @@ export default function Imoveis() {
                           ) >= 0
                       }
                     >
-                      {condominiums.map((condominium) => (
-                        <Select.Option key={condominium} value={condominium}>
-                          {condominium}
+                      {informations?.condominium_name?.map((item: any) => (
+                        <Select.Option key={item} value={item}>
+                          {item}
                         </Select.Option>
                       ))}
                     </Select>
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12} md={8} xl={6}>
-                  <Form.Item
-                    label={<span className="font-bold">Origem</span>}
-                    name="origem"
-                  >
-                    <Select
-                      placeholder="Selecione"
-                      allowClear
-                      onChange={(value) => {
-                        setOrigem(value);
-                      }}
-                      showSearch
-                      filterOption={(input, option: any) =>
-                        option.children
-                          ?.normalize("NFD")
-                          .replace(/[\u0300-\u036f]/g, "")
-                          .toLowerCase()
-                          .indexOf(
-                            input
-                              ?.normalize("NFD")
-                              .replace(/[\u0300-\u036f]/g, "")
-                              .toLowerCase()
-                          ) >= 0
-                      }
-                    >
-                      <Select.Option value="grego">Grego Imoveis</Select.Option>
-                      <Select.Option value="liberato">
-                        Imobiliaria Liberato
-                      </Select.Option>
-                      <Select.Option value="amancio">
-                        Imobiliaria Amancio
-                      </Select.Option>
-                    </Select>
-                  </Form.Item>
-                </Col>
-                <Col xs={24} sm={12} md={8} xl={6}>
+                {/* <Col xs={24} sm={12} md={8} xl={6}>
                   <Form.Item
                     label={
                       <span className="font-bold">Filtros Personalizados</span>
@@ -714,7 +638,7 @@ export default function Imoveis() {
                       Abrir Filtros
                     </button>
                   </Form.Item>
-                </Col>
+                </Col> */}
               </Row>
             </Form>
           </div>
@@ -799,154 +723,140 @@ export default function Imoveis() {
         </Modal>
       </div>
       <Table
-            columns={[
-    
-              {
-                title: "Referência",
-                dataIndex: "reference",
-                key: "reference",
-                width: 100,
-              },
-              {
-                title: "Transação",
-                dataIndex: "transaction",
-                key: "transaction",
-                width: 100,
-              },
-              {
-                title: "Status",
-                dataIndex: "status",
-                key: "status",
-                width: 100,
-              },
-              {
-                title: "Tipo",
-                dataIndex: "type",
-                key: "type",
-                width: 130,
-              },
-              {
-                title: "Subtipo",
-                dataIndex: "subtype",
-                key: "subtype",
-                width: 100,
-              },
-              {
-                title: "Perfil",
-                dataIndex: "profile",
-                key: "profile",
-                width: 300,
-              },
-              {
-                title: "Situação",
-                dataIndex: "situation",
-                key: "situation",
-                width: 300,
-              },
-              {
-                title: "Nome do Condominio",
-                dataIndex: "condominium_name",
-                key: "condominium_name",
-                width: 300,
-              },
-              {
-                title: "Bloco / Quadra / Torre",
-                dataIndex: "block_section_tower",
-                key: "block_section_tower",
-                width: 300,
-              },
-              {
-                title: "Ap / Loja / Lote / Sala",
-                dataIndex: "apartment_store_lot_room",
-                key: "apartment_store_lot_room",
-                width: 300,
-              },
-              // {
-              //   title: "Titulo",
-              //   dataIndex: "meta_title",
-              //   key: "meta_title",
-              //   width: 400,
-              // },
-              // {
-              //   title: "Endereço",
-              //   dataIndex: "city",
-              //   key: "city",
-              //   render: (address: any, record: any) => {       
-              //     return (
-              //       <div>
-              //         <p>{record?.neighborhood} - {address}</p>
-              //       </div>
-              //     );
-              //   },
-              // },
-              // {
-              //   title: "Preço",
-              //   dataIndex: "price",
-              //   key: "price",
-              // },
-              // {
-              //   title: "Fonte dos Dados",
-              //   dataIndex: "url",
-              //   key: "url",
-              //   width: 100,
-              //   render: (url) => {
-              //     console.log("url", url)
-              //     if(url !== null && url !== "") {
-              //       return (
-              //         <a href={url} target="_black">
-              //           Clique aqui
-              //         </a>
-              //       );
-              //     } else {
-              //       return (
-              //         <p>Não Informado</p>
-              //       )
-              //     }
-              //   },
-              // },
-              {
-                title: "Ações",
-                dataIndex: "actions",
-                key: "actions",
-                align: "center",
-                //fixar a coluna de ações
-                fixed: "right",
-                width: 100,
-                render: (actions: any[], record: any) => {
-                  return (
-                    <div className="flex justify-around">
-                      <EditOutlined
+        columns={[
+          {
+            title: "Referência",
+            dataIndex: "reference",
+            key: "reference",
+            width: 100,
+          },
+          {
+            title: "Preço de Venda",
+            dataIndex: "sale_price",
+            key: "sale_price",
+            width: 100,
+          },
+          {
+            title: "Transação",
+            dataIndex: "transaction",
+            key: "transaction",
+            width: 100,
+          },
+          {
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+            width: 100,
+          },
+          {
+            title: "Tipo",
+            dataIndex: "type",
+            key: "type",
+            width: 130,
+          },
+          {
+            title: "Subtipo",
+            dataIndex: "subtype",
+            key: "subtype",
+            width: 100,
+          },
+          {
+            title: "Perfil",
+            dataIndex: "profile",
+            key: "profile",
+            width: 300,
+          },
+          {
+            title: "Cidade",
+            dataIndex: "city",
+            key: "city",
+            width: 150,
+          },
+          {
+            title: "Bairro",
+            dataIndex: "district",
+            key: "district",
+            width: 300,
+          },
+          {
+            title: "Situação",
+            dataIndex: "situation",
+            key: "situation",
+            width: 300,
+          },
+          {
+            title: "Subtitulo",
+            dataIndex: "subtitle",
+            key: "subtitle",
+            width: 500,
+          },
+          {
+            title: "Nome do Condominio",
+            dataIndex: "condominium_name",
+            key: "condominium_name",
+            width: 300,
+          },
+          {
+            title: "Bloco / Quadra / Torre",
+            dataIndex: "block_section_tower",
+            key: "block_section_tower",
+            width: 300,
+          },
+          {
+            title: "Ap / Loja / Lote / Sala",
+            dataIndex: "apartment_store_lot_room",
+            key: "apartment_store_lot_room",
+            width: 300,
+          },
+          {
+            title: "Ações",
+            dataIndex: "actions",
+            key: "actions",
+            align: "center",
+            //fixar a coluna de ações
+            fixed: "right",
+            width: 100,
+            render: (actions: any[], record: any) => {
+              return (
+                <div className="flex justify-around">
+                  <EditOutlined
+                    className="text-orange-500 hover:text-orange-700 text-xl"
+                    onClick={() => {
+                      setVisibleRegisterModal(true);
+                      setDataToEdit(record);
+                      setIsEditing(true);
+                    }}
+                  />
+                  {/* <InfoCircleOutlined
                         className="text-orange-500 hover:text-orange-700 text-xl"
                         onClick={() => {
-                          setVisibleRegisterModal(true);
-                          setDataToEdit(record);
-                          setIsEditing(true);
-                        }}
-                      />
-                      {/* <DeleteOutlined
-                        className="text-orange-500 hover:text-orange-700 text-xl"
-                        onClick={() => {
-                          router.push(`/imoveis/excluir/${record.url}`);
+                          setOpenInfoModal(true);
                         }}
                       /> */}
-                    </div>
-                  );
-                },
-              },
-            ]}
-            dataSource={properties}
-            size="small"
-            scroll={{ x: 1300 }}
-            pagination={{
-              total: total,
-              pageSize: limit,
-              current: page,
-              onChange: (page, pageSize) => {
-                setPage(page);
-                setLimit(pageSize || 10);
-              },
-            }}
-          /> 
+                  {/* <DeleteOutlined
+                        className="text-orange-500 hover:text-orange-700 text-xl"
+                        onClick={async() => {
+                          await propertiesService.(record.id)
+                        }}
+                      /> */}
+                </div>
+              );
+            },
+          },
+        ]}
+        dataSource={properties}
+        size="small"
+        scroll={{ x: 1300 }}
+        pagination={{
+          total: total,
+          pageSize: limit,
+          current: page,
+          onChange: (page, pageSize) => {
+            setPage(page);
+            setLimit(pageSize || 10);
+          },
+        }}
+      />
     </div>
   );
 }

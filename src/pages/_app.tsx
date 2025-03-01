@@ -36,8 +36,6 @@ export default function App({ Component, pageProps }: AppProps) {
     recoveryAuthLogin();
 }, [user]);
 
-console.log("user", user);
-
  return (
     <ConfigProvider locale={ptBR} theme={theme}>
       <LayoutSidebar>
