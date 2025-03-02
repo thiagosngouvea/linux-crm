@@ -55,6 +55,8 @@ const getInTecimobByReference = async (reference: string, token: string) => awai
   }
 });
 
+const deleteProperties = async (id: any) => await api.delete(`/linux-properties/${id}`);
+
 export const propertiesService = {
   getAll,
   getByUrl,
@@ -69,5 +71,6 @@ export const propertiesService = {
   getTypes,
   uploadExcel,
   getInTecimobByReference,
-  getFieldsInformations
+  getFieldsInformations,
+  deleteProperties
 };

@@ -83,8 +83,8 @@ export default function Imoveis() {
         filterBy += filterBy === "" ? "sale_price" : ",sale_price";
         filterValue +=
           filterValue === ""
-            ? `${valorMinFormatado}|${valorMaxFormatado}`
-            : `,${valorMinFormatado}|${valorMaxFormatado}`;
+            ? `${valorMinFormatado ?? '0'}|${valorMaxFormatado ?? '999999999'}`
+            : `,${valorMinFormatado ?? '0' }|${valorMaxFormatado ?? '999999999'}`;
         filterType += filterType === "" ? "btw_price" : ",btw_price";
       }
     }
@@ -422,8 +422,8 @@ export default function Imoveis() {
                     name="valor_min"
                   >
                     <Input
-                      disabled
-                      placeholder="Temporariamente desabilitado"
+                      // disabled
+                      placeholder="R$ 0,00"
                       onChange={(e) => {
                         const inputValue = e.target.value.replace(/\D/g, "");
                         const formatted = new Intl.NumberFormat("pt-BR", {
@@ -442,8 +442,8 @@ export default function Imoveis() {
                     name="valor_max"
                   >
                     <Input
-                      disabled
-                      placeholder="Temporariamente desabilitado"
+                      // disabled
+                      placeholder="R$ 1.000.000,00"
                       onChange={(e) => {
                         const inputValue = e.target.value.replace(/\D/g, "");
                         const formatted = new Intl.NumberFormat("pt-BR", {
@@ -833,12 +833,12 @@ export default function Imoveis() {
                           setOpenInfoModal(true);
                         }}
                       /> */}
-                  {/* <DeleteOutlined
+                  <DeleteOutlined
                         className="text-orange-500 hover:text-orange-700 text-xl"
                         onClick={async() => {
-                          await propertiesService.(record.id)
+                          await propertiesService.deleteProperties(record.id)
                         }}
-                      /> */}
+                      />
                 </div>
               );
             },
