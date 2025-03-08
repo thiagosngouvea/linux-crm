@@ -21,6 +21,12 @@ const getByUrl = async (url: string) => await api.get(`/linux-properties/${url}`
 
 const getFieldsInformations = async () => await api.get(`/linux-properties/informations/list`);
 
+const getFieldsInformationsByCondominiumName = async (condominiumName: string) => await api.get(`/linux-properties/condominium-name/list`, {
+  params: {
+    condominiumName
+  }
+});
+
 const getById = async (id: any) => await api.get(`/linux-properties/single/${id}`);
 
 const create = async (data: any) => await api.post(`/linux-properties`, data);
@@ -72,5 +78,6 @@ export const propertiesService = {
   uploadExcel,
   getInTecimobByReference,
   getFieldsInformations,
-  deleteProperties
+  deleteProperties,
+  getFieldsInformationsByCondominiumName
 };

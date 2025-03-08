@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Form, Col, Row, Select, Input, Tabs, notification } from "antd";
+import { Form, Col, Row, Select, Input, Tabs, notification, InputNumber } from "antd";
 import { propertiesService } from "@/services/linux-properties.service";
 
 interface FormRegisterProps {
@@ -82,16 +82,46 @@ const FormRegister = React.memo(function FormRegister({
     notes: "",
   });
 
+  const getCondominiumNameInfos = useCallback(async (
+    condominium_name: string
+  ) => {
+    if (formData.condominium_name && formData.condominium_name !== "") {
+      try {
+        const response = await propertiesService.getFieldsInformationsByCondominiumName(
+          condominium_name
+        );
+
+        form.setFieldsValue({
+          city: response.data.fields?.cities?.[0] || '',
+          district: response.data.fields?.districts?.[0] || '',
+          street: response.data.fields?.streets?.[0] || '',
+          number: response.data.fields?.numbers?.[0] || '',
+          state: response.data.fields?.states?.[0] || '',
+          blocks_sections_towers_in_condominium: response.data.fields?.blocksSectionsTowers?.[0] || '',
+          units_in_condominium: response.data.fields?.unitsInCondominium?.[0] || '',
+          floors_in_condominium: response.data.fields?.floorsInCondominium?.[0] || '',
+          units_per_floors_in_condominium: response.data.fields?.unitsPerFloorCondominium?.[0] || '',
+        })
+
+      } catch (error) {
+        console.error("Erro ao buscar informações do condomínio:", error);
+      }
+    }
+  }, [formData.condominium_name]);
+
   // Atualiza o estado sempre que algum campo muda
   const handleValuesChange = useCallback(
     (changedValues: any, allValues: any) => {
-
       setFormData(allValues);
+      if (changedValues.condominium_name) {
+        getCondominiumNameInfos(
+          changedValues.condominium_name
+        );
+      }
     },
     []
   );
 
-  console.log("data", !!data);
   const handleFinish = useCallback(async (values: any) => {
     if(isEditing){
         try {
@@ -132,6 +162,12 @@ const FormRegister = React.memo(function FormRegister({
       form.setFieldsValue(data);
     }
   }, [data, form]);
+
+  useEffect(() => {
+    if (formData.condominium_name && formData.condominium_name !== "") {
+      
+    }
+  }, [informations]);
 
   return (
     <Form
@@ -337,7 +373,7 @@ const FormRegister = React.memo(function FormRegister({
           <Row gutter={16}>
             <Col span={2}>
               <Form.Item name="area" label="Área">
-                <Input />
+                <InputNumber />
               </Form.Item>
             </Col>
             <Col span={4}>
@@ -424,7 +460,7 @@ const FormRegister = React.memo(function FormRegister({
             <Col span={4}>
               <Form.Item
                 name="units_in_condominium"
-                label="Unid. no Condomínio"
+                label="Total no Condomínio"
               >
                 <Input />
               </Form.Item>
@@ -450,6 +486,16 @@ const FormRegister = React.memo(function FormRegister({
                   <Select.Option value={true}>Sim</Select.Option>
                   <Select.Option value={false}>Não</Select.Option>
                 </Select>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="rental_price" label="Valor do Aluguel">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="rental_conditions" label="Condições do Aluguel">
+                <Input />
               </Form.Item>
             </Col>
           </Row>
@@ -603,7 +649,7 @@ const FormRegister = React.memo(function FormRegister({
           <Row gutter={16}>
             <Col span={6}>
               <Form.Item name="construction_year" label="Ano de Construção">
-                <Input />
+                <InputNumber />
               </Form.Item>
             </Col>
             <Col span={6}>
