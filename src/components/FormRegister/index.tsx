@@ -1,5 +1,14 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Form, Col, Row, Select, Input, Tabs, notification, InputNumber } from "antd";
+import {
+  Form,
+  Col,
+  Row,
+  Select,
+  Input,
+  Tabs,
+  notification,
+  InputNumber,
+} from "antd";
 import { propertiesService } from "@/services/linux-properties.service";
 
 interface FormRegisterProps {
@@ -13,7 +22,7 @@ const FormRegister = React.memo(function FormRegister({
   data,
   informations,
   isEditing,
-    setVisibleRegisterModal,
+  setVisibleRegisterModal,
 }: FormRegisterProps) {
   const [form] = Form.useForm();
 
@@ -82,80 +91,88 @@ const FormRegister = React.memo(function FormRegister({
     notes: "",
   });
 
-  const getCondominiumNameInfos = useCallback(async (
-    condominium_name: string
-  ) => {
-    if (formData.condominium_name && formData.condominium_name !== "") {
-      try {
-        const response = await propertiesService.getFieldsInformationsByCondominiumName(
-          condominium_name
-        );
+  const getCondominiumNameInfos = useCallback(
+    async (condominium_name: string) => {
+      console.log("condominium_name", condominium_name);
+      if (condominium_name && condominium_name !== "") {
+        try {
+          const response =
+            await propertiesService.getFieldsInformationsByCondominiumName(
+              condominium_name
+            );
 
-        form.setFieldsValue({
-          city: response.data.fields?.cities?.[0] || '',
-          district: response.data.fields?.districts?.[0] || '',
-          street: response.data.fields?.streets?.[0] || '',
-          number: response.data.fields?.numbers?.[0] || '',
-          state: response.data.fields?.states?.[0] || '',
-          blocks_sections_towers_in_condominium: response.data.fields?.blocksSectionsTowers?.[0] || '',
-          units_in_condominium: response.data.fields?.unitsInCondominium?.[0] || '',
-          floors_in_condominium: response.data.fields?.floorsInCondominium?.[0] || '',
-          units_per_floors_in_condominium: response.data.fields?.unitsPerFloorCondominium?.[0] || '',
-        })
-
-      } catch (error) {
-        console.error("Erro ao buscar informações do condomínio:", error);
+          form.setFieldsValue({
+            city: response.data.fields?.cities?.[0] || "",
+            district: response.data.fields?.districts?.[0] || "",
+            street: response.data.fields?.streets?.[0] || "",
+            number: response.data.fields?.numbers?.[0] || "",
+            state: response.data.fields?.states?.[0] || "",
+            blocks_sections_towers_in_condominium:
+              response.data.fields?.blocksSectionsTowers?.[0] || "",
+            units_in_condominium:
+              response.data.fields?.unitsInCondominium?.[0] || "",
+            floors_in_condominium:
+              response.data.fields?.floorsInCondominium?.[0] || "",
+            units_per_floors_in_condominium:
+              response.data.fields?.unitsPerFloorCondominium?.[0] || "",
+          });
+        } catch (error) {
+          console.error("Erro ao buscar informações do condomínio:", error);
+        }
       }
-    }
-  }, [formData.condominium_name]);
+    },
+    [formData.condominium_name]
+  );
 
   // Atualiza o estado sempre que algum campo muda
   const handleValuesChange = useCallback(
     (changedValues: any, allValues: any) => {
       setFormData(allValues);
+      console.log("changedValues", changedValues);
       if (changedValues.condominium_name) {
-        getCondominiumNameInfos(
-          changedValues.condominium_name
-        );
+        getCondominiumNameInfos(changedValues.condominium_name);
       }
     },
     []
   );
 
-  const handleFinish = useCallback(async (values: any) => {
-    if(isEditing){
+  const handleFinish = useCallback(
+    async (values: any) => {
+      if (isEditing) {
         try {
-            await propertiesService.update(data.id, values);
-            setVisibleRegisterModal(false);
-            notification.success({
-                message: "Sucesso!",
-                description: "Imóvel atualizado com sucesso!",
-            });
+          await propertiesService.update(data.id, values);
+          setVisibleRegisterModal(false);
+          notification.success({
+            message: "Sucesso!",
+            description: "Imóvel atualizado com sucesso!",
+          });
         } catch (error) {
-            console.error("Erro ao enviar formulário:", error);
-            notification.error({
-                message: "Erro!",
-                description: "Erro ao atualizar imóvel!",
-            });
+          console.error("Erro ao enviar formulário:", error);
+          notification.error({
+            message: "Erro!",
+            description: "Erro ao atualizar imóvel!",
+          });
         }
         return;
-    }
+      }
 
-    try {
+      try {
         await propertiesService.create(values);
         notification.success({
-            message: "Sucesso!",
-            description: "Imóvel cadastrado com sucesso!",
+          message: "Sucesso!",
+          description: "Imóvel cadastrado com sucesso!",
         });
         setVisibleRegisterModal(false);
-    } catch (error) {
+      } catch (error) {
         console.error("Erro ao enviar formulário:", error);
         notification.error({
-            message: "Erro!",
-            description: "Erro ao cadastrar imóvel!",
+          message: "Erro!",
+          description: "Erro ao cadastrar imóvel!",
         });
-    }
-  }, [isEditing, data]);
+      }
+    },
+    [isEditing, data]
+  );
 
   useEffect(() => {
     if (data) {
@@ -163,11 +180,7 @@ const FormRegister = React.memo(function FormRegister({
     }
   }, [data, form]);
 
-  useEffect(() => {
-    if (formData.condominium_name && formData.condominium_name !== "") {
-      
-    }
-  }, [informations]);
+  console.log("informations", informations);
 
   return (
     <Form
@@ -196,7 +209,7 @@ const FormRegister = React.memo(function FormRegister({
         </Col>
         <Col span={4}>
           <Form.Item name="transaction" label="Transação">
-            <Select placeholder="Selecione" allowClear>
+            <Select placeholder="Selecione" allowClear showSearch>
               <Select.Option value="Venda">Venda</Select.Option>
               <Select.Option value="Aluguel">Aluguel</Select.Option>
               <Select.Option value="Venda/Aluguel">Venda/Aluguel</Select.Option>
@@ -206,7 +219,7 @@ const FormRegister = React.memo(function FormRegister({
         </Col>
         <Col span={4}>
           <Form.Item name="status" label="Status">
-            <Select placeholder="Selecione" allowClear>
+            <Select placeholder="Selecione" allowClear showSearch>
               <Select.Option value="Disponível">Disponível</Select.Option>
               <Select.Option value="Excluído">Excluído</Select.Option>
             </Select>
@@ -271,7 +284,7 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={5}>
               <Form.Item name="exclusive" label="Exclusividade">
-                <Select placeholder="Selecione" allowClear>
+                <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
                   <Select.Option value={false}>Não</Select.Option>
                 </Select>
@@ -279,14 +292,23 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={5}>
               <Form.Item name="commission" label="Comissão">
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.commission?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={2}>
               <Form.Item name="state" label="Estado">
-                <Select placeholder="Selecione" allowClear>
+                <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value="AC">AC</Select.Option>
                   <Select.Option value="AL">AL</Select.Option>
                   <Select.Option value="AP">AP</Select.Option>
@@ -383,7 +405,16 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={8}>
               <Form.Item name="block_section_tower" label="Bloco-Quadra-Torre">
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.blockSectionTower?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -391,7 +422,16 @@ const FormRegister = React.memo(function FormRegister({
                 name="apartment_store_lot_room"
                 label="Ap-Loja-Lote-Sala"
               >
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.apartmentStoreLotRoom?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={4}>
@@ -428,7 +468,16 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={7}>
               <Form.Item name="covered_garages" label="Cobertura das Garagens">
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.coveredGarages?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -438,7 +487,18 @@ const FormRegister = React.memo(function FormRegister({
                 name="blocks_sections_towers_in_condominium"
                 label="Blocos, Quadras ou Torres no Condomínio"
               >
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.blockSectionTowerInCondominium?.map(
+                    (item: any) => (
+                      <Select.Option
+                        key={`${item}-${Math.random()}`}
+                        value={item}
+                      >
+                        {item}
+                      </Select.Option>
+                    )
+                  )}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -474,7 +534,16 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={12}>
               <Form.Item name="sale_conditions" label="Condições da Venda">
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.saleConditions?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -482,7 +551,7 @@ const FormRegister = React.memo(function FormRegister({
                 name="accepts_assets"
                 label="Aceita Bens na Negociação"
               >
-                      <Select placeholder="Selecione" allowClear>
+                <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
                   <Select.Option value={false}>Não</Select.Option>
                 </Select>
@@ -510,7 +579,16 @@ const FormRegister = React.memo(function FormRegister({
                 name="included_in_condominium"
                 label="O que está Incluso no Condomínio"
               >
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.includedInCondominium?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -520,14 +598,23 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={6}>
               <Form.Item name="fees_description" label="Descrição das Taxas">
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.feesDescription?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={3}>
               <Form.Item name="deeded" label="Escriturado">
-              <Select placeholder="Selecione" allowClear>
+                <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
                   <Select.Option value={false}>Não</Select.Option>
                 </Select>
@@ -535,7 +622,7 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={4}>
               <Form.Item name="has_financing" label="Tem Financiamento">
-              <Select placeholder="Selecione" allowClear>
+                <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
                   <Select.Option value={false}>Não</Select.Option>
                 </Select>
@@ -543,7 +630,7 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={4}>
               <Form.Item name="financing_accepted" label="Aceita Financiamento">
-              <Select placeholder="Selecione" allowClear>
+                <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
                   <Select.Option value={false}>Não</Select.Option>
                 </Select>
@@ -551,16 +638,20 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={3}>
               <Form.Item name="occupation" label="Ocupação">
-              <Select placeholder="Selecione" allowClear>
+                <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value="Desocupado">Desocupado</Select.Option>
-                  <Select.Option value="Dono Morando">Dono Morando</Select.Option>
-                  <Select.Option value="Inquilino Morando">Inquilino Morando</Select.Option>
+                  <Select.Option value="Dono Morando">
+                    Dono Morando
+                  </Select.Option>
+                  <Select.Option value="Inquilino Morando">
+                    Inquilino Morando
+                  </Select.Option>
                 </Select>
               </Form.Item>
             </Col>
             <Col span={4}>
               <Form.Item name="corner_property" label="Imóvel de Esquina">
-              <Select placeholder="Selecione" allowClear>
+                <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
                   <Select.Option value={false}>Não</Select.Option>
                 </Select>
@@ -568,13 +659,16 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={3}>
               <Form.Item name="solar_position" label="Posição Solar">
-              <Select placeholder="Selecione" showSearch allowClear>
-              {informations?.solarPosition?.map((item: any) => (
-                <Select.Option key={`${item}-${Math.random()}`} value={item}>
-                  {item}
-                </Select.Option>
-              ))}
-            </Select>
+                <Select placeholder="Selecione" showSearch allowClear>
+                  {informations?.solarPosition?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={3}>
@@ -586,7 +680,7 @@ const FormRegister = React.memo(function FormRegister({
           <Row gutter={16}>
             <Col span={3}>
               <Form.Item name="role" label="Função">
-              <Select placeholder="Selecione" allowClear>
+                <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value="Construtora">Construtora</Select.Option>
                   <Select.Option value="Dono">Dono</Select.Option>
                   <Select.Option value="Imobiliária">Imobiliária</Select.Option>
@@ -596,7 +690,16 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={6}>
               <Form.Item name="responsible1" label="Responsável 1">
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.responsiblesWithContacts.responsible1?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item.name}
+                    >
+                      {item.name}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -604,7 +707,16 @@ const FormRegister = React.memo(function FormRegister({
                 name="contact_responsible1"
                 label="Contato Responsável 1"
               >
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.contactResponsible1?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={4}>
@@ -624,7 +736,16 @@ const FormRegister = React.memo(function FormRegister({
           <Row gutter={16}>
             <Col span={6}>
               <Form.Item name="responsible2" label="Responsável 2">
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.responsible2?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -632,7 +753,16 @@ const FormRegister = React.memo(function FormRegister({
                 name="contact_responsible2"
                 label="Contato Responsável 2"
               >
-                <Input />
+                <Select placeholder="Selecione" allowClear showSearch>
+                  {informations?.contactResponsible2?.map((item: any) => (
+                    <Select.Option
+                      key={`${item}-${Math.random()}`}
+                      value={item}
+                    >
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={6}>
@@ -659,7 +789,11 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={6}>
               <Form.Item name="builder" label="Construtora">
-                <Input />
+                {informations?.builder?.map((item: any) => (
+                  <Select.Option key={`${item}-${Math.random()}`} value={item}>
+                    {item}
+                  </Select.Option>
+                ))}
               </Form.Item>
             </Col>
           </Row>
@@ -724,11 +858,11 @@ const FormRegister = React.memo(function FormRegister({
         </Tabs.TabPane>
       </Tabs>
       <Form.Item>
-        <button 
-        type="submit"
-        className="bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded-md w-full"
+        <button
+          type="submit"
+          className="bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded-md w-full"
         >
-            {isEditing ? "Atualizar" : "Cadastrar"}
+          {isEditing ? "Atualizar" : "Cadastrar"}
         </button>
       </Form.Item>
     </Form>
