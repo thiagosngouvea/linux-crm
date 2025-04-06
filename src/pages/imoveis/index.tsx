@@ -51,12 +51,15 @@ export default function Imoveis() {
   const [balconies, setBalconies] = useState<string[]>([]);
   const [garages, setGarages] = useState<string[]>([]);
 
+  const [search, setSearch] = useState<string>("");
+
   const [visibleRegisterModal, setVisibleRegisterModal] = useState(false);
 
   const [dataToEdit, setDataToEdit] = useState<any>({});
   const [isEditing, setIsEditing] = useState(false);
 
   const [informations, setInformations] = useState<any>({});
+  const [loadingInformations, setLoadingInformations] = useState(false);
 
   const fetchData = useCallback(async () => {
     let filterBy = "";
@@ -300,13 +303,18 @@ export default function Imoveis() {
 
 
     try {
-      const res = await propertiesService.getAll(
-        page,
-        limit,
-        filterBy,
-        filterValue,
-        filterType
+      let res: any;
+      if (search !== "" && !!search) {
+        res = await propertiesService.getInAllFields(search, page, limit);
+      } else {
+        res = await propertiesService.getAll(
+          page,
+          limit,
+          filterBy,
+          filterValue,
+          filterType
       );
+      }
 
       //remover properties sem imagens
 
@@ -340,6 +348,7 @@ export default function Imoveis() {
     bathrooms,
     balconies,
     garages,
+    search,
   ]);
 
   useEffect(() => {
@@ -367,21 +376,312 @@ export default function Imoveis() {
     bathrooms,
     balconies,
     garages,
+    search,
     fetchData,
   ]);
 
   const fetchInformations = useCallback(async () => {
+    let filterBy = "";
+    let filterValue = "";
+    let filterType = "";
+    
+    // Add conditions similar to fetchData if you need to filter the information fields
+    // For example:
+    if ((valorMax !== null || valorMin !== null) && (negocio.some(item => item?.includes("Venda")) || negocio.length === 0)) {
+      let valorMinFormatado = valorMin
+      ?.replace(/[^\d]/g, "")
+      .replace(/0{2}$/, "");
+      let valorMaxFormatado = valorMax
+      ?.replace(/[^\d]/g, "")
+      .replace(/0{2}$/, "");
+
+      // Only add the filter if we have valid min or max values
+      if (
+      (valorMinFormatado && valorMinFormatado !== "0") || 
+      (valorMaxFormatado && valorMaxFormatado !== "0")
+      ) {
+      if (!valorMaxFormatado || valorMaxFormatado === "0") {
+        valorMaxFormatado = "999999999";
+      }
+      if (!valorMinFormatado || valorMinFormatado === "0") {
+        valorMinFormatado = "0";
+      }
+
+      filterBy += filterBy === "" ? "sale_price" : ",sale_price";
+      filterValue +=
+        filterValue === ""
+        ? `${valorMinFormatado}|${valorMaxFormatado}`
+        : `,${valorMinFormatado}|${valorMaxFormatado}`;
+      filterType += filterType === "" ? "btw_price" : ",btw_price";
+      }
+    }
+
+    if ((valorMaxRent !== null || valorMinRent !== null) && (negocio.some(item => item?.includes("Aluguel")) || negocio.length === 0)) {
+      let valorMinFormatado = valorMinRent
+      ?.replace(/[^\d]/g, "")
+      .replace(/0{2}$/, "");
+      let valorMaxFormatado = valorMaxRent
+      ?.replace(/[^\d]/g, "")
+      .replace(/0{2}$/, "");
+
+      // Only add the filter if we have valid min or max values
+      if (
+      (valorMinFormatado && valorMinFormatado !== "0") || 
+      (valorMaxFormatado && valorMaxFormatado !== "0")
+      ) {
+      if (!valorMaxFormatado || valorMaxFormatado === "0") {
+        valorMaxFormatado = "999999999";
+      }
+      if (!valorMinFormatado || valorMinFormatado === "0") {
+        valorMinFormatado = "0";
+      }
+
+      filterBy += filterBy === "" ? "rental_price" : ",rental_price";
+      filterValue +=
+        filterValue === ""
+        ? `${valorMinFormatado}|${valorMaxFormatado}`
+        : `,${valorMinFormatado}|${valorMaxFormatado}`;
+      filterType += filterType === "" ? "btw_price" : ",btw_price";
+      }
+    }
+
+    if (!!tipoImovel) {
+      filterBy += filterBy === "" ? "subtype" : ",subtype";
+      filterValue += filterValue === "" ? `${tipoImovel}` : `,${tipoImovel}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+
+    if (!!referencia) {
+      filterBy += filterBy === "" ? "reference" : ",reference";
+      filterValue += filterValue === "" ? `${referencia}` : `,${referencia}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+
+    if (!!deeded) {
+      filterBy += filterBy === "" ? "deeded" : ",deeded";
+      filterValue += filterValue === "" ? `${deeded}` : `,${deeded}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+
+    if (!!titulo) {
+      filterBy += filterBy === "" ? "subtitle" : ",subtitle";
+      filterValue += filterValue === "" ? `${titulo}` : `,${titulo}`;
+      filterType += filterType === "" ? "ilike" : ",ilike";
+    }
+    if (!!cidade && (!Array.isArray(cidade) || cidade.length > 0)) {
+      filterBy += filterBy === "" ? "city" : ",city";
+      if (Array.isArray(cidade)) {
+      const filteredCidade = cidade.filter(item => !!item);
+      if (filteredCidade.length > 0) {
+        filterValue += filterValue === "" ? `${filteredCidade.join('|')}` : `,${filteredCidade.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${cidade}` : `,${cidade}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+
+    if (!!bairro && (!Array.isArray(bairro) || bairro.length > 0)) {
+      filterBy += filterBy === "" ? "district" : ",district";
+      if (Array.isArray(bairro)) {
+      const filteredBairro = bairro.filter(item => !!item);
+      if (filteredBairro.length > 0) {
+        filterValue += filterValue === "" ? `${filteredBairro.join('|')}` : `,${filteredBairro.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${bairro}` : `,${bairro}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+
+    if (!!negocio && (!Array.isArray(negocio) || negocio.length > 0)) {
+      filterBy += filterBy === "" ? "transaction" : ",transaction";
+      if (Array.isArray(negocio)) {
+      const filteredNegocio = negocio.filter(item => !!item);
+      if (filteredNegocio.length > 0) {
+        filterValue += filterValue === "" ? `${filteredNegocio.join('|')}` : `,${filteredNegocio.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${negocio}` : `,${negocio}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+
+    if (!!tipo && (!Array.isArray(tipo) || tipo.length > 0)) {
+      filterBy += filterBy === "" ? "type" : ",type";
+      if (Array.isArray(tipo)) {
+      const filteredTipo = tipo.filter(item => !!item);
+      if (filteredTipo.length > 0) {
+        filterValue += filterValue === "" ? `${filteredTipo.join('|')}` : `,${filteredTipo.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${tipo}` : `,${tipo}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+
+    if (!!condominios && (!Array.isArray(condominios) || condominios.length > 0)) {
+      filterBy += filterBy === "" ? "condominium_name" : ",condominium_name";
+      if (Array.isArray(condominios)) {
+      const filteredCondominios = condominios.filter(item => !!item);
+      if (filteredCondominios.length > 0) {
+        filterValue += filterValue === "" ? `${filteredCondominios.join('|')}` : `,${filteredCondominios.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${condominios}` : `,${condominios}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+
+    if (!!status && (!Array.isArray(status) || status.length > 0)) {
+      filterBy += filterBy === "" ? "status" : ",status";
+      if (Array.isArray(status)) {
+      const filteredStatus = status.filter(item => !!item);
+      if (filteredStatus.length > 0) {
+        filterValue += filterValue === "" ? `${filteredStatus.join('|')}` : `,${filteredStatus.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${status}` : `,${status}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+
+    if (!!bedrooms && (!Array.isArray(bedrooms) || bedrooms.length > 0)) {
+      filterBy += filterBy === "" ? "bedrooms" : ",bedrooms";
+      if (Array.isArray(bedrooms)) {
+      const filteredStatus = bedrooms.filter(item => !!item);
+      if (filteredStatus.length > 0) {
+        filterValue += filterValue === "" ? `${filteredStatus.join('|')}` : `,${filteredStatus.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${bedrooms}` : `,${bedrooms}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+
+    if (!!bathrooms && (!Array.isArray(bathrooms) || bathrooms.length > 0)) {
+      filterBy += filterBy === "" ? "bathrooms" : ",bathrooms";
+      if (Array.isArray(bathrooms)) {
+      const filteredStatus = bathrooms.filter(item => !!item);
+      if (filteredStatus.length > 0) {
+        filterValue += filterValue === "" ? `${filteredStatus.join('|')}` : `,${filteredStatus.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${bathrooms}` : `,${bathrooms}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+
+    if (!!balconies && (!Array.isArray(balconies) || balconies.length > 0)) {
+      filterBy += filterBy === "" ? "balconies" : ",balconies";
+      if (Array.isArray(balconies)) {
+      const filteredStatus = balconies.filter(item => !!item);
+      if (filteredStatus.length > 0) {
+        filterValue += filterValue === "" ? `${filteredStatus.join('|')}` : `,${filteredStatus.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${balconies}` : `,${balconies}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+
+    if (!!garages && (!Array.isArray(garages) || garages.length > 0)) {
+      filterBy += filterBy === "" ? "garages" : ",garages";
+      if (Array.isArray(garages)) {
+      const filteredStatus = garages.filter(item => !!item);
+      if (filteredStatus.length > 0) {
+        filterValue += filterValue === "" ? `${filteredStatus.join('|')}` : `,${filteredStatus.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${garages}` : `,${garages}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+
+    if (!!suites && (!Array.isArray(suites) || suites.length > 0)) {
+      filterBy += filterBy === "" ? "suites" : ",suites";
+      if (Array.isArray(suites)) {
+      const filteredStatus = suites.filter(item => !!item);
+      if (filteredStatus.length > 0) {
+        filterValue += filterValue === "" ? `${filteredStatus.join('|')}` : `,${filteredStatus.join('|')}`;
+        filterType += filterType === "" ? "in" : ",in";
+      }
+      } else {
+      filterValue += filterValue === "" ? `${suites}` : `,${suites}`;
+      filterType += filterType === "" ? "in" : ",in";
+      }
+    }
+    setLoadingInformations(true);
     try {
-      const res = await propertiesService.getFieldsInformations();
-      setInformations(res.data.fields);
+      const res = await propertiesService.getFieldsInformations(
+        filterBy,
+        filterValue,
+        filterType
+      );
+      setInformations(res.data.fields.result);
     } catch (error: any) {
       console.log("error", error);
+    } finally {
+      setLoadingInformations(false);
     }
-  }, []);
+  }, [  
+    valorMax,
+    valorMin,
+    tipoImovel,
+    referencia,
+    titulo,
+    cidade,
+    bairro,
+    negocio,
+    status,
+    tipo,
+    condominios,
+    origem,
+    deeded,
+    valorMaxRent,
+    valorMinRent,
+    bedrooms,
+    suites,
+    bathrooms,
+    balconies,
+    garages
+  ]); // Add dependencies based on your filter criteria
 
   useEffect(() => {
     fetchInformations();
-  }, [fetchInformations]);
+  }, [
+    valorMax,
+    valorMin,
+    tipoImovel,
+    referencia,
+    titulo,
+    cidade,
+    bairro,
+    negocio,
+    status,
+    tipo,
+    condominios,
+    origem,
+    deeded,
+    valorMaxRent,
+    valorMinRent,
+    bedrooms,
+    suites,
+    bathrooms,
+    balconies,
+    garages,
+    fetchInformations
+  ]);
 
   console.log("informations", informations);
 
@@ -772,6 +1072,7 @@ export default function Imoveis() {
                           .toLowerCase()
                           .indexOf(input.toLowerCase()) >= 0
                       }
+                      loading={loadingInformations}
                     >
                       {informations?.type?.map((item: any) => (
                         <Select.Option key={item} value={item}>
@@ -799,6 +1100,7 @@ export default function Imoveis() {
                           .toLowerCase()
                           .indexOf(input.toLowerCase()) >= 0
                       }
+                      loading={loadingInformations}
                     >
                       {informations?.cities?.map((city: any) => (
                         <Select.Option key={city} value={city}>
@@ -826,6 +1128,7 @@ export default function Imoveis() {
                           .toLowerCase()
                           .indexOf(input.toLowerCase()) >= 0
                       }
+                      loading={loadingInformations}
                     >
                       {informations?.district?.map((item: any) => (
                         <Select.Option key={item} value={item}>
@@ -860,6 +1163,7 @@ export default function Imoveis() {
                               .toLowerCase()
                           ) >= 0
                       }
+                      loading={loadingInformations}
                     >
                       {informations?.condominium_name?.map((item: any) => (
                         <Select.Option key={item} value={item}>
@@ -1063,6 +1367,19 @@ export default function Imoveis() {
                   </Form.Item>
                 </Col> */}
               </Row>
+              <Row gutter={16}>
+                <Col xs={24} sm={24} md={24} xl={24}>
+                  <Form.Item
+                    label={<span className="font-bold">Busca Geral</span>}
+                    name="search"
+                  >
+                    <Input 
+                      placeholder="Buscar por referência, título, endereço..." 
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
             </Form>
           </div>
         </div>
@@ -1250,18 +1567,31 @@ export default function Imoveis() {
                       setIsEditing(true);
                     }}
                   />
-                  {/* <InfoCircleOutlined
-                        className="text-orange-500 hover:text-orange-700 text-xl"
-                        onClick={() => {
-                          setOpenInfoModal(true);
-                        }}
-                      /> */}
                   <DeleteOutlined
-                        className="text-orange-500 hover:text-orange-700 text-xl"
-                        onClick={async() => {
-                          await propertiesService.deleteProperties(record.id)
-                        }}
-                      />
+                    className="text-orange-500 hover:text-orange-700 text-xl"
+                    onClick={() => {
+                      Modal.confirm({
+                        title: 'Confirmação',
+                        content: 'Tem certeza que deseja excluir este imóvel?',
+                        okText: 'Sim',
+                        cancelText: 'Não',
+                        okType: 'danger',
+                        onOk: async () => { 
+                          try {
+                            await propertiesService.deleteProperties(record.id);
+                            // Refresh data after deletion
+                            fetchData();
+                          } catch (error) {
+                            console.error("Error deleting property:", error);
+                            Modal.error({
+                              title: 'Erro',
+                              content: 'Ocorreu um erro ao excluir o imóvel.'
+                            });
+                          }
+                        }
+                      });
+                    }}
+                  />
                 </div>
               );
             },

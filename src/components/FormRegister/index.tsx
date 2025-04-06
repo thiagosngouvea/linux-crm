@@ -47,11 +47,11 @@ const FormRegister = React.memo(function FormRegister({
     block_section_tower: "",
     apartment_store_lot_room: "",
     floor: "",
-    bedrooms: "",
-    suites: "",
-    bathrooms: "",
-    balconies: "",
-    garages: "",
+    bedrooms: null,
+    suites: null,
+    bathrooms: null,
+    balconies: null,
+    garages: null,
     covered_garages: "",
     blocks_sections_towers_in_condominium: "",
     units_in_condominium: "",
@@ -101,11 +101,13 @@ const FormRegister = React.memo(function FormRegister({
               condominium_name
             );
 
+          console.log("response", response.data);
+
           form.setFieldsValue({
             city: response.data.fields?.cities?.[0] || "",
             district: response.data.fields?.districts?.[0] || "",
             street: response.data.fields?.streets?.[0] || "",
-            number: response.data.fields?.numbers?.[0] || "",
+            number: response.data.fields?.number?.[0] || "",
             state: response.data.fields?.states?.[0] || "",
             blocks_sections_towers_in_condominium:
               response.data.fields?.blocksSectionsTowers?.[0] || "",
@@ -138,9 +140,15 @@ const FormRegister = React.memo(function FormRegister({
 
   const handleFinish = useCallback(
     async (values: any) => {
+      // Convert empty strings to null
+      const processedValues = Object.keys(values).reduce((acc, key) => {
+        acc[key] = values[key] === "" ? null : values[key];
+        return acc;
+      }, {} as any);
+
       if (isEditing) {
         try {
-          await propertiesService.update(data.id, values);
+          await propertiesService.update(data.id, processedValues);
           setVisibleRegisterModal(false);
           notification.success({
             message: "Sucesso!",
@@ -157,7 +165,7 @@ const FormRegister = React.memo(function FormRegister({
       }
 
       try {
-        await propertiesService.create(values);
+        await propertiesService.create(processedValues);
         notification.success({
           message: "Sucesso!",
           description: "Imóvel cadastrado com sucesso!",
@@ -171,7 +179,7 @@ const FormRegister = React.memo(function FormRegister({
         });
       }
     },
-    [isEditing, data]
+    [isEditing, data, setVisibleRegisterModal]
   );
 
   useEffect(() => {
@@ -443,7 +451,7 @@ const FormRegister = React.memo(function FormRegister({
           <Row gutter={16}>
             <Col span={3}>
               <Form.Item name="bedrooms" label="Dormitórios">
-                <Input />
+                <InputNumber />
               </Form.Item>
             </Col>
             <Col span={3}>
@@ -453,7 +461,7 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
             <Col span={3}>
               <Form.Item name="bathrooms" label="Banheiros">
-                <Input />
+                <InputNumber />
               </Form.Item>
             </Col>
             <Col span={4}>

@@ -17,9 +17,22 @@ const getAll = async (
   }`
 );
 
+const getInAllFields = async (search: string, page = 1, per_page = 8) => await api.get(`/linux-properties/search?page=${page}&per_page=${per_page}&search=${search}`);
+
 const getByUrl = async (url: string) => await api.get(`/linux-properties/${url}`);
 
-const getFieldsInformations = async () => await api.get(`/linux-properties/informations/list`);
+const getFieldsInformations = async (
+  filterBy = "",
+  filterValue?: string,
+  filterType = ""
+) =>
+  await api.get(
+    `/linux-properties/informations/list?page=${1}&per_page=${500000}${
+      !!filterValue
+        ? `&filterBy=${filterBy}&filterValue=${filterValue}&filterType=${filterType}`
+        : ""
+    }`
+  );
 
 const getFieldsInformationsByCondominiumName = async (condominiumName: string) => await api.get(`/linux-properties/condominium-name/list`, {
   params: {
@@ -79,5 +92,6 @@ export const propertiesService = {
   getInTecimobByReference,
   getFieldsInformations,
   deleteProperties,
-  getFieldsInformationsByCondominiumName
+  getFieldsInformationsByCondominiumName,
+  getInAllFields
 };
