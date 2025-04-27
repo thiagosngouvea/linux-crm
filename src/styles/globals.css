@@ -25,3 +25,13 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.ant-btn-primary {
+  background-color: #f97316;
+  border-color: #f97316;
+}
+
+.ant-btn-primary:hover {
+  background-color: #ea580c;
+  border-color: #ea580c;
+}

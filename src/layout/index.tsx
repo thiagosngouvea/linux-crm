@@ -8,7 +8,7 @@ import {
   //icone de logout
     LogoutOutlined,
 } from '@ant-design/icons';
-import { BsFillHouseDoorFill, BsListUl, BsFillHouseAddFill } from 'react-icons/bs';
+import { BsFillHouseDoorFill, BsListUl, BsFillHouseAddFill, BsCalendarEvent } from 'react-icons/bs';
 import { BiSolidDashboard } from 'react-icons/bi';
 import { SiMicrosoftexcel } from "react-icons/si";
 import type { MenuProps } from 'antd';
@@ -77,6 +77,9 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
                     </Menu.Item>
                     <Menu.Item key="sub3" icon={<BsFillHouseAddFill />} onClick={() => route.push('/imoveis/cadastro')}>
                         Cadastro
+                    </Menu.Item>
+                    <Menu.Item key="sub4" icon={<BsCalendarEvent />} onClick={() => route.push('/imoveis/agendamentos')}>
+                        Agendamentos
                     </Menu.Item>
                 </SubMenu>
                 <Menu.Item key="2" icon={<SiMicrosoftexcel />} onClick={() => route.push('/excel/analise')}>

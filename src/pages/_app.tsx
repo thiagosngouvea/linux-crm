@@ -2,7 +2,6 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 
 import { useEffect } from "react";
-import Head from "next/head";
 
 import { useAuthStore } from "@/context/auth";
 import { useRouter } from "next/router";

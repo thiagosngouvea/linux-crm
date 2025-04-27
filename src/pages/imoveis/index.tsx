@@ -1,15 +1,19 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { propertiesService } from "@/services/linux-properties.service";
+import { listsService } from "@/services/lists.service";
 import {
   Button,
   Col,
   Form,
   Image,
   Input,
+  message,
   Modal,
   Row,
+  Segmented,
   Select,
   Table,
+  Tabs,
 } from "antd";
 import {
   EditOutlined,
@@ -60,6 +64,13 @@ export default function Imoveis() {
 
   const [informations, setInformations] = useState<any>({});
   const [loadingInformations, setLoadingInformations] = useState(false);
+
+  const [selectedRowIds, setSelectedRowIds] = useState<React.Key[]>([]);
+
+  const [openModalList, setOpenModalList] = useState(false);
+  const [fieldsList, setFieldsList] = useState<any[]>([]);
+  const [listName, setListName] = useState<string>("");
+  const [typeList, setTypeList] = useState<string>("");
 
   const fetchData = useCallback(async () => {
     let filterBy = "";
@@ -683,6 +694,18 @@ export default function Imoveis() {
     fetchInformations
   ]);
 
+  const [lists, setLists] = useState<any[]>([]);
+
+  console.log("lists", lists);
+  console.log("fieldsList", fieldsList);
+  useEffect(() => {
+    const fetchLists = async () => {
+      const res = await listsService.getAll();
+      setLists(res.data.lists.result);
+    };
+    fetchLists();
+  }, []);
+
   console.log("informations", informations);
 
   const [filters, setFilters] = useState([{ field: "", value: "" }]);
@@ -713,6 +736,127 @@ export default function Imoveis() {
   const handleSubmit = () => {
     // Lógica para submissão do formulário com os filtros
     console.log(filters);
+  };
+
+  const handleDuplicateProperties = async () => {
+    try {
+      const res = await propertiesService.duplicateProperties(selectedRowIds);
+      console.log(res);
+      message.success("Imóveis duplicados com sucesso");
+      fetchData();
+    } catch (error: any) {
+      console.log(error);
+      message.error("Erro ao duplicar imóveis");
+    }
+  };
+
+  const handleCreateList = async () => {
+    try {
+      const res = await listsService.create({
+        name: listName,
+        fields: fieldsList
+      });
+      console.log(res);
+      message.success("Lista criada com sucesso");
+      setOpenModalList(false);
+      setListName("");
+      setFieldsList([]);
+    } catch (error: any) {
+      console.log(error);
+      message.error("Erro ao criar lista");
+    }
+  };
+
+  const handleCopyList = async () => {
+    //copiar para clipboard todos os campos da lista selecionada, os campos a serrem copiados serão os que estão selecionados na lista de campo fieldsList
+    // então vai pegar os valores de todos os campos do array properties e copiar para clipboard
+    const fieldsString = properties.map((property) => {
+      return fieldsList.map((field) => property[field]).join(" - ");
+    }).join("\n");
+    
+    const headerRow = fieldsList.map((field) => {
+      console.log("field", field);
+      const fieldMapping = [
+        {key: 'reference', label: 'Referência'},
+        {key: 'transaction', label: 'Transação'},
+        {key: 'status', label: 'Status'},
+        {key: 'type', label: 'Tipo'},
+        {key: 'subtype', label: 'Subtipo'}, 
+        {key: 'profile', label: 'Perfil'},
+        {key: 'situation', label: 'Situação'},
+        {key: 'condominium_name', label: 'Nome do Condomínio'},
+        {key: 'block_section_tower', label: 'Quadra/Seção/Torre'},
+        {key: 'apartment_store_lot_room', label: 'Apto/Loja/Lote/Sala'},
+        {key: 'floor', label: 'Andar'},
+        {key: 'blocks_sections_towers_in_condominium', label: 'Quadras/Seções/Torres no Condomínio'},
+        {key: 'floors_in_condominium', label: 'Andares no Condomínio'},
+        {key: 'units_per_floor_condominium', label: 'Unidades por Andar'},
+        {key: 'units_in_condominium', label: 'Unidades no Condomínio'},
+        {key: 'state', label: 'Estado'},
+        {key: 'city', label: 'Cidade'},
+        {key: 'district', label: 'Bairro'},
+        {key: 'street', label: 'Rua'},
+        {key: 'number', label: 'Número'},
+        {key: 'complement', label: 'Complemento'},
+        {key: 'area', label: 'Área'},
+        {key: 'measurement_unit', label: 'Unidade de Medida'},
+        {key: 'bedrooms', label: 'Quartos'},
+        {key: 'suites', label: 'Suítes'},
+        {key: 'bathrooms', label: 'Banheiros'},
+        {key: 'balconies', label: 'Varandas'},
+        {key: 'garages', label: 'Vagas'},
+        {key: 'covered_garages', label: 'Vagas Cobertas'},
+        {key: 'corner_property', label: 'Imóvel de Esquina'},
+        {key: 'solar_position', label: 'Posição Solar'},
+        {key: 'proximity_to_sea', label: 'Proximidade do Mar'},
+        {key: 'subtitle', label: 'Subtítulo'},
+        {key: 'property_description', label: 'Descrição do Imóvel'},
+        {key: 'condominium_description', label: 'Descrição do Condomínio'},
+        {key: 'role', label: 'Função'},
+        {key: 'responsible1', label: 'Responsável 1'},
+        {key: 'contact_responsible1', label: 'Contato Responsável 1'},
+        {key: 'responsible2', label: 'Responsável 2'},
+        {key: 'contact_responsible2', label: 'Contato Responsável 2'},
+        {key: 'contact_link_responsible2', label: 'Link Contato Responsável 2'},
+        {key: 'key_responsible', label: 'Responsável pela Chave'},
+        {key: 'contact_key_responsible', label: 'Contato Responsável pela Chave'},
+        {key: 'sale_price', label: 'Preço de Venda'},
+        {key: 'sale_conditions', label: 'Condições de Venda'},
+        {key: 'rental_price', label: 'Preço de Aluguel'},
+        {key: 'rental_conditions', label: 'Condições de Aluguel'},
+        {key: 'property_tax', label: 'IPTU'},
+        {key: 'property_tax_period', label: 'Período IPTU'},
+        {key: 'condominium_fee', label: 'Taxa de Condomínio'},
+        {key: 'included_in_condominium', label: 'Incluído no Condomínio'},
+        {key: 'other_fees', label: 'Outras Taxas'},
+        {key: 'fees_description', label: 'Descrição das Taxas'},
+        {key: 'deeded', label: 'Escriturado'},
+        {key: 'financing_accepted', label: 'Aceita Financiamento'},
+        {key: 'has_financing', label: 'Possui Financiamento'},
+        {key: 'commission', label: 'Comissão'},
+        {key: 'accepts_assets', label: 'Aceita Permuta'},
+        {key: 'occupation', label: 'Ocupação'},
+        {key: 'exclusive', label: 'Exclusivo'},
+        {key: 'notes', label: 'Observações'},
+        {key: 'capture_link', label: 'Link de Captura'},
+        {key: 'site_link', label: 'Link do Site'},
+        {key: 'olx_link', label: 'Link OLX'},
+        {key: 'update_message', label: 'Mensagem de Atualização'},
+        {key: 'construction_year', label: 'Ano de Construção'},
+        {key: 'delivery_forecast', label: 'Previsão de Entrega'},
+        {key: 'builder', label: 'Construtora'},
+        {key: 'user', label: 'Usuário'},
+        {key: 'created_at', label: 'Criado em'},
+        {key: 'updated_at', label: 'Atualizado em'}
+      ].find(f => f.key === field);
+      console.log("fieldMapping", fieldMapping);
+      return fieldMapping?.label || field;
+    }).join(" - ");
+
+    const fullString = headerRow + "\n" + fieldsString;
+
+    navigator.clipboard.writeText(fullString);
+    message.success("Lista copiada para clipboard");
   };
 
   return (
@@ -1462,7 +1606,187 @@ export default function Imoveis() {
           </div>
         </Modal>
       </div>
+      <div className="flex justify-start gap-4">
+        <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={handleDuplicateProperties}>
+          Duplicar
+        </button>
+        <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={() => setOpenModalList(true)}>
+          Criar / Copiar Lista
+        </button>
+
+      </div>
+      <Modal
+        title="Lista Personalizada"
+        open={openModalList}
+        onCancel={() => setOpenModalList(false)}
+        footer={null}
+        width={"90%"}
+      >
+        <Segmented
+        //vai ter duas opções: criar e selecionar
+        options={[
+          {
+            label: "Criar",
+            value: "create",
+          },
+          {
+            label: "Selecionar",
+            value: "select",
+          }
+        ]}
+        onChange={(value) => {
+          setTypeList(value as string );
+        }}
+        />
+            <Form
+              layout="vertical"
+            >
+          <Form.Item label="Selecione a lista" name="list">
+            <Select
+              placeholder="Selecione a lista"
+              onChange={(value) => {
+                const list = lists.find((list) => list.id === value);
+                setFieldsList(list.fields);
+              }}
+            >
+              {lists && lists?.map((list) => (
+                <Select.Option key={list.id} value={list.id}>{list.name}</Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          {typeList === "create" && (
+          <Form.Item label="Nome da Lista" name="name">
+            <Input
+              placeholder="Digite o nome da lista"
+              onChange={(e) => setListName(e.target.value)}
+            />
+          </Form.Item>
+          )}
+          <Form.Item label="Selecione os campos para inserir na lista" name="name">
+            <div>
+              <div className="grid grid-cols-4 gap-4 mt-4">
+                {[
+                  {key: 'reference', label: 'Referência'},
+                  {key: 'transaction', label: 'Transação'},
+                  {key: 'status', label: 'Status'},
+                  {key: 'type', label: 'Tipo'},
+                  {key: 'subtype', label: 'Subtipo'}, 
+                  {key: 'profile', label: 'Perfil'},
+                  {key: 'situation', label: 'Situação'},
+                  {key: 'condominium_name', label: 'Nome do Condomínio'},
+                  {key: 'block_section_tower', label: 'Quadra/Seção/Torre'},
+                  {key: 'apartment_store_lot_room', label: 'Apto/Loja/Lote/Sala'},
+                  {key: 'floor', label: 'Andar'},
+                  {key: 'blocks_sections_towers_in_condominium', label: 'Quadras/Seções/Torres no Condomínio'},
+                  {key: 'floors_in_condominium', label: 'Andares no Condomínio'},
+                  {key: 'units_per_floor_condominium', label: 'Unidades por Andar'},
+                  {key: 'units_in_condominium', label: 'Unidades no Condomínio'},
+                  {key: 'state', label: 'Estado'},
+                  {key: 'city', label: 'Cidade'},
+                  {key: 'district', label: 'Bairro'},
+                  {key: 'street', label: 'Rua'},
+                  {key: 'number', label: 'Número'},
+                  {key: 'complement', label: 'Complemento'},
+                  {key: 'area', label: 'Área'},
+                  {key: 'measurement_unit', label: 'Unidade de Medida'},
+                  {key: 'bedrooms', label: 'Quartos'},
+                  {key: 'suites', label: 'Suítes'},
+                  {key: 'bathrooms', label: 'Banheiros'},
+                  {key: 'balconies', label: 'Varandas'},
+                  {key: 'garages', label: 'Vagas'},
+                  {key: 'covered_garages', label: 'Vagas Cobertas'},
+                  {key: 'corner_property', label: 'Imóvel de Esquina'},
+                  {key: 'solar_position', label: 'Posição Solar'},
+                  {key: 'proximity_to_sea', label: 'Proximidade do Mar'},
+                  {key: 'subtitle', label: 'Subtítulo'},
+                  {key: 'property_description', label: 'Descrição do Imóvel'},
+                  {key: 'condominium_description', label: 'Descrição do Condomínio'},
+                  {key: 'role', label: 'Função'},
+                  {key: 'responsible1', label: 'Responsável 1'},
+                  {key: 'contact_responsible1', label: 'Contato Responsável 1'},
+                  {key: 'responsible2', label: 'Responsável 2'},
+                  {key: 'contact_responsible2', label: 'Contato Responsável 2'},
+                  {key: 'contact_link_responsible2', label: 'Link Contato Responsável 2'},
+                  {key: 'key_responsible', label: 'Responsável pela Chave'},
+                  {key: 'contact_key_responsible', label: 'Contato Responsável pela Chave'},
+                  {key: 'sale_price', label: 'Preço de Venda'},
+                  {key: 'sale_conditions', label: 'Condições de Venda'},
+                  {key: 'rental_price', label: 'Preço de Aluguel'},
+                  {key: 'rental_conditions', label: 'Condições de Aluguel'},
+                  {key: 'property_tax', label: 'IPTU'},
+                  {key: 'property_tax_period', label: 'Período IPTU'},
+                  {key: 'condominium_fee', label: 'Taxa de Condomínio'},
+                  {key: 'included_in_condominium', label: 'Incluído no Condomínio'},
+                  {key: 'other_fees', label: 'Outras Taxas'},
+                  {key: 'fees_description', label: 'Descrição das Taxas'},
+                  {key: 'deeded', label: 'Escriturado'},
+                  {key: 'financing_accepted', label: 'Aceita Financiamento'},
+                  {key: 'has_financing', label: 'Possui Financiamento'},
+                  {key: 'commission', label: 'Comissão'},
+                  {key: 'accepts_assets', label: 'Aceita Permuta'},
+                  {key: 'occupation', label: 'Ocupação'},
+                  {key: 'exclusive', label: 'Exclusivo'},
+                  {key: 'notes', label: 'Observações'},
+                  {key: 'capture_link', label: 'Link de Captura'},
+                  {key: 'site_link', label: 'Link do Site'},
+                  {key: 'olx_link', label: 'Link OLX'},
+                  {key: 'update_message', label: 'Mensagem de Atualização'},
+                  {key: 'construction_year', label: 'Ano de Construção'},
+                  {key: 'delivery_forecast', label: 'Previsão de Entrega'},
+                  {key: 'builder', label: 'Construtora'},
+                  {key: 'user', label: 'Usuário'},
+                  {key: 'created_at', label: 'Criado em'},
+                  {key: 'updated_at', label: 'Atualizado em'}
+                ].map((field) => (
+                  <div
+                    key={field.key}
+                    className={`p-2 border rounded cursor-pointer ${
+                      fieldsList.includes(field.key) ? 'bg-orange-500 text-white' : 'bg-white'
+                    }`}
+                    onClick={() => {
+                      if (fieldsList.includes(field.key)) {
+                        setFieldsList(fieldsList.filter(f => f !== field.key));
+                      } else {
+                        setFieldsList([...fieldsList, field.key]);
+                      }
+                    }}
+                  >
+                    {field.label}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Form.Item>
+        </Form>
+        {typeList === "create" && (
+            <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handleCreateList}
+            >
+              Criar
+            </button>
+          )}
+        {typeList === "select" && (
+            <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
+              onClick={handleCopyList}
+            >
+              Copiar
+            </button>
+          )}
+      </Modal>
       <Table
+        rowKey={(record) => record.id || record.reference}
+        rowSelection={{
+          type: 'checkbox',
+          getCheckboxProps: (record) => ({
+            name: record.reference,
+            key: record.id || record.reference
+          }),
+          onChange: (selectedRowKeys: React.Key[], selectedRows) => {
+            const validKeys = Array.isArray(selectedRowKeys) ? selectedRowKeys : [];
+            setSelectedRowIds(validKeys);
+          },
+          selectedRowKeys: selectedRowIds,
+        }}
         columns={[
           {
             title: "Referência",

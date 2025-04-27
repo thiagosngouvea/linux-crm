@@ -76,6 +76,12 @@ const getInTecimobByReference = async (reference: string, token: string) => awai
 
 const deleteProperties = async (id: any) => await api.delete(`/linux-properties/${id}`);
 
+const duplicateProperties = async (ids: any[]) => await api.post(`/linux-properties/duplicate-properties`, {
+  ids
+});
+
+const getNextReference = async (prefix: string) => await api.get(`/linux-properties/next-reference/${prefix}`);
+
 export const propertiesService = {
   getAll,
   getByUrl,
@@ -93,5 +99,7 @@ export const propertiesService = {
   getFieldsInformations,
   deleteProperties,
   getFieldsInformationsByCondominiumName,
-  getInAllFields
+  getInAllFields,
+  duplicateProperties,
+  getNextReference
 };

@@ -10,6 +10,8 @@ import {
   InputNumber,
 } from "antd";
 import { propertiesService } from "@/services/linux-properties.service";
+import { gerarReferencia } from "@/utils/generateReference";
+
 
 interface FormRegisterProps {
   data: any;
@@ -31,6 +33,7 @@ const FormRegister = React.memo(function FormRegister({
     transaction: "",
     status: "",
     condominium_name: "",
+    type: "",
     subtype: "",
     profile: "",
     situation: "",
@@ -188,7 +191,22 @@ const FormRegister = React.memo(function FormRegister({
     }
   }, [data, form]);
 
+
   console.log("informations", informations);
+
+  console.log("data", data);
+  console.log("formData", formData);
+  console.log("form", form);
+
+  useEffect(() => {
+    if (formData.type || formData.condominium_name || formData.transaction || formData.role) {
+      gerarReferencia(formData.type, formData.condominium_name, formData.role, formData.transaction)
+      .then((reference) => {
+        form.setFieldsValue({ reference });
+      });
+    }
+  }, [formData]);
+
 
   return (
     <Form
@@ -233,9 +251,10 @@ const FormRegister = React.memo(function FormRegister({
             </Select>
           </Form.Item>
         </Col>
-        <Col span={8}>
-          <Form.Item name="condominium_name" label="Nome do Condomínio">
-            <Select placeholder="Selecione" showSearch allowClear>
+        {formData?.type && formData?.type.includes("Apartamento") && (
+          <Col span={8}>
+            <Form.Item name="condominium_name" label="Nome do Condomínio">
+              <Select placeholder="Selecione" showSearch allowClear>
               {informations?.condominium_name?.map((item: any) => (
                 <Select.Option key={`${item}-${Math.random()}`} value={item}>
                   {item}
@@ -244,6 +263,7 @@ const FormRegister = React.memo(function FormRegister({
             </Select>
           </Form.Item>
         </Col>
+        )}
       </Row>
       <Tabs defaultActiveKey="1">
         <Tabs.TabPane tab="Dados Gerais 1" key="1">
@@ -489,93 +509,108 @@ const FormRegister = React.memo(function FormRegister({
               </Form.Item>
             </Col>
           </Row>
+          {formData?.type && formData?.type.includes("Apartamento") && (
+            <Row gutter={16}>
+              <Col span={8}>
+                <Form.Item
+                  name="blocks_sections_towers_in_condominium"
+                  label="Blocos, Quadras ou Torres no Condomínio"
+                >
+                  <Select placeholder="Selecione" allowClear showSearch>
+                    {informations?.blockSectionTowerInCondominium?.map(
+                      (item: any) => (
+                        <Select.Option
+                          key={`${item}-${Math.random()}`}
+                          value={item}
+                        >
+                          {item}
+                        </Select.Option>
+                      )
+                    )}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  name="units_in_condominium"
+                  label="Andares no Condomínio"
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  name="units_per_floor_condominium"
+                  label="Unid. por Andar no Condomínio"
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item
+                  name="units_in_condominium"
+                  label="Total no Condomínio"
+                >
+                  <Input />
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
           <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item
-                name="blocks_sections_towers_in_condominium"
-                label="Blocos, Quadras ou Torres no Condomínio"
-              >
-                <Select placeholder="Selecione" allowClear showSearch>
-                  {informations?.blockSectionTowerInCondominium?.map(
-                    (item: any) => (
-                      <Select.Option
-                        key={`${item}-${Math.random()}`}
-                        value={item}
-                      >
-                        {item}
-                      </Select.Option>
-                    )
-                  )}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                name="units_in_condominium"
-                label="Andares no Condomínio"
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                name="units_per_floor_condominium"
-                label="Unid. por Andar no Condomínio"
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={4}>
-              <Form.Item
-                name="units_in_condominium"
-                label="Total no Condomínio"
-              >
-                <Input />
-              </Form.Item>
-            </Col>
+            {formData?.transaction &&formData?.transaction.includes("Venda") && (
+              <>
+                <Col span={6}>
+                  <Form.Item name="sale_price" label="Valor de Venda">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item name="sale_conditions" label="Condições da Venda">
+                    <Select placeholder="Selecione" allowClear showSearch>
+                      {informations?.saleConditions?.map((item: any) => (
+                        <Select.Option
+                          key={`${item}-${Math.random()}`}
+                          value={item}
+                        >
+                          {item}
+                        </Select.Option>
+                      ))}
+                    </Select> 
+                  </Form.Item>
+                </Col>
+                <Col span={6}>
+                  <Form.Item
+                    name="accepts_assets"
+                    label="Aceita Bens na Negociação"
+                  >
+                    <Select placeholder="Selecione" allowClear showSearch>
+                      <Select.Option value={true}>Sim</Select.Option>
+                      <Select.Option value={false}>Não</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </>
+            )}
+
+            {formData?.transaction && formData?.transaction.includes("Aluguel") && (
+              <>
+                <Col span={6}>
+                  <Form.Item name="rental_price" label="Valor do Aluguel">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="rental_conditions"
+                    label="Condições do Aluguel"
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+              </>
+            )}
           </Row>
-          <Row gutter={16}>
-            <Col span={6}>
-              <Form.Item name="sale_price" label="Valor de Venda">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="sale_conditions" label="Condições da Venda">
-                <Select placeholder="Selecione" allowClear showSearch>
-                  {informations?.saleConditions?.map((item: any) => (
-                    <Select.Option
-                      key={`${item}-${Math.random()}`}
-                      value={item}
-                    >
-                      {item}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item
-                name="accepts_assets"
-                label="Aceita Bens na Negociação"
-              >
-                <Select placeholder="Selecione" allowClear showSearch>
-                  <Select.Option value={true}>Sim</Select.Option>
-                  <Select.Option value={false}>Não</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item name="rental_price" label="Valor do Aluguel">
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="rental_conditions" label="Condições do Aluguel">
-                <Input />
-              </Form.Item>
-            </Col>
-          </Row>
+          {formData?.type && formData?.type.includes("Apartamento") && (
           <Row gutter={16}>
             <Col span={6}>
               <Form.Item name="condominium_fee" label="Valor do Condomínio">
@@ -619,6 +654,7 @@ const FormRegister = React.memo(function FormRegister({
               </Form.Item>
             </Col>
           </Row>
+          )}
           <Row gutter={16}>
             <Col span={3}>
               <Form.Item name="deeded" label="Escriturado">
@@ -699,14 +735,16 @@ const FormRegister = React.memo(function FormRegister({
             <Col span={6}>
               <Form.Item name="responsible1" label="Responsável 1">
                 <Select placeholder="Selecione" allowClear showSearch>
-                  {informations?.responsiblesWithContacts.responsible1?.map((item: any) => (
-                    <Select.Option
-                      key={`${item}-${Math.random()}`}
-                      value={item.name}
-                    >
-                      {item.name}
-                    </Select.Option>
-                  ))}
+                  {informations?.responsiblesWithContacts?.responsible1?.map(
+                    (item: any) => (
+                      <Select.Option
+                        key={`${item}-${Math.random()}`}
+                        value={item.name}
+                      >
+                        {item.name}
+                      </Select.Option>
+                    )
+                  )}
                 </Select>
               </Form.Item>
             </Col>
