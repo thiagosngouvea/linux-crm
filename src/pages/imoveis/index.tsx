@@ -1643,6 +1643,7 @@ export default function Imoveis() {
           Duplicar
         </button>
         <button 
+          disabled={selectedRowIds.length === 0} 
           className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
           onClick={() => setOpenModalList(true)}
         >
