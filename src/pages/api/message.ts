@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: "AIzaSyAYzDqn0Ae8GUX6dkKC1MyT2w8aBgYtmX8" });
+const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
