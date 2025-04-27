@@ -16,6 +16,12 @@ export default function Home() {
           rota="/imoveis"
         />
         <CardMenu
+          nome="Agendamentos"
+          descricao="Listagem de Agendamentos"
+          imagem={MenuImagem}
+          rota="/imoveis/agendamentos"
+        />
+        <CardMenu
           nome="Cadastro de Imóveis"
           descricao="Cadastrar um novo imóvel"
           imagem={CadastroImagem}
