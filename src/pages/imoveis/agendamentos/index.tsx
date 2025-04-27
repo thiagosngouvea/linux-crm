@@ -25,6 +25,7 @@ export default function Agendamentos() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
   const [form] = Form.useForm();
 
   const getAllSchedules = async () => {
@@ -200,7 +201,6 @@ export default function Agendamentos() {
             dataIndex: "date",
             key: "date",
             width: 120,
-            sorter: (a: any, b: any) => dayjs(a.date).diff(dayjs(b.date)),
             render: (date: string) =>
               new Date(date).toLocaleTimeString("pt-BR"),
           },
@@ -276,13 +276,6 @@ export default function Agendamentos() {
           showSizeChanger: true,
           showQuickJumper: true,
         }}
-        //pintar as linhas com a cor preta, se a data for hoje
-        // rowClassName={(record) => {
-        //   if (dayjs(record.date).isSame(dayjs(), 'day')) {
-        //     return 'bg-orange-400 text-white font-bold hover:text-black';
-        //   }
-        //   return '';
-        // }}
         sortDirections={['ascend', 'descend']}
         expandable={{
           expandedRowClassName: () => 'bg-white text-black hover:text-black',
@@ -333,10 +326,14 @@ export default function Agendamentos() {
                   <p><strong>Link do Whatsapp do Responsável 2:</strong> <a href={record.property.contact_link_responsible2} target="_blank" rel="noopener noreferrer">{record.property.contact_link_responsible2}</a></p>
                 </>
               )}
-
             </div>
-          )
+          ),
+          expandedRowKeys: expandedRowKeys,
+          onExpand: (expanded, record) => {
+            setExpandedRowKeys(expanded ? [record.id] : []);
+          }
         }}
+        rowKey={(record) => record.id}
       />
 
       <Modal
@@ -447,9 +444,14 @@ export default function Agendamentos() {
             <Input.TextArea rows={4} />
           </Form.Item>
           <div className="flex justify-end">
-            <button key="cancel" onClick={() => setIsModalVisible(false)} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+            <button onClick={() => {
+              setIsModalVisible(false);
+              setIsEditing(false);
+              setEditingId(null);
+              form.resetFields();
+            }} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
               Cancelar
-            </button>,
+            </button>
             <button key="submit" type="submit" className=" ml-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md" >
               Salvar
             </button>
