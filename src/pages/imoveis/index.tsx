@@ -1635,13 +1635,24 @@ export default function Imoveis() {
         </Modal>
       </div>
       <div className="flex justify-start gap-4 mb-4">
-        <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={handleDuplicateProperties}>
+        <button 
+          disabled={selectedRowIds.length === 0} 
+          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
+          onClick={handleDuplicateProperties}
+        >
           Duplicar
         </button>
-        <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={() => setOpenModalList(true)}>
+        <button 
+          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
+          onClick={() => setOpenModalList(true)}
+        >
           Criar / Copiar Lista
         </button>
-        <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={() => setOpenModalMessage(true)}>
+        <button 
+          disabled={selectedRowIds.length === 0} 
+          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
+          onClick={() => setOpenModalMessage(true)}
+        >
           Criar Mensagem
         </button>
       </div>
