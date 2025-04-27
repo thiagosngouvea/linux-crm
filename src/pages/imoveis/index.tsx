@@ -24,6 +24,7 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { FormRegister } from "@/components/FormRegister";
+import { fields } from "@/utils/fields";
 
 export default function Imoveis() {
   const [properties, setProperties] = useState<any[]>([]);
@@ -71,6 +72,8 @@ export default function Imoveis() {
   const [fieldsList, setFieldsList] = useState<any[]>([]);
   const [listName, setListName] = useState<string>("");
   const [typeList, setTypeList] = useState<string>("");
+
+  const [openModalMessage, setOpenModalMessage] = useState(false);
 
   const fetchData = useCallback(async () => {
     let filterBy = "";
@@ -859,6 +862,31 @@ export default function Imoveis() {
     message.success("Lista copiada para clipboard");
   };
 
+  const [messagem, setMessagem] = useState("");
+  const [camposSelecionados, setCamposSelecionados] = useState<string[][]>([]);
+  const [rules, setRules] = useState("");
+
+  console.log("camposSelecionados", camposSelecionados);
+
+  const fetchMessage = async () => {
+    const imoveisInfo = camposSelecionados.map((campos: string[], index: number) => {
+      return `Imóvel ${index + 1}: ${campos.join(" - ")}`;
+    }).join("\n");
+
+    console.log("imoveisInfo", imoveisInfo);
+    try {
+      const response = await fetch("/api/message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic: imoveisInfo, rules: rules }),
+      });
+      const data = await response.json();
+      setMessagem(data.question);
+    } catch (error) {
+      console.error("Failed to fetch question:", error);
+    }
+  };
+
   return (
     <div>
       <div>
@@ -1606,15 +1634,78 @@ export default function Imoveis() {
           </div>
         </Modal>
       </div>
-      <div className="flex justify-start gap-4">
+      <div className="flex justify-start gap-4 mb-4">
         <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={handleDuplicateProperties}>
           Duplicar
         </button>
         <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={() => setOpenModalList(true)}>
           Criar / Copiar Lista
         </button>
-
+        <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={() => setOpenModalMessage(true)}>
+          Criar Mensagem
+        </button>
       </div>
+      <Modal
+        title="Mensagem"
+        open={openModalMessage}
+        onCancel={() => setOpenModalMessage(false)}
+        footer={null}
+        width={"90%"}
+      >
+        <Form
+          layout="vertical"
+        >
+          <Form.Item label="Regras" name="rules"> 
+            <Input.TextArea
+              placeholder="Digite as regras"
+              onChange={(e) => setRules(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item label="Campos" name="fields">
+            <Select
+              placeholder="Selecione o campo"
+          onChange={(value) => {
+            //pegar os imoveis selecionados
+            const selectedProperties = properties.filter((property) => selectedRowIds.includes(property.id));
+
+            //em selectedProperties, pegar os campos que estão no value
+            const selectedFields = selectedProperties.map((property) => {
+              return value.map((field: string) => property[field]);
+            });
+
+            setCamposSelecionados(selectedFields);
+          }}
+          style={{ width: '100%' }}
+          mode="multiple"
+          showSearch
+          allowClear
+        >
+            {fields.map((field) => (
+              <Select.Option key={field.key} value={field.key}>{field.label}</Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        </Form>
+
+        <div className="mt-4">
+          <p className="text-sm">Valores Selecionados:</p>
+          {camposSelecionados.map((campos, index) => (
+            <p key={index} className="text-sm ml-2">
+              Imóvel {index + 1}: {campos.join(", ")}
+            </p>
+          ))}
+        </div>
+
+        <div className="mt-4">
+          <button className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" onClick={fetchMessage}>
+            Gerar Mensagem
+          </button>
+        </div>
+
+        <div className="mt-4">
+          <p className="text-sm whitespace-pre-line">Mensagem: {messagem}</p>
+        </div>
+      </Modal>
       <Modal
         title="Lista Personalizada"
         open={openModalList}
@@ -1665,79 +1756,7 @@ export default function Imoveis() {
           <Form.Item label="Selecione os campos para inserir na lista" name="name">
             <div>
               <div className="grid grid-cols-4 gap-4 mt-4">
-                {[
-                  {key: 'reference', label: 'Referência'},
-                  {key: 'transaction', label: 'Transação'},
-                  {key: 'status', label: 'Status'},
-                  {key: 'type', label: 'Tipo'},
-                  {key: 'subtype', label: 'Subtipo'}, 
-                  {key: 'profile', label: 'Perfil'},
-                  {key: 'situation', label: 'Situação'},
-                  {key: 'condominium_name', label: 'Nome do Condomínio'},
-                  {key: 'block_section_tower', label: 'Quadra/Seção/Torre'},
-                  {key: 'apartment_store_lot_room', label: 'Apto/Loja/Lote/Sala'},
-                  {key: 'floor', label: 'Andar'},
-                  {key: 'blocks_sections_towers_in_condominium', label: 'Quadras/Seções/Torres no Condomínio'},
-                  {key: 'floors_in_condominium', label: 'Andares no Condomínio'},
-                  {key: 'units_per_floor_condominium', label: 'Unidades por Andar'},
-                  {key: 'units_in_condominium', label: 'Unidades no Condomínio'},
-                  {key: 'state', label: 'Estado'},
-                  {key: 'city', label: 'Cidade'},
-                  {key: 'district', label: 'Bairro'},
-                  {key: 'street', label: 'Rua'},
-                  {key: 'number', label: 'Número'},
-                  {key: 'complement', label: 'Complemento'},
-                  {key: 'area', label: 'Área'},
-                  {key: 'measurement_unit', label: 'Unidade de Medida'},
-                  {key: 'bedrooms', label: 'Quartos'},
-                  {key: 'suites', label: 'Suítes'},
-                  {key: 'bathrooms', label: 'Banheiros'},
-                  {key: 'balconies', label: 'Varandas'},
-                  {key: 'garages', label: 'Vagas'},
-                  {key: 'covered_garages', label: 'Vagas Cobertas'},
-                  {key: 'corner_property', label: 'Imóvel de Esquina'},
-                  {key: 'solar_position', label: 'Posição Solar'},
-                  {key: 'proximity_to_sea', label: 'Proximidade do Mar'},
-                  {key: 'subtitle', label: 'Subtítulo'},
-                  {key: 'property_description', label: 'Descrição do Imóvel'},
-                  {key: 'condominium_description', label: 'Descrição do Condomínio'},
-                  {key: 'role', label: 'Função'},
-                  {key: 'responsible1', label: 'Responsável 1'},
-                  {key: 'contact_responsible1', label: 'Contato Responsável 1'},
-                  {key: 'responsible2', label: 'Responsável 2'},
-                  {key: 'contact_responsible2', label: 'Contato Responsável 2'},
-                  {key: 'contact_link_responsible2', label: 'Link Contato Responsável 2'},
-                  {key: 'key_responsible', label: 'Responsável pela Chave'},
-                  {key: 'contact_key_responsible', label: 'Contato Responsável pela Chave'},
-                  {key: 'sale_price', label: 'Preço de Venda'},
-                  {key: 'sale_conditions', label: 'Condições de Venda'},
-                  {key: 'rental_price', label: 'Preço de Aluguel'},
-                  {key: 'rental_conditions', label: 'Condições de Aluguel'},
-                  {key: 'property_tax', label: 'IPTU'},
-                  {key: 'property_tax_period', label: 'Período IPTU'},
-                  {key: 'condominium_fee', label: 'Taxa de Condomínio'},
-                  {key: 'included_in_condominium', label: 'Incluído no Condomínio'},
-                  {key: 'other_fees', label: 'Outras Taxas'},
-                  {key: 'fees_description', label: 'Descrição das Taxas'},
-                  {key: 'deeded', label: 'Escriturado'},
-                  {key: 'financing_accepted', label: 'Aceita Financiamento'},
-                  {key: 'has_financing', label: 'Possui Financiamento'},
-                  {key: 'commission', label: 'Comissão'},
-                  {key: 'accepts_assets', label: 'Aceita Permuta'},
-                  {key: 'occupation', label: 'Ocupação'},
-                  {key: 'exclusive', label: 'Exclusivo'},
-                  {key: 'notes', label: 'Observações'},
-                  {key: 'capture_link', label: 'Link de Captura'},
-                  {key: 'site_link', label: 'Link do Site'},
-                  {key: 'olx_link', label: 'Link OLX'},
-                  {key: 'update_message', label: 'Mensagem de Atualização'},
-                  {key: 'construction_year', label: 'Ano de Construção'},
-                  {key: 'delivery_forecast', label: 'Previsão de Entrega'},
-                  {key: 'builder', label: 'Construtora'},
-                  {key: 'user', label: 'Usuário'},
-                  {key: 'created_at', label: 'Criado em'},
-                  {key: 'updated_at', label: 'Atualizado em'}
-                ].map((field) => (
+                {fields.map((field) => (
                   <div
                     key={field.key}
                     className={`p-2 border rounded cursor-pointer ${
