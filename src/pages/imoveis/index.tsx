@@ -699,13 +699,12 @@ export default function Imoveis() {
 
   const [lists, setLists] = useState<any[]>([]);
 
-  console.log("lists", lists);
-  console.log("fieldsList", fieldsList);
+  const fetchLists = async () => {
+    const res = await listsService.getAll();
+    setLists(res.data.lists.result);
+  };
+
   useEffect(() => {
-    const fetchLists = async () => {
-      const res = await listsService.getAll();
-      setLists(res.data.lists.result);
-    };
     fetchLists();
   }, []);
 
@@ -758,12 +757,13 @@ export default function Imoveis() {
       const res = await listsService.create({
         name: listName,
         fields: fieldsList
-      });
-      console.log(res);
+      })
+      
       message.success("Lista criada com sucesso");
       setOpenModalList(false);
       setListName("");
       setFieldsList([]);
+      fetchLists();
     } catch (error: any) {
       console.log(error);
       message.error("Erro ao criar lista");
