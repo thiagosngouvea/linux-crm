@@ -337,7 +337,7 @@ export default function Imoveis() {
       setProperties(data);
       setTotal(res.data.properties.total);
     } catch (error: any) {
-      console.log("error", error);
+      message.error(error.response.data.message);
     }
   }, [
     page,
@@ -644,7 +644,7 @@ export default function Imoveis() {
       );
       setInformations(res.data.fields.result);
     } catch (error: any) {
-      console.log("error", error);
+      message.error(error.response.data.message);
     } finally {
       setLoadingInformations(false);
     }
@@ -747,8 +747,7 @@ export default function Imoveis() {
       message.success("Imóveis duplicados com sucesso");
       fetchData();
     } catch (error: any) {
-      console.log(error);
-      message.error("Erro ao duplicar imóveis");
+      message.error(error.response.data.message);
     }
   };
 
@@ -765,8 +764,7 @@ export default function Imoveis() {
       setFieldsList([]);
       fetchLists();
     } catch (error: any) {
-      console.log(error);
-      message.error("Erro ao criar lista");
+      message.error(error.response.data.message);
     }
   };
 
@@ -866,14 +864,12 @@ export default function Imoveis() {
   const [camposSelecionados, setCamposSelecionados] = useState<string[][]>([]);
   const [rules, setRules] = useState("");
 
-  console.log("camposSelecionados", camposSelecionados);
 
   const fetchMessage = async () => {
     const imoveisInfo = camposSelecionados.map((campos: string[], index: number) => {
       return `Imóvel ${index + 1}: ${campos.join(" - ")}`;
     }).join("\n");
 
-    console.log("imoveisInfo", imoveisInfo);
     try {
       const response = await fetch("/api/message", {
         method: "POST",
@@ -882,8 +878,8 @@ export default function Imoveis() {
       });
       const data = await response.json();
       setMessagem(data.question);
-    } catch (error) {
-      console.error("Failed to fetch question:", error);
+    } catch (error: any) {
+      message.error(error.response.data.message);
     }
   };
 
@@ -1936,11 +1932,10 @@ export default function Imoveis() {
                             await propertiesService.deleteProperties(record.id);
                             // Refresh data after deletion
                             fetchData();
-                          } catch (error) {
-                            console.error("Error deleting property:", error);
+                          } catch (error: any) {
                             Modal.error({
                               title: 'Erro',
-                              content: 'Ocorreu um erro ao excluir o imóvel.'
+                              content: error.response.data.message
                             });
                           }
                         }

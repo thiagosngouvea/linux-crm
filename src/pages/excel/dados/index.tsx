@@ -26,7 +26,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { propertiesService } from "@/services/properties.service";
-import { parseCookies } from "nookies";
+import { parse } from 'cookie';
 import { tecimobService } from "@/services/tecimob.service";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
@@ -52,6 +52,7 @@ const DadosExcel = React.memo(function DadosExcel({
 }: {
   token: string;
 }) {
+
   const [data, setData] = useState<DadosExcelProps[]>([]);
 
   const [reference, setReference] = useState<string>("");
@@ -1262,17 +1263,14 @@ const DadosExcel = React.memo(function DadosExcel({
 export default DadosExcel;
 
 export const getServerSideProps = async (ctx: any) => {
-  const { ["token.tecimob"]: token } = parseCookies(ctx);
+  const cookies = parse(ctx.req.headers.cookie || '');
+  const token = cookies['token.tecimob'];
 
   if (!token) {
-    return {
-      props: {},
-    };
+    return { props: {} };
   }
 
   return {
-    props: {
-      token,
-    },
+    props: { token },
   };
 };

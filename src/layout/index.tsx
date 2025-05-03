@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DesktopOutlined,
   FileOutlined,
@@ -8,7 +8,7 @@ import {
   //icone de logout
     LogoutOutlined,
 } from '@ant-design/icons';
-import { BsFillHouseDoorFill, BsListUl, BsFillHouseAddFill, BsCalendarEvent } from 'react-icons/bs';
+import { BsFillHouseDoorFill, BsListUl, BsFillHouseAddFill, BsCalendarEvent, BsFillPersonFill } from 'react-icons/bs';
 import { BiSolidDashboard } from 'react-icons/bi';
 import { SiMicrosoftexcel } from "react-icons/si";
 import type { MenuProps } from 'antd';
@@ -51,7 +51,13 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
 
   const { SubMenu } = Menu;
   
-  const { logout } = useAuthStore();
+  const { logout, user } = useAuthStore();
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    setIsAdmin(user?.role === 'super_admin' || user?.role === 'admin');
+  }, [user]);
 
   const isMobile = windowSize.width ? windowSize.width <= 768 : false;
 
@@ -82,9 +88,15 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
                         Agendamentos
                     </Menu.Item>
                 </SubMenu>
+                {isAdmin && (
+                <Menu.Item key="4" icon={<BsFillPersonFill />} onClick={() => route.push('/admin/contas')}>
+                    Usuários
+                </Menu.Item>
+                )}
                 <Menu.Item key="2" icon={<SiMicrosoftexcel />} onClick={() => route.push('/excel/analise')}>
                     Analisar Excel
                 </Menu.Item>
+               
                 <Menu.Item key="3" icon={<SiMicrosoftexcel />} onClick={() => route.push('/excel/dados')}>
                     Dados de Captação
                 </Menu.Item>
