@@ -97,10 +97,22 @@ export default function Imoveis() {
     beforeUpload: async (file) => {
       const formData = new FormData();
       formData.append("file", file);
-      await propertiesService.uploadExcelDatabase(formData).then(async (res) => {
-        await fetchData();
-        message.success(res?.data?.file_path?.message);
+      
+      Modal.info({
+        title: 'Carregando',
+        content: 'O upload do arquivo está em andamento. Por favor, aguarde...',
+        okButtonProps: { style: { display: 'none' } }
       });
+
+      try {
+        const res = await propertiesService.uploadExcelDatabase(formData);
+        await fetchData();
+        Modal.destroyAll(); // Remove o modal de loading
+        message.success(res?.data?.file_path?.message);
+      } catch (error) {
+        Modal.destroyAll(); // Remove o modal de loading em caso de erro
+        message.error('Erro ao fazer upload do arquivo');
+      }
       return true;
     },
     onChange(info) {
@@ -1692,12 +1704,30 @@ export default function Imoveis() {
         >
           Criar Mensagem
         </button>
+
         {isSuperAdmin && (
-        <Upload {...props}>
-          <Button icon={<UploadOutlined />}>
-            Selecione o arquivo para upload
-          </Button>
-        </Upload>
+          <div className="flex gap-4">
+            <button 
+            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" 
+            onClick={() => {
+              Modal.confirm({
+                title: 'Confirmação',
+                content: 'Tem certeza que deseja excluir todos os imóveis do banco de dados?',
+                onOk: async () => {
+                  await propertiesService.deleteAllProperties();
+                  fetchData();
+                }
+              });
+            }}
+          >
+            Excluir Todos
+          </button>
+          <Upload {...props}>
+            <Button icon={<UploadOutlined />}>
+              Selecione o arquivo para upload
+            </Button>
+          </Upload>
+          </div>
         )}
       </div>
       <Modal

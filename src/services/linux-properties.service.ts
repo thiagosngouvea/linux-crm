@@ -88,6 +88,8 @@ const uploadExcelDatabase = async (data: any) => await api.post(`/linux-properti
   }
 });
 
+const deleteAllProperties = async () => await api.delete(`/linux-properties/delete/all`);
+
 export const propertiesService = {
   getAll,
   getByUrl,
@@ -108,5 +110,6 @@ export const propertiesService = {
   getInAllFields,
   duplicateProperties,
   getNextReference,
-  uploadExcelDatabase
+  uploadExcelDatabase,
+  deleteAllProperties
 };
