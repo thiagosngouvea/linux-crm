@@ -14,6 +14,8 @@ import {
   Select,
   Table,
   Tabs,
+  Upload,
+  UploadProps,
 } from "antd";
 import {
   EditOutlined,
@@ -21,10 +23,12 @@ import {
   MinusCircleOutlined,
   PlusOutlined,
   InfoCircleOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import { FormRegister } from "@/components/FormRegister";
 import { fields } from "@/utils/fields";
+import { useAuthStore } from "@/context/auth";
 
 export default function Imoveis() {
   const [properties, setProperties] = useState<any[]>([]);
@@ -74,6 +78,42 @@ export default function Imoveis() {
   const [typeList, setTypeList] = useState<string>("");
 
   const [openModalMessage, setOpenModalMessage] = useState(false);
+
+  const { user } = useAuthStore();
+
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+
+  useEffect(() => {
+    setIsSuperAdmin(user?.role === "super_admin");
+  }, [user]);
+
+
+  const props: UploadProps = {
+    name: "file",
+    accept: ".xlsx",
+    headers: {
+      authorization: "authorization-text",
+    },
+    beforeUpload: async (file) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      await propertiesService.uploadExcelDatabase(formData).then(async (res) => {
+        await fetchData();
+        message.success(res?.data?.file_path?.message);
+      });
+      return true;
+    },
+    onChange(info) {
+      if (info.file.status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        message.success(`${info.file.name} upload concluido com sucesso.`);
+      } else if (info.file.status === "error") {
+        message.error(`${info.file.name} upload falhou.`);
+      }
+    },
+  };
 
   const fetchData = useCallback(async () => {
     let filterBy = "";
@@ -337,7 +377,7 @@ export default function Imoveis() {
       setProperties(data);
       setTotal(res.data.properties.total);
     } catch (error: any) {
-      message.error(error.response.data.message);
+      message.error(error?.response?.data?.message || "Erro ao buscar imóveis");
     }
   }, [
     page,
@@ -644,7 +684,7 @@ export default function Imoveis() {
       );
       setInformations(res.data.fields.result);
     } catch (error: any) {
-      message.error(error.response.data.message);
+      message.error(error?.response?.data?.message || "Erro ao buscar informações dos imóveis");
     } finally {
       setLoadingInformations(false);
     }
@@ -747,7 +787,7 @@ export default function Imoveis() {
       message.success("Imóveis duplicados com sucesso");
       fetchData();
     } catch (error: any) {
-      message.error(error.response.data.message);
+      message.error(error?.response?.data?.message || "Erro ao duplicar imóveis");
     }
   };
 
@@ -764,7 +804,7 @@ export default function Imoveis() {
       setFieldsList([]);
       fetchLists();
     } catch (error: any) {
-      message.error(error.response.data.message);
+      message.error(error?.response?.data?.message || "Erro ao criar lista");
     }
   };
 
@@ -879,7 +919,7 @@ export default function Imoveis() {
       const data = await response.json();
       setMessagem(data.question);
     } catch (error: any) {
-      message.error(error.response.data.message);
+      message.error(error?.response?.data?.message || "Erro ao criar mensagem");
     }
   };
 
@@ -1652,6 +1692,13 @@ export default function Imoveis() {
         >
           Criar Mensagem
         </button>
+        {isSuperAdmin && (
+        <Upload {...props}>
+          <Button icon={<UploadOutlined />}>
+            Selecione o arquivo para upload
+          </Button>
+        </Upload>
+        )}
       </div>
       <Modal
         title="Mensagem"
@@ -1935,7 +1982,7 @@ export default function Imoveis() {
                           } catch (error: any) {
                             Modal.error({
                               title: 'Erro',
-                              content: error.response.data.message
+                              content: error?.response?.data?.message || "Erro ao deletar imóvel"
                             });
                           }
                         }

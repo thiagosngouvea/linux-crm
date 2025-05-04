@@ -560,7 +560,7 @@ const DadosExcel = React.memo(function DadosExcel({
             width: 300,
           },
           {
-            title: "Última Checagem",
+            title: "Última Atualização",
             dataIndex: "updated_at",
             key: "updated_at",
             width: 300,

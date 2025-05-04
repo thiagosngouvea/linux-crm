@@ -82,6 +82,12 @@ const duplicateProperties = async (ids: any[]) => await api.post(`/linux-propert
 
 const getNextReference = async (prefix: string) => await api.get(`/linux-properties/next-reference/${prefix}`);
 
+const uploadExcelDatabase = async (data: any) => await api.post(`/linux-properties/upload-excel-to-database`, data ,{
+  headers: {
+    "Content-Type": "multipart/form-data"
+  }
+});
+
 export const propertiesService = {
   getAll,
   getByUrl,
@@ -101,5 +107,6 @@ export const propertiesService = {
   getFieldsInformationsByCondominiumName,
   getInAllFields,
   duplicateProperties,
-  getNextReference
+  getNextReference,
+  uploadExcelDatabase
 };
