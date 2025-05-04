@@ -88,6 +88,11 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
                         Agendamentos
                     </Menu.Item>
                 </SubMenu>
+                <SubMenu key="sub2" icon={<BsFillHouseDoorFill />} title="Tecimob">
+                    <Menu.Item key="sub5" icon={<BsListUl />} onClick={() => route.push('/tecimob/imoveis')}>
+                        Imóveis
+                    </Menu.Item>
+                </SubMenu>
                 {isAdmin && (
                 <Menu.Item key="4" icon={<BsFillPersonFill />} onClick={() => route.push('/admin/contas')}>
                     Usuários

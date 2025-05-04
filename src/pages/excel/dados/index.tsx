@@ -32,6 +32,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
 import type { UploadProps } from "antd";
+import Cookies from "js-cookie";
 
 
 
@@ -87,6 +88,30 @@ const DadosExcel = React.memo(function DadosExcel({
   const [successStatus, setSuccessStatus] = useState<boolean>(false);
 
   const [visibleAdd, setVisibleAdd] = useState<boolean>(false);
+
+  const [modalLogin, setModalLogin] = useState(false);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [messageLogin, setMessageLogin] = useState('');
+
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
+    await tecimobService.login(email, password)
+            .then((res) => {
+
+                if(res.data.data.message === "Usuário não encontrado."){
+                    setMessageLogin("Usuário não encontrado");
+                } else if (res.data.data.message === "Senha inválida.") {
+                    setMessageLogin("Senha inválida");
+                } else if (res.data.data.access_token){
+                    Cookies.set("token.tecimob", res.data.data.access_token);
+                    setModalLogin(false);
+                    window.location.reload();
+                }
+            })
+  }
 
   const props: UploadProps = {
     name: "file",
@@ -293,6 +318,50 @@ const DadosExcel = React.memo(function DadosExcel({
 
   return (
     <>
+    <Modal
+            open={modalLogin}
+            onCancel={() => setModalLogin(false)}
+            footer={null}
+            title="O seu token está expirado, por favor, entre com o seu email e senha"
+        >
+            <div className="p-6 space-y-4 md:space-y-6">
+                {messageLogin && <p className="text-red-500">{messageLogin}</p>}
+                <form className="space-y-4 md:space-y-6" onSubmit={handleLogin}>
+                    <div>
+                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                            placeholder="name@company.com"
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
+                            Senha
+                        </label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="••••••••"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    >
+                        Entrar
+                    </button>
+                </form>
+            </div>
+        </Modal>
       <Form layout="vertical">
         <Row gutter={[16, 16]}>
           <Col span={8}>
@@ -740,6 +809,10 @@ const DadosExcel = React.memo(function DadosExcel({
                                   ...data,
                                 }
                               );
+                            }).catch((error) => {
+                              if(error.response.status === 401){
+                                setModalLogin(true);
+                              }
                             }),
                         "Publicação atualizada com sucesso!",
                         "Erro ao atualizar publicação"
@@ -760,7 +833,11 @@ const DadosExcel = React.memo(function DadosExcel({
                                     price
                                   ),
                               })
-                            ),
+                            ).catch((error) => {
+                              if(error.response.status === 401){
+                                setModalLogin(true);
+                              }
+                            }),
                         "Descrição atualizada com sucesso!",
                         "Erro ao atualizar descrição"
                       );
@@ -774,7 +851,12 @@ const DadosExcel = React.memo(function DadosExcel({
                                 ...response.data.data,
                                 price,
                               })
-                            ),
+                            )
+                            .catch((error) => {
+                              if(error.response.status === 401){
+                                setModalLogin(true);
+                              }
+                            }),
                         "Preço atualizado com sucesso!",
                         "Erro ao atualizar preço"
                       );
@@ -835,10 +917,14 @@ const DadosExcel = React.memo(function DadosExcel({
                             setSuccessStatus(true);
                           })
                           .catch((error) => {
-                            notification.error({
-                              message: "Erro ao inativar imóvel!",
-                              description: error,
-                            });
+                            if(error.response.status === 401){
+                              setModalLogin(true);
+                            } else {
+                              notification.error({
+                                message: "Erro ao inativar imóvel!",
+                                description: error,
+                              });
+                            }
                           });
                       }
                       if (editData?.capture_link_situation === "Disponível") {
@@ -851,10 +937,14 @@ const DadosExcel = React.memo(function DadosExcel({
                             setSuccessStatus(true);
                           })
                           .catch((error) => {
-                            notification.error({
-                              message: "Erro ao ativar imóvel!",
-                              description: error,
-                            });
+                            if(error.response.status === 401){
+                              setModalLogin(true);
+                            } else {
+                              notification.error({
+                                message: "Erro ao ativar imóvel!",
+                                description: error,
+                              });
+                            }
                           });
                       }
                     }}

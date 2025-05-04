@@ -93,6 +93,14 @@ const alterarPublicacaoImovel = async (id: string, token: string, data: any) => 
   });
 }
 
+const getImoveis = async (token: string) => {
+  return await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/properties`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 
 
 export const tecimobService = { 
@@ -105,6 +113,7 @@ export const tecimobService = {
   getDescricaoImovel,
   alterarDescricaoImovel,
   getPublicacaoImovel,
-  alterarPublicacaoImovel
+  alterarPublicacaoImovel,
+  getImoveis
 };
   

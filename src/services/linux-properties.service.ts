@@ -90,6 +90,10 @@ const uploadExcelDatabase = async (data: any) => await api.post(`/linux-properti
 
 const deleteAllProperties = async () => await api.delete(`/linux-properties/delete/all`);
 
+const getInLinuxReference = async (reference: string[]) => await api.post(`/linux-properties/get-properties-by-reference`, {
+  reference
+});
+
 export const propertiesService = {
   getAll,
   getByUrl,
@@ -111,5 +115,6 @@ export const propertiesService = {
   duplicateProperties,
   getNextReference,
   uploadExcelDatabase,
-  deleteAllProperties
+  deleteAllProperties,
+  getInLinuxReference
 };

@@ -53,6 +53,7 @@ const getInTecimobByReference = async (reference: string, token: string) => awai
   }
 });
 
+
 export const propertiesService = {
   getAll,
   getByUrl,
