@@ -120,51 +120,68 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
           </Layout>
         </Layout>
     ) : (
-      //faça o layout para mobile usando navbar em vez do componente de sidebar
       <Layout style={{ minHeight: '100vh' }}>
         <Header 
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 1,
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          backgroundColor: '#fff',
-        }}
-        //precisa ser light para que o logo fique visível
+          style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 1,
+            width: '100%',
+            padding: 0,
+            backgroundColor: '#fff',
+            height: 'auto'
+          }}
         >
-          {/* <div className="logo">
-            <Image
-              src={Logo}
-              alt="Logo"
-              width={100}
-              height={50}
-            />
-          </div> */}
-          <Menu theme="light" mode="horizontal" defaultSelectedKeys={['2']}>
-            <Menu.Item key="1" icon={<BiSolidDashboard />} onClick={() => route.push('/')}>
+          <Menu 
+            theme="light" 
+            mode="horizontal"
+            style={{
+              width: '100%',
+              overflowX: 'auto',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <Menu.Item key="1" onClick={() => route.push('/')}>
               Inicio
             </Menu.Item>
-            <SubMenu key="sub1" icon={<BsFillHouseDoorFill />} title="Imóveis">
-              <Menu.Item key="sub2" icon={<BsListUl />} onClick={() => route.push('/imoveis')}>
+            <SubMenu key="sub1" title="Imóveis">
+              <Menu.Item key="sub2" onClick={() => route.push('/imoveis')}>
                 Listagem
               </Menu.Item>
-              <Menu.Item key="sub3" icon={<BsFillHouseAddFill />} onClick={() => route.push('/imoveis/cadastro')}>
+              <Menu.Item key="sub3" onClick={() => route.push('/imoveis/cadastro')}>
                 Cadastro
               </Menu.Item>
+              <Menu.Item key="sub4" onClick={() => route.push('/imoveis/agendamentos')}>
+                Agendamentos
+              </Menu.Item>
             </SubMenu>
-            <Menu.Item key="10" icon={<LogoutOutlined />} onClick={logout}>
+            <SubMenu key="sub2" title="Tecimob">
+              <Menu.Item key="sub5" onClick={() => route.push('/tecimob/imoveis')}>
+                Imóveis
+              </Menu.Item>
+            </SubMenu>
+            {isAdmin && (
+              <Menu.Item key="4" onClick={() => route.push('/admin/contas')}>
+                Usuários
+              </Menu.Item>
+            )}
+            <Menu.Item key="2" onClick={() => route.push('/excel/analise')}>
+              Excel
+            </Menu.Item>
+            <Menu.Item key="3" onClick={() => route.push('/excel/dados')}>
+              Captação
+            </Menu.Item>
+            <Menu.Item key="10" onClick={logout}>
               Sair
             </Menu.Item>
           </Menu>
         </Header>
-        <Content >
-          <div style={{ padding: 16, minHeight: 360 }}>
+        <Content>
+          <div style={{ padding: 8 }}>
             {children}
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Linux Imóveis ©2023 Created by TG Software</Footer>
+        <Footer style={{ textAlign: 'center', padding: 8 }}>Linux Imóveis ©2023</Footer>
       </Layout>
     )
     

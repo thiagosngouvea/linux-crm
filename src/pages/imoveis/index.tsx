@@ -968,8 +968,8 @@ export default function Imoveis() {
           Listagem de Imóveis
         </h1>
         {/*criar uma barra de pesquisa*/}
-        <div className="flex justify-between">
-          <div className="absolute top-4">
+        <div className="md:flex xs:grid justify-between">
+          <div className="md:absolute xs:top-4 md:top-0 md:grid">
             <button
               className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded"
               onClick={() => {
@@ -1708,58 +1708,58 @@ export default function Imoveis() {
           </div>
         </Modal>
       </div>
-      <div className="flex justify-start gap-4 mb-4">
+      <div className="flex flex-wrap justify-start gap-4 mb-4">
         <button 
           disabled={selectedRowIds.length === 0} 
-          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
+          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
           onClick={handleDuplicateProperties}
         >
           Duplicar
         </button>
         <button 
           disabled={selectedRowIds.length === 0} 
-          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
+          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
           onClick={() => setOpenModalList(true)}
         >
           Criar / Copiar Lista
         </button>
         <button 
           disabled={selectedRowIds.length === 0} 
-          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
+          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
           onClick={() => setOpenModalMessage(true)}
         >
           Criar Mensagem
         </button>
         <button 
           disabled={selectedRowIds.length === 0} 
-          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
+          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
           onClick={() => setOpenModalVisit(true)}
         >
           Agendar Visita
         </button>
 
         {isSuperAdmin && (
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4 w-full sm:w-auto">
             <button 
-            className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded" 
-            onClick={() => {
-              Modal.confirm({
-                title: 'Confirmação',
-                content: 'Tem certeza que deseja excluir todos os imóveis do banco de dados?',
-                onOk: async () => {
-                  await propertiesService.deleteAllProperties();
-                  fetchData();
-                }
-              });
-            }}
-          >
-            Excluir Todos
-          </button>
-          <Upload {...props}>
-            <Button icon={<UploadOutlined />}>
-              Importar Imóveis
-            </Button>
-          </Upload>
+              className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto" 
+              onClick={() => {
+                Modal.confirm({
+                  title: 'Confirmação',
+                  content: 'Tem certeza que deseja excluir todos os imóveis do banco de dados?',
+                  onOk: async () => {
+                    await propertiesService.deleteAllProperties();
+                    fetchData();
+                  }
+                });
+              }}
+            >
+              Excluir Todos
+            </button>
+            <Upload {...props}>
+              <Button icon={<UploadOutlined />} className="w-full sm:w-auto">
+                Importar Imóveis
+              </Button>
+            </Upload>
           </div>
         )}
       </div>

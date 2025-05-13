@@ -216,13 +216,13 @@ const FormRegister = React.memo(function FormRegister({
       onValuesChange={handleValuesChange}
       onFinish={handleFinish}
     >
-      <Row gutter={16}>
-        <Col span={4}>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={24} md={4}>
           <Form.Item name="reference" label="Referência">
             <Input />
           </Form.Item>
         </Col>
-        <Col span={4}>
+        <Col xs={24} sm={24} md={4}>
           <Form.Item name="type" label="Tipo">
             <Select placeholder="Selecione" showSearch allowClear>
               {informations?.type?.map((item: any) => (
@@ -233,7 +233,7 @@ const FormRegister = React.memo(function FormRegister({
             </Select>
           </Form.Item>
         </Col>
-        <Col span={4}>
+        <Col xs={24} sm={24} md={4}>
           <Form.Item name="transaction" label="Transação">
             <Select placeholder="Selecione" allowClear showSearch>
               <Select.Option value="Venda">Venda</Select.Option>
@@ -243,7 +243,7 @@ const FormRegister = React.memo(function FormRegister({
             </Select>
           </Form.Item>
         </Col>
-        <Col span={4}>
+        <Col xs={24} sm={24} md={4}>
           <Form.Item name="status" label="Status">
             <Select placeholder="Selecione" allowClear showSearch>
               <Select.Option value="Disponível">Disponível</Select.Option>
@@ -252,7 +252,7 @@ const FormRegister = React.memo(function FormRegister({
           </Form.Item>
         </Col>
         {formData?.type && formData?.type.includes("Apartamento") && (
-          <Col span={8}>
+          <Col xs={24} sm={24} md={8}>
             <Form.Item name="condominium_name" label="Nome do Condomínio">
               <Select placeholder="Selecione" showSearch allowClear>
               {informations?.condominium_name?.map((item: any) => (
@@ -267,8 +267,8 @@ const FormRegister = React.memo(function FormRegister({
       </Row>
       <Tabs defaultActiveKey="1">
         <Tabs.TabPane tab="Dados Gerais 1" key="1">
-          <Row gutter={16}>
-            <Col span={4}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="subtype" label="Subtipo">
                 <Select placeholder="Selecione" showSearch allowClear>
                   {informations?.subtype?.map((item: any) => (
@@ -282,7 +282,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="profile" label="Perfil">
                 <Select placeholder="Selecione" showSearch allowClear>
                   {informations?.profile?.map((item: any) => (
@@ -296,7 +296,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="situation" label="Situação">
                 <Select placeholder="Selecione" showSearch allowClear>
                   {informations?.situation?.map((item: any) => (
@@ -310,7 +310,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={5}>
+            <Col xs={24} sm={24} md={5}>
               <Form.Item name="exclusive" label="Exclusividade">
                 <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
@@ -318,7 +318,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={5}>
+            <Col xs={24} sm={24} md={5}>
               <Form.Item name="commission" label="Comissão">
                 <Select placeholder="Selecione" allowClear showSearch>
                   {informations?.commission?.map((item: any) => (
@@ -333,8 +333,8 @@ const FormRegister = React.memo(function FormRegister({
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={2}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={2}>
               <Form.Item name="state" label="Estado">
                 <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value="AC">AC</Select.Option>
@@ -367,7 +367,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="city" label="Cidade">
                 <Select placeholder="Selecione" showSearch allowClear>
                   {informations?.cities?.map((item: any) => (
@@ -381,7 +381,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="district" label="Bairro">
                 <Select placeholder="Selecione" showSearch allowClear>
                   {informations?.district?.map((item: any) => (
@@ -395,7 +395,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="street" label="Logradouro">
                 <Select placeholder="Selecione" showSearch allowClear>
                   {informations?.street?.map((item: any) => (
@@ -409,29 +409,29 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={2}>
+            <Col xs={24} sm={24} md={2}>
               <Form.Item name="number" label="Número">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="complement" label="Complemento">
                 <Input />
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={2}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={2}>
               <Form.Item name="area" label="Área">
                 <InputNumber />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="measurement_unit" label="Unid. Medida">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={8}>
               <Form.Item name="block_section_tower" label="Bloco-Quadra-Torre">
                 <Select placeholder="Selecione" allowClear showSearch>
                   {informations?.blockSectionTower?.map((item: any) => (
@@ -445,7 +445,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item
                 name="apartment_store_lot_room"
                 label="Ap-Loja-Lote-Sala"
@@ -462,39 +462,39 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="floor" label="Nº do Andar">
                 <Input />
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={3}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={3}>
               <Form.Item name="bedrooms" label="Dormitórios">
                 <InputNumber />
               </Form.Item>
             </Col>
-            <Col span={3}>
+            <Col xs={24} sm={24} md={3}>
               <Form.Item name="suites" label="Suítes">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={3}>
+            <Col xs={24} sm={24} md={3}>
               <Form.Item name="bathrooms" label="Banheiros">
                 <InputNumber />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="balconies" label="Varandas">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="garages" label="Garagens">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={7}>
+            <Col xs={24} sm={24} md={7}>
               <Form.Item name="covered_garages" label="Cobertura das Garagens">
                 <Select placeholder="Selecione" allowClear showSearch>
                   {informations?.coveredGarages?.map((item: any) => (
@@ -510,8 +510,8 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
           </Row>
           {formData?.type && formData?.type.includes("Apartamento") && (
-            <Row gutter={16}>
-              <Col span={8}>
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={24} md={8}>
                 <Form.Item
                   name="blocks_sections_towers_in_condominium"
                   label="Blocos, Quadras ou Torres no Condomínio"
@@ -530,7 +530,7 @@ const FormRegister = React.memo(function FormRegister({
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col xs={24} sm={24} md={6}>
                 <Form.Item
                   name="units_in_condominium"
                   label="Andares no Condomínio"
@@ -538,7 +538,7 @@ const FormRegister = React.memo(function FormRegister({
                   <Input />
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col xs={24} sm={24} md={6}>
                 <Form.Item
                   name="units_per_floor_condominium"
                   label="Unid. por Andar no Condomínio"
@@ -546,7 +546,7 @@ const FormRegister = React.memo(function FormRegister({
                   <Input />
                 </Form.Item>
               </Col>
-              <Col span={4}>
+              <Col xs={24} sm={24} md={4}>
                 <Form.Item
                   name="units_in_condominium"
                   label="Total no Condomínio"
@@ -556,15 +556,15 @@ const FormRegister = React.memo(function FormRegister({
               </Col>
             </Row>
           )}
-          <Row gutter={16}>
+          <Row gutter={[16, 16]}>
             {formData?.transaction &&formData?.transaction.includes("Venda") && (
               <>
-                <Col span={6}>
+                <Col xs={24} sm={24} md={6}>
                   <Form.Item name="sale_price" label="Valor de Venda">
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
+                <Col xs={24} sm={24} md={12}>
                   <Form.Item name="sale_conditions" label="Condições da Venda">
                     <Select placeholder="Selecione" allowClear showSearch>
                       {informations?.saleConditions?.map((item: any) => (
@@ -578,7 +578,7 @@ const FormRegister = React.memo(function FormRegister({
                     </Select> 
                   </Form.Item>
                 </Col>
-                <Col span={6}>
+                <Col xs={24} sm={24} md={6}>
                   <Form.Item
                     name="accepts_assets"
                     label="Aceita Bens na Negociação"
@@ -594,12 +594,12 @@ const FormRegister = React.memo(function FormRegister({
 
             {formData?.transaction && formData?.transaction.includes("Aluguel") && (
               <>
-                <Col span={6}>
+                <Col xs={24} sm={24} md={6}>
                   <Form.Item name="rental_price" label="Valor do Aluguel">
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
+                <Col xs={24} sm={24} md={12}>
                   <Form.Item
                     name="rental_conditions"
                     label="Condições do Aluguel"
@@ -611,13 +611,13 @@ const FormRegister = React.memo(function FormRegister({
             )}
           </Row>
           {formData?.type && formData?.type.includes("Apartamento") && (
-          <Row gutter={16}>
-            <Col span={6}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="condominium_fee" label="Valor do Condomínio">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item
                 name="included_in_condominium"
                 label="O que está Incluso no Condomínio"
@@ -634,12 +634,12 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="other_fees" label="Valor das Taxas">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="fees_description" label="Descrição das Taxas">
                 <Select placeholder="Selecione" allowClear showSearch>
                   {informations?.feesDescription?.map((item: any) => (
@@ -655,8 +655,8 @@ const FormRegister = React.memo(function FormRegister({
             </Col>
           </Row>
           )}
-          <Row gutter={16}>
-            <Col span={3}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={3}>
               <Form.Item name="deeded" label="Escriturado">
                 <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
@@ -664,7 +664,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="has_financing" label="Tem Financiamento">
                 <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
@@ -672,7 +672,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="financing_accepted" label="Aceita Financiamento">
                 <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
@@ -680,7 +680,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={3}>
+            <Col xs={24} sm={24} md={3}>
               <Form.Item name="occupation" label="Ocupação">
                 <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value="Desocupado">Desocupado</Select.Option>
@@ -693,7 +693,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="corner_property" label="Imóvel de Esquina">
                 <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value={true}>Sim</Select.Option>
@@ -701,7 +701,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={3}>
+            <Col xs={24} sm={24} md={3}>
               <Form.Item name="solar_position" label="Posição Solar">
                 <Select placeholder="Selecione" showSearch allowClear>
                   {informations?.solarPosition?.map((item: any) => (
@@ -715,14 +715,14 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={3}>
+            <Col xs={24} sm={24} md={3}>
               <Form.Item name="proximity_to_sea" label="Prox. do Mar">
                 <Input />
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={3}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={3}>
               <Form.Item name="role" label="Função">
                 <Select placeholder="Selecione" allowClear showSearch>
                   <Select.Option value="Construtora">Construtora</Select.Option>
@@ -732,7 +732,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="responsible1" label="Responsável 1">
                 <Select placeholder="Selecione" allowClear showSearch>
                   {informations?.responsiblesWithContacts?.responsible1?.map(
@@ -748,7 +748,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item
                 name="contact_responsible1"
                 label="Contato Responsável 1"
@@ -765,12 +765,12 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item name="key_responsible" label="Resp. pela Chave">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={4}>
+            <Col xs={24} sm={24} md={4}>
               <Form.Item
                 name="contact_key_responsible"
                 label="Contato Resp. Chave"
@@ -779,8 +779,8 @@ const FormRegister = React.memo(function FormRegister({
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={6}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="responsible2" label="Responsável 2">
                 <Select placeholder="Selecione" allowClear showSearch>
                   {informations?.responsible2?.map((item: any) => (
@@ -794,7 +794,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item
                 name="contact_responsible2"
                 label="Contato Responsável 2"
@@ -811,7 +811,7 @@ const FormRegister = React.memo(function FormRegister({
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item
                 name="contact_link_responsible2"
                 label="Link do Contato do Responsável 2"
@@ -822,18 +822,18 @@ const FormRegister = React.memo(function FormRegister({
           </Row>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Dados Gerais 2" key="2">
-          <Row gutter={16}>
-            <Col span={6}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="construction_year" label="Ano de Construção">
                 <InputNumber />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="delivery_forecast" label="Previsão de Entrega">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="builder" label="Construtora">
                 {informations?.builder?.map((item: any) => (
                   <Select.Option key={`${item}-${Math.random()}`} value={item}>
@@ -843,25 +843,25 @@ const FormRegister = React.memo(function FormRegister({
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={6}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="capture_link" label="Link de Captação">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="site_link" label="Link do Site">
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={6}>
+            <Col xs={24} sm={24} md={6}>
               <Form.Item name="olx_link" label="Link da OLX">
                 <Input />
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={18}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={18}>
               <Form.Item name="update_message" label="Mensagem de Atualização">
                 <Input />
               </Form.Item>
@@ -869,15 +869,15 @@ const FormRegister = React.memo(function FormRegister({
           </Row>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Dados Gerais 3" key="3">
-          <Row gutter={16}>
-            <Col span={24}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={24}>
               <Form.Item name="subtitle" label="Subtitulo">
                 <Input />
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={12}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={12}>
               <Form.Item
                 name="property_description"
                 label="Descrição do Imóvel"
@@ -885,7 +885,7 @@ const FormRegister = React.memo(function FormRegister({
                 <Input.TextArea rows={12} />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={24} md={12}>
               <Form.Item
                 name="condominium_description"
                 label="Descrição do Condomínio"
@@ -894,8 +894,8 @@ const FormRegister = React.memo(function FormRegister({
               </Form.Item>
             </Col>
           </Row>
-          <Row>
-            <Col span={12}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={24} md={12}>
               <Form.Item name="notes" label="Anotações">
                 <Input.TextArea rows={4} />
               </Form.Item>
