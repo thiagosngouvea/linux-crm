@@ -116,7 +116,7 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
                 {children}
               </div>
             </Content>
-            <Footer style={{ textAlign: 'center' }}>Linux Imóveis ©2023 Created by TG Software</Footer>
+            <Footer style={{ textAlign: 'center' }}>Linux Imóveis ©2025 Created by TG Software</Footer>
           </Layout>
         </Layout>
     ) : (

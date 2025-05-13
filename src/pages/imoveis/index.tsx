@@ -4,6 +4,7 @@ import { listsService } from "@/services/lists.service";
 import {
   Button,
   Col,
+  DatePicker,
   Form,
   Image,
   Input,
@@ -29,6 +30,8 @@ import { useRouter } from "next/router";
 import { FormRegister } from "@/components/FormRegister";
 import { fields } from "@/utils/fields";
 import { useAuthStore } from "@/context/auth";
+import dayjs from "dayjs";
+import { schedulesService } from "@/services/schedules.service";
 
 export default function Imoveis() {
   const [properties, setProperties] = useState<any[]>([]);
@@ -70,14 +73,17 @@ export default function Imoveis() {
   const [informations, setInformations] = useState<any>({});
   const [loadingInformations, setLoadingInformations] = useState(false);
 
-  const [selectedRowIds, setSelectedRowIds] = useState<React.Key[]>([]);
+  const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
 
   const [openModalList, setOpenModalList] = useState(false);
   const [fieldsList, setFieldsList] = useState<any[]>([]);
   const [listName, setListName] = useState<string>("");
   const [typeList, setTypeList] = useState<string>("");
 
+  const [form] = Form.useForm();
+
   const [openModalMessage, setOpenModalMessage] = useState(false);
+  const [openModalVisit, setOpenModalVisit] = useState(false);
 
   const { user } = useAuthStore();
 
@@ -790,6 +796,26 @@ export default function Imoveis() {
   const handleSubmit = () => {
     // Lógica para submissão do formulário com os filtros
     console.log(filters);
+  };
+
+  const handleSubmitVisit = async (values: any) => {
+    selectedRowIds.forEach(async (id: string) => {
+      const data = {
+        date: values.date.format("YYYY-MM-DD HH:mm"),
+        property_id: id,
+        client_name: values?.client_name,
+        client_phone: values?.client_phone,
+        client_email: values?.client_email,
+        status: values?.status,
+        description: values?.description,
+      }
+
+      await schedulesService.create(data);
+    });
+
+    message.success("Visita agendada com sucesso");
+    setOpenModalVisit(false);
+    form.resetFields();
   };
 
   const handleDuplicateProperties = async () => {
@@ -1704,6 +1730,13 @@ export default function Imoveis() {
         >
           Criar Mensagem
         </button>
+        <button 
+          disabled={selectedRowIds.length === 0} 
+          className={`bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded ${selectedRowIds.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`} 
+          onClick={() => setOpenModalVisit(true)}
+        >
+          Agendar Visita
+        </button>
 
         {isSuperAdmin && (
           <div className="flex gap-4">
@@ -1724,7 +1757,7 @@ export default function Imoveis() {
           </button>
           <Upload {...props}>
             <Button icon={<UploadOutlined />}>
-              Selecione o arquivo para upload
+              Importar Imóveis
             </Button>
           </Upload>
           </div>
@@ -1877,6 +1910,123 @@ export default function Imoveis() {
             </button>
           )}
       </Modal>
+      <Modal
+        title="Visita"
+        open={openModalVisit}
+        onCancel={() => setOpenModalVisit(false)}
+        footer={null}
+        width={"90%"}
+      >
+       <Form 
+          layout="vertical"
+          form={form}
+          onFinish={handleSubmitVisit}
+           >
+          <Form.Item
+            label="Data"
+            name="date"
+            rules={[{ required: true, message: "Por favor selecione a data e o horário" }]}
+          >
+            <DatePicker
+              format="DD/MM/YYYY HH:mm"
+              showTime
+              style={{ width: "100%" }}
+              disabledDate={(current) => {
+                return current && current < dayjs().startOf('day');
+              }}
+              allowClear
+              onChange={(value) => {
+                if (value) {
+                  form.setFieldsValue({ date: value });
+                }
+              }}
+            />
+          </Form.Item>
+
+          {/* <Form.Item
+            label="Imóvel"
+            name="property_id"
+            rules={[
+              { required: true, message: "Por favor selecione o imóvel" },
+            ]}
+          >
+            <Select
+              showSearch
+              filterOption={(input, option) =>
+                option?.props.children
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {properties.map((property: any) => (
+                <Select.Option 
+                key={property.id} 
+                value={property.id}
+                >
+                  {property.reference}
+                  </Select.Option>
+              ))}
+            </Select>
+          </Form.Item> */}
+
+          <Form.Item
+            label="Nome do Cliente"
+            name="client_name"
+            rules={[
+              { required: true, message: "Por favor insira o nome do cliente" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Telefone do Cliente"
+            name="client_phone"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Email do Cliente"
+            name="client_email"
+            rules={[
+              { type: "email", message: "Email inválido" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Status"
+            name="status"
+            rules={[
+              { required: true, message: "Por favor selecione o status" },
+            ]}
+          >
+            <Select>
+              <Select.Option value="confirmed">Confirmado</Select.Option>
+              <Select.Option value="pending">Pendente</Select.Option>
+              <Select.Option value="canceled">Cancelado</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item label="Descrição" name="description">
+            <Input.TextArea rows={4} />
+          </Form.Item>
+          <div className="flex justify-end">
+            <button onClick={() => {
+              setOpenModalVisit(false);
+              form.resetFields();
+            }} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+              Cancelar
+            </button>
+            <button key="submit" type="submit" className=" ml-4 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md" >
+              Salvar
+            </button>
+          </div>
+        </Form>
+      </Modal>
+
       <Table
         rowKey={(record) => record.id || record.reference}
         rowSelection={{
@@ -1887,7 +2037,7 @@ export default function Imoveis() {
           }),
           onChange: (selectedRowKeys: React.Key[], selectedRows) => {
             const validKeys = Array.isArray(selectedRowKeys) ? selectedRowKeys : [];
-            setSelectedRowIds(validKeys);
+            setSelectedRowIds(validKeys as string[]);
           },
           selectedRowKeys: selectedRowIds,
         }}

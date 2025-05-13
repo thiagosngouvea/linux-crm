@@ -224,6 +224,9 @@ export default function Agendamentos() {
             key: "client_phone",
             width: 150,
             ellipsis: true,
+            render: (phone: string) => {
+              return <a href={`https://wa.me/55${phone}`} target="_blank" rel="noopener noreferrer">{phone}</a>
+            }
           },
           {
             title: "Email",
@@ -282,6 +285,7 @@ export default function Agendamentos() {
           rowExpandable: () => true,
           expandedRowRender: (record) => (
             <div className="p-4">
+              <p><strong>Link WhatsApp do Cliente:</strong> <a href={`https://wa.me/55${record.client_phone}`} target="_blank" rel="noopener noreferrer">{`https://wa.me/55${record.client_phone}`}</a></p>
               <p><strong>Cidade:</strong> {record.property.city || "Não informado"}</p>
               <p><strong>Bairro:</strong> {record.property.district || "Não informado"}</p>
               <p><strong>Rua:</strong> {record.property.street || "Não informado"}</p>
