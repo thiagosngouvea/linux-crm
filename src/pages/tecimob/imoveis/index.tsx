@@ -38,6 +38,8 @@ function Imoveis({ token }: { token: string }) {
     setLoading(true);
     try {
       const response = await tecimobService.getImoveis(token);
+
+      console.log(response?.data?.data);
       const formattedData = response?.data?.data?.map((property: any) => ({
           reference: property.reference,
           status: property.status,
@@ -67,7 +69,8 @@ function Imoveis({ token }: { token: string }) {
       const formattedData = response?.data?.properties?.map((property: any) => ({
         reference: property.reference,
         status: property.status,
-        calculated_price: property.sale_price === "" ? (property.rental_price === "" ? null : property.rental_price) : property.sale_price
+        calculated_price: property.sale_price === "" ? (property.rental_price === "" ? null : property.rental_price) : property.sale_price,
+        ...property
       }));
       
       setImoveisLinux(formattedData);
@@ -102,6 +105,223 @@ function Imoveis({ token }: { token: string }) {
   //agora eu quero um array com os imoveis que tem o status diferente entre status e status_linux ou o calculated_price diferente entre calculated_price e calculated_price_linux
   const imoveisStatusDiferente = imoveisEmComum.filter((imovel: any) => imovel.status !== imovel.status_linux || imovel.calculated_price !== imovel.calculated_price_linux);
 
+  // Mapeamento de campos equivalentes entre as bases
+  const fieldMapping = {
+    // Campos básicos
+    reference: {
+      linux: 'reference',
+      tecimob: 'data.reference'
+    },
+    status: {
+      linux: 'status',
+      tecimob: 'data.status'
+    },
+    transaction: {
+      linux: 'transaction',
+      tecimob: 'data.transaction',
+      transform: (value: any) => {
+        if (typeof value === 'number') {
+          return value === 1 ? 'Venda' : 'Aluguel';
+        }
+        return value;
+      }
+    },
+
+    // Tipo e subtipo
+    type: {
+      linux: 'type.title',
+      tecimob: 'data.type'
+    },
+    subtype: {
+      linux: 'subtype.title',
+      tecimob: 'data.subtype'
+    },
+
+    // Localização
+    state: {
+      linux: 'state',
+      tecimob: 'data.state'
+    },
+    city: {
+      linux: 'city',
+      tecimob: 'data.city'
+    },
+    district: {
+      linux: 'district',
+      tecimob: 'data.district'
+    },
+    street: {
+      linux: 'street_address',
+      tecimob: 'data.street'
+    },
+    number: {
+      linux: 'street_number',
+      tecimob: 'data.number'
+    },
+    complement: {
+      linux: 'complement_address',
+      tecimob: 'data.complement'
+    },
+
+    // Preços
+    sale_price: {
+      linux: 'calculated_price',
+      tecimob: 'data.sale_price',
+      transform: (value: any) => {
+        if (typeof value === 'string' && value.includes('R$')) {
+          return value.replace('R$', '').replace(/\./g, '').replace(',', '').trim();
+        }
+        return value;
+      }
+    },
+    rental_price: {
+      linux: 'rental_price',
+      tecimob: 'data.rental_price'
+    },
+    condominium_fee: {
+      linux: 'condominium_price',
+      tecimob: 'data.condominium_fee'
+    },
+
+    // Características do imóvel
+    area: {
+      linux: 'areas.built_area.value',
+      tecimob: 'data.area',
+      transform: (value: any) => {
+        if (value === null || value === undefined) return null;
+        return String(value);
+      }
+    },
+    measurement_unit: {
+      linux: 'areas.built_area.measure',
+      tecimob: 'data.measurement_unit'
+    },
+
+    // Informações adicionais
+    delivery_forecast: {
+      linux: 'delivery_forecast',
+      tecimob: 'data.delivery_forecast'
+    },
+    site_link: {
+      linux: 'site_link',
+      tecimob: 'data.site_link'
+    },
+    created_at: {
+      linux: 'created_at',
+      tecimob: 'data.created_at',
+      transform: (value: any) => {
+        if (!value) return null;
+        const date = new Date(value);
+        return isNaN(date.getTime()) ? null : date.toISOString();
+      }
+    },
+    updated_at: {
+      linux: 'updated_at',
+      tecimob: 'data.updated_at',
+      transform: (value: any) => {
+        if (!value) return null;
+        const date = new Date(value);
+        return isNaN(date.getTime()) ? null : date.toISOString();
+      }
+    }
+  };
+
+  // Função para obter valor de um objeto usando path string (ex: "data.type")
+  const getNestedValue = (obj: any, path: string) => {
+    if (!obj) return null;
+    return path.split('.').reduce((acc, part) => (acc && acc[part] !== undefined) ? acc[part] : null, obj);
+  };
+
+  // Função para comparar valores considerando as transformações necessárias
+  const compareValues = (tecimobValue: any, linuxValue: any, fieldConfig: any) => {
+    if (typeof fieldConfig === 'string') {
+      return tecimobValue === linuxValue;
+    }
+
+    const transformFn = fieldConfig.transform || ((v: any) => v);
+    const tecimobTransformed = transformFn(tecimobValue);
+    const linuxTransformed = transformFn(linuxValue);
+
+    return tecimobTransformed === linuxTransformed;
+  };
+
+
+  console.log('imoveisEmComum', imoveisEmComum);
+  // Nova variável com todas as diferenças detalhadas
+  const todasDiferencas = {
+    // Imóveis que existem no Tecimob mas não no Linux
+    imoveisApenasNoTecimob: imoveis.filter((imovel: any) => 
+      !imoveisLinux.some((imoveilinux: any) => imoveilinux.reference === imovel.reference)
+    ),
+    
+    // Imóveis que existem no Linux mas não no Tecimob
+    imoveisApenasNoLinux: imoveisLinux.filter((imovel: any) => 
+      !imoveis.some((imoveitecimob: any) => imoveitecimob.reference === imovel.reference)
+    ),
+    
+    // Imóveis com diferenças em campos equivalentes
+    imoveisComDiferencas: imoveisEmComum
+      .map((imovelTecimob: any) => {
+        const imovelLinux = imoveisLinux.find((il: any) => il.reference === imovelTecimob.reference);
+        
+        const diferencas: any = {
+          referencia: imovelTecimob.reference,
+          campos: {}
+        };
+
+        // Comparar todos os campos mapeados
+        Object.entries(fieldMapping).forEach(([campo, config]) => {
+          const tecimobValue = typeof config === 'string' 
+            ? imovelTecimob[config]
+            : getNestedValue(imovelTecimob, config.tecimob);
+
+          const linuxValue = typeof config === 'string'
+            ? imovelLinux?.[config]
+            : getNestedValue(imovelLinux, config.linux);
+
+          if (!compareValues(tecimobValue, linuxValue, config)) {
+            diferencas.campos[campo] = {
+              tecimob: tecimobValue,
+              linux: linuxValue,
+              temDiferenca: true
+            };
+          }
+        });
+
+        return diferencas;
+      })
+      .filter((diff: any) => Object.keys(diff.campos).length > 0)
+  };
+
+  console.log('todasDiferencas', todasDiferencas);
+
+  // Colunas para a tabela de diferenças
+  const columnsDetalhados = [
+    {
+      title: 'Referência',
+      dataIndex: 'referencia',
+      key: 'referencia',
+    },
+    {
+      title: 'Campos com Diferenças',
+      dataIndex: 'campos',
+      key: 'campos',
+      render: (campos: any) => (
+        <div className="space-y-2">
+          {Object.entries(campos ?? {}).map(([campo, valores]: [string, any]) => (
+            <div key={campo} className="border-b pb-2">
+              <div className="font-bold">{campo}</div>
+              <div className="space-y-1">
+                <div className="text-red-600">Nosso Sistema: {String(valores?.tecimob ?? 'Não informado')}</div>
+                <div className="text-green-600">Tecimob: {String(valores?.linux ?? 'Não informado')}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ),
+    }
+  ];
+
   const columns = [
     {
         title: 'Referência',
@@ -119,6 +339,10 @@ function Imoveis({ token }: { token: string }) {
         key: 'status',
     },
   ]
+
+  const imoveisNaoTecimob = imoveisLinux.filter((imovel: any) => !imoveis.some((imoveitecimob: any) => imoveitecimob.reference === imovel.reference));
+
+
   
   return (
     <div>
@@ -269,6 +493,42 @@ function Imoveis({ token }: { token: string }) {
                     }
                 }
             ]}
+        />
+
+        <div className="flex items-center gap-2 mb-4">
+            <h1 className='text-2xl font-bold text-orange-500'>Imóveis que existem no Tecimob mas não no Linux</h1>
+            <span className="px-3 py-1 text-sm font-semibold bg-orange-100 text-orange-700 rounded-full">
+                {todasDiferencas.imoveisApenasNoTecimob.length}
+            </span>
+        </div>
+        <Table 
+            dataSource={todasDiferencas.imoveisApenasNoTecimob} 
+            loading={loading} 
+            columns={columnsDetalhados}
+        />
+
+        <div className="flex items-center gap-2 mb-4">
+            <h1 className='text-2xl font-bold text-orange-500'>Imóveis que existem no Linux mas não no Tecimob</h1>
+            <span className="px-3 py-1 text-sm font-semibold bg-orange-100 text-orange-700 rounded-full">
+                {todasDiferencas.imoveisApenasNoLinux.length}
+            </span>
+        </div>
+        <Table 
+            dataSource={todasDiferencas.imoveisApenasNoLinux} 
+            loading={loading} 
+            columns={columnsDetalhados}
+        />
+
+        <div className="flex items-center gap-2 mb-4">
+            <h1 className='text-2xl font-bold text-orange-500'>Imóveis com diferenças em campos equivalentes</h1>
+            <span className="px-3 py-1 text-sm font-semibold bg-orange-100 text-orange-700 rounded-full">
+                {todasDiferencas.imoveisComDiferencas.length}
+            </span>
+        </div>
+        <Table 
+            dataSource={todasDiferencas.imoveisComDiferencas} 
+            loading={loading} 
+            columns={columnsDetalhados}
         />
     </div>
   );
