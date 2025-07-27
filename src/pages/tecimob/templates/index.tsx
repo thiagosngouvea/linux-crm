@@ -26,7 +26,8 @@ import { FaBath } from "react-icons/fa6";
 import { BiCloset } from "react-icons/bi";
 import { FaKitchenSet } from "react-icons/fa6";
 import { TbRulerMeasure } from "react-icons/tb";
-
+import { toPng } from 'html-to-image';
+import { saveAs } from 'file-saver';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -399,215 +400,35 @@ function Templates({ token }: { token: string }) {
   };
 
   const downloadTemplate = async () => {
-    // Cria um canvas 1080x1920 (proporção 9:16 para status do WhatsApp)
-    const canvas = document.createElement("canvas");
-    canvas.width = WHATSAPP_STATUS_WIDTH;
-    canvas.height = WHATSAPP_STATUS_HEIGHT;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Fundo
-    ctx.fillStyle = "#eee";
-    ctx.fillRect(0, 0, WHATSAPP_STATUS_WIDTH, WHATSAPP_STATUS_HEIGHT);
-
-    // Imagem principal (ocupa toda a altura)
-    if (templateData.backgroundImage) {
-      const mainImg = new window.Image();
-      mainImg.crossOrigin = "anonymous";
-      mainImg.src = templateData.backgroundImage;
-      await new Promise((resolve) => {
-        mainImg.onload = resolve;
-        mainImg.onerror = resolve;
+    const templateElement = document.getElementById('template-content');
+  
+    if (!templateElement) {
+      console.error('Elemento do template não encontrado');
+      return;
+    }
+  
+    const width = 1080;
+    const height = 1920;
+  
+    toPng(templateElement, {
+      width,
+      height,
+      pixelRatio: 2, // Maior qualidade
+      cacheBust: true,
+      backgroundColor: '#ffffff',
+      style: {
+        transform: 'none',
+        position: 'relative',
+        top: '0',
+        left: '0',
+      },
+    })
+      .then((dataUrl) => {
+        saveAs(dataUrl, 'template.png');
+      })
+      .catch((err) => {
+        console.error('Erro ao exportar imagem:', err);
       });
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(WHATSAPP_STATUS_WIDTH, 0);
-      ctx.lineTo(WHATSAPP_STATUS_WIDTH, WHATSAPP_STATUS_HEIGHT);
-      ctx.lineTo(0, WHATSAPP_STATUS_HEIGHT);
-      ctx.closePath();
-      ctx.clip();
-      ctx.drawImage(
-        mainImg,
-        0,
-        0,
-        WHATSAPP_STATUS_WIDTH,
-        WHATSAPP_STATUS_HEIGHT
-      );
-      ctx.restore();
-    }
-
-    // Informações do imóvel (sobreposição na parte inferior da imagem principal)
-    const infoBoxY = Math.round(WHATSAPP_STATUS_HEIGHT * 0.65);
-    const infoBoxHeight = 450;
-    ctx.save();
-    ctx.globalAlpha = 0.85;
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, infoBoxY, WHATSAPP_STATUS_WIDTH, infoBoxHeight);
-    ctx.restore();
-
-    // Título (laranja, bold)
-    ctx.save();
-    ctx.font = "bold 36px Arial";
-    ctx.fillStyle = "#ff6b00";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    ctx.fillText(
-      templateData.title || "VENDO APARTAMENTO",
-      24,
-      infoBoxY + 24,
-      WHATSAPP_STATUS_WIDTH - 48
-    );
-    ctx.restore();
-
-    // Detalhes (quartos | vagas | área)
-    ctx.save();
-    ctx.font = "bold 24px Arial";
-    ctx.fillStyle = "#333";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    const detailsArr = [
-      templateData.rooms.bedroom?.value && `${templateData.rooms.bedroom.value} QUARTOS`,
-      templateData.rooms.garage?.value && `${templateData.rooms.garage.value} VAGA(S)`,
-      templateData.rooms.primary_area?.value && `${templateData.rooms.primary_area.value}M²`,
-    ].filter(Boolean);
-    ctx.fillText(
-      detailsArr.join("   |   "),
-      24,
-      infoBoxY + 80,
-      WHATSAPP_STATUS_WIDTH - 48
-    );
-    ctx.restore();
-
-    // Imagens secundárias (até 3)
-    const secondaryImages = [templateData.firstImage, templateData.secondImage, templateData.thirdImage].filter(Boolean);
-    const imgGap = 16;
-    const imgWidth = 320;
-    const imgHeight = 300;
-    const totalImgs = secondaryImages.length;
-    const totalWidth = totalImgs * imgWidth + (totalImgs - 1) * imgGap;
-    let startX = (WHATSAPP_STATUS_WIDTH - totalWidth) / 2;
-    const imgY = infoBoxY + 130;
-
-    for (let i = 0; i < totalImgs; i++) {
-      const imageUrl = secondaryImages[i];
-      const img = new window.Image();
-      img.crossOrigin = "anonymous";
-      img.src = imageUrl;
-      await new Promise((resolve) => {
-        img.onload = resolve;
-        img.onerror = resolve;
-      });
-      ctx.save();
-      // Borda arredondada
-      const radius = 16;
-      ctx.beginPath();
-      ctx.moveTo(startX + radius, imgY);
-      ctx.lineTo(startX + imgWidth - radius, imgY);
-      ctx.quadraticCurveTo(
-        startX + imgWidth,
-        imgY,
-        startX + imgWidth,
-        imgY + radius
-      );
-      ctx.lineTo(startX + imgWidth, imgY + imgHeight - radius);
-      ctx.quadraticCurveTo(
-        startX + imgWidth,
-        imgY + imgHeight,
-        startX + imgWidth - radius,
-        imgY + imgHeight
-      );
-      ctx.lineTo(startX + radius, imgY + imgHeight);
-      ctx.quadraticCurveTo(
-        startX,
-        imgY + imgHeight,
-        startX,
-        imgY + imgHeight - radius
-      );
-      ctx.lineTo(startX, imgY + radius);
-      ctx.quadraticCurveTo(startX, imgY, startX + radius, imgY);
-      ctx.closePath();
-      ctx.clip();
-
-      // Fundo claro
-      ctx.fillStyle = "#fafafa";
-      ctx.fillRect(startX, imgY, imgWidth, imgHeight);
-
-      // Imagem
-      ctx.drawImage(img, startX, imgY, imgWidth, imgHeight);
-      ctx.restore();
-
-      // Borda e sombra
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(startX + radius, imgY);
-      ctx.lineTo(startX + imgWidth - radius, imgY);
-      ctx.quadraticCurveTo(
-        startX + imgWidth,
-        imgY,
-        startX + imgWidth,
-        imgY + radius
-      );
-      ctx.lineTo(startX + imgWidth, imgY + imgHeight - radius);
-      ctx.quadraticCurveTo(
-        startX + imgWidth,
-        imgY + imgHeight,
-        startX + imgWidth - radius,
-        imgY + imgHeight
-      );
-      ctx.lineTo(startX + radius, imgY + imgHeight);
-      ctx.quadraticCurveTo(
-        startX,
-        imgY + imgHeight,
-        startX,
-        imgY + imgHeight - radius
-      );
-      ctx.lineTo(startX, imgY + radius);
-      ctx.quadraticCurveTo(startX, imgY, startX + radius, imgY);
-      ctx.closePath();
-      ctx.strokeStyle = "#eee";
-      ctx.lineWidth = 2;
-      ctx.shadowColor = "rgba(0,0,0,0.08)";
-      ctx.shadowBlur = 8;
-      ctx.stroke();
-      ctx.restore();
-
-      startX += imgWidth + imgGap;
-    }
-
-    // Referência (cinza, itálico)
-    if (templateData.reference) {
-      ctx.save();
-      ctx.font = "italic 18px Arial";
-      ctx.fillStyle = "#888";
-      ctx.textAlign = "left";
-      ctx.textBaseline = "top";
-      ctx.fillText(
-        `REF: ${templateData.reference}`,
-        24,
-        infoBoxY + infoBoxHeight - 40,
-        WHATSAPP_STATUS_WIDTH - 48
-      );
-      ctx.restore();
-    }
-
-    // Download
-    canvas.toBlob((blob) => {
-      if (blob) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `imovel-whatsapp-status-${
-          templateData.reference || "template"
-        }.png`;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }, 100);
-      }
-    }, "image/png");
   };
 
   const handleSearch = async () => {
@@ -675,7 +496,16 @@ function Templates({ token }: { token: string }) {
             
             setTemplateData({
                 transaction: res.data.data.transaction,
-                title: res.data.data.title,
+                title: (() => {
+                  let title = res.data.data.title || "";
+                  if (title.includes(" p/ ")) {
+                    return title.split(" p/ ")[0].trim();
+                  }
+                  if (title.includes(" à Venda")) {
+                    return title.split(" à Venda")[0].trim();
+                  }
+                  return title;
+                })(),
                 rooms: fullRooms,
                 reference: res.data.data.reference,
                 backgroundImage: res.data.data.images[0]?.file_url?.large || "",
@@ -965,13 +795,14 @@ function Templates({ token }: { token: string }) {
                   }}
                 >
                   <div
+                    id="template-content"
                     style={{
                       width: 1080,
                       height: 1920,
                       position: "relative",
                       background: "#eee",
                       overflow: "hidden",
-                      borderRadius: 16,
+                      borderRadius: 0, // Removido para evitar faixas brancas na captura
                     }}
                   >
                     {/* Imagem principal */}
@@ -991,8 +822,8 @@ function Templates({ token }: { token: string }) {
                             height: "100%",
                             objectFit: "cover",
                             objectPosition: "center",
-                            borderTopLeftRadius: 16,
-                            borderTopRightRadius: 16,
+                            borderTopLeftRadius: 0,
+                            borderTopRightRadius: 0,
                             display: "block",
                             filter: "none",
                             imageRendering: "auto",
@@ -1053,7 +884,23 @@ function Templates({ token }: { token: string }) {
                             "'Montserrat', 'Segoe UI', 'Arial', sans-serif",
                         }}
                       >
-                        {templateData.title}
+                        {
+                          (() => {
+                            let title = templateData.title || "";
+
+                            // Remove " p/ ..." and everything after
+                            if (title.includes(" p/ ")) {
+                              return title.split(" p/ ")[0].trim();
+                            }
+
+                            // Remove " à Venda" and everything after
+                            if (title.includes(" à Venda")) {
+                              return title.split(" à Venda")[0].trim();
+                            }
+
+                            return title;
+                          })()
+                        }
                       </div>
                     </div>
                     
@@ -1212,7 +1059,7 @@ function Templates({ token }: { token: string }) {
                 icon={<DownloadOutlined />}
                 onClick={downloadTemplate}
               >
-                Baixar imagem para Status do WhatsApp (1080x1920)
+                Baixar imagem para Status do WhatsApp
               </Button>
             </div>
           </Card>
