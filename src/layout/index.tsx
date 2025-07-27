@@ -95,6 +95,9 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
                     <Menu.Item key="sub6" icon={<BsListUl />} onClick={() => route.push('/tecimob/comparar')}>
                         Comparar
                     </Menu.Item>
+                    <Menu.Item key="sub7" icon={<BsListUl />} onClick={() => route.push('/tecimob/templates')}>
+                        Templates
+                    </Menu.Item>
                 </SubMenu>
                 {isAdmin && (
                 <Menu.Item key="4" icon={<BsFillPersonFill />} onClick={() => route.push('/admin/contas')}>
@@ -164,6 +167,9 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
               </Menu.Item>
               <Menu.Item key="sub6" onClick={() => route.push('/tecimob/comparar')}>
                 Comparar
+              </Menu.Item>
+              <Menu.Item key="sub7" onClick={() => route.push('/tecimob/templates')}>
+                Templates
               </Menu.Item>
             </SubMenu>
             {isAdmin && (

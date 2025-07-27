@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, Modal, message, notification, Select } from 'antd';
 import { tecimobService } from '@/services/tecimob.service';
 import { propertiesService } from '@/services/linux-properties.service';
+import { tecimobPropertiesService } from '@/services/tecimob-properties.service';
 import { parse } from 'cookie';
 import Cookies from 'js-cookie';
 
@@ -39,10 +40,16 @@ function Comparar({ token }: { token: string }) {
   const fetchImoveis = async () => {
     setLoading(true);
     try {
-      const response = await tecimobService.getImoveis(token);
+      const response = await tecimobPropertiesService.getAll(
+        1,
+        10000,
+        "",
+        "",
+        ""
+      );
 
-      console.log('response?.data?.data', response?.data?.data);
-      const formattedData = response?.data?.data?.map((property: any) => ({
+      console.log('response?.data?.data', response?.data?.properties);
+      const formattedData = response?.data?.properties?.map((property: any) => ({
           ...property,
           reference: property.reference,
           status: property.status,
@@ -408,6 +415,10 @@ function Comparar({ token }: { token: string }) {
       .filter((diff: any) => Object.keys(diff.campos).length > 0)
   };
 
+  const handleSincronizar = (actions: any) => {
+    console.log('actions', actions);
+  }
+
   // Colunas para a tabela de diferenças
   const columnsDetalhados = [
     {
@@ -420,6 +431,18 @@ function Comparar({ token }: { token: string }) {
       dataIndex: 'campos',
       key: 'campos',
       render: (campos: any) => Object.keys(campos ?? {}).length
+    },
+    {
+      title: 'Ações',
+      dataIndex: 'actions',
+      key: 'actions',
+      render: (actions: any, record: any) => (
+        <div className="flex items-center gap-2">
+          <button className="text-blue-500" onClick={() => {
+            handleSincronizar(record);
+          }}>Sincronizar</button>
+        </div>
+      )
     }
   ];
 
@@ -470,6 +493,31 @@ function Comparar({ token }: { token: string }) {
 
   console.log('todasDiferencas', todasDiferencas);
 
+  const handleUpdateBaseTecimob = async () => {
+    setLoading(true);
+    try {
+      const response = await tecimobService.getImoveis(token);
+      const properties = response?.data?.data || [];
+      // Processa em lotes para evitar sobrecarga e problemas de concorrência
+      const batchSize = 10;
+      for (let i = 0; i < properties.length; i += batchSize) {
+        const batch = properties.slice(i, i + batchSize);
+        await Promise.all(
+          batch.map((property: any) => tecimobPropertiesService.create(property))
+        );
+      }
+
+      message.success('Base atualizada com sucesso');
+    } catch (error: any) {
+      message.error(`Erro ao buscar imóveis Tecimob: ${error?.response?.data?.status === 401 ? 'Token inválido' : 'Erro ao buscar imóveis'}`);
+      if (error?.response?.data?.status === 401) {
+        setModalLogin(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div>
         <Modal
@@ -518,6 +566,13 @@ function Comparar({ token }: { token: string }) {
         </Modal>
 
         <div className="space-y-4">
+            <button 
+            className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            onClick={() => {
+              handleUpdateBaseTecimob();
+            }}>
+                Atualizar Base Tecimob
+            </button>
             <div className="flex items-center gap-2 mb-4">
                 <h1 className='text-2xl font-bold text-orange-500'>Imóveis com inconsistências</h1>
                 <span className="px-3 py-1 text-sm font-semibold bg-orange-100 text-orange-700 rounded-full">
