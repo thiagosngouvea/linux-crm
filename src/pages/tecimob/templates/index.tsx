@@ -9,6 +9,7 @@ import {
   Upload,
   Space,
   Divider,
+  Select,
 } from "antd";
 import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 import { tecimobService } from "../../../services/tecimob.service";
@@ -19,16 +20,337 @@ import Cookies from "js-cookie";
 import Logo from "../../../assets/logo.png";
 
 const { Title, Text } = Typography;
+const { Option } = Select;
 
 interface TemplateData {
-  titulo: string;
-  quartos: string;
-  vagas: string;
-  area: string;
-  valor: string;
-  fotos: UploadFile[];
-  referencia: string;
+  transaction: string | number;
+  calculated_price: string;
+  title: string;
+  rooms: any;
+  backgroundImage: string;
+  firstImage: string;
+  secondImage: string;
+  thirdImage: string;
+  reference: string;
 }
+
+interface ImovelImage {
+    updated_at: string;
+    created_at: string;
+    id: string;
+    gallery: number;
+    caption: string | null;
+    order: number;
+    property_id: string;
+    file_url: {
+      large: string;
+      medium: string;
+    };
+    is_external: boolean;
+  }
+
+  interface ImovelArea {
+    name: string;
+    title: string;
+    value: string;
+    measure: string;
+  }
+
+  interface ImovelRoomExtra {
+    is_covered?: {
+      name: string;
+      title: string;
+      value: boolean;
+    };
+    [key: string]: any;
+  }
+
+  interface ImovelRoom {
+    name: string;
+    title: string;
+    value: string;
+    title_formated: string;
+    extra?: ImovelRoomExtra;
+  }
+
+  interface ImovelRooms {
+    [key: string]: ImovelRoom;
+  }
+
+  interface ImovelAreas {
+    [key: string]: ImovelArea;
+  }
+
+  interface ImovelPricesPerArea {
+    [key: string]: {
+      title: string;
+      price: string;
+    };
+  }
+
+  interface ImovelCountry {
+    updated_at: string;
+    created_at: string;
+    id: string;
+    name: string;
+  }
+
+  interface ImovelState {
+    updated_at: string;
+    created_at: string;
+    id: string;
+    name: string;
+    acronym: string;
+    country_id: string;
+  }
+
+  interface ImovelCity {
+    updated_at: string;
+    created_at: string;
+    id: string;
+    name: string;
+    real_estate_id: string | null;
+    state_id: string;
+    state: ImovelState;
+  }
+
+  interface ImovelNeighborhood {
+    updated_at: string;
+    created_at: string;
+    id: string;
+    name: string;
+    city_id: string;
+    real_estate_id: string | null;
+    city: ImovelCity;
+    state: ImovelState;
+    country: ImovelCountry;
+  }
+
+  interface ImovelRealEstate {
+    updated_at: string;
+    created_at: string;
+    id: string;
+    blocked: boolean;
+    name: string;
+    contact_email: string;
+    neighborhood_id: string;
+    address_cep: string;
+    address_street: string;
+    address_number: string;
+    address_complement: string;
+    social_medias: {
+      instagram?: string;
+      facebook?: string;
+      [key: string]: string | undefined;
+    };
+    has_coordinates: boolean;
+    file_url: string;
+    header_background: string;
+    header_type: string;
+    maps_latitude: string;
+    maps_longitude: string;
+    is_address_shown: boolean;
+    type: string;
+    cpf_cnpj: string;
+    serial: number;
+    resale_id: string;
+    is_paying: boolean;
+    mailboxes_count: number;
+    redirect_mails_count: number;
+    users_count: number;
+    with_grouped_condos: boolean;
+    with_guru: boolean;
+    with_guru_portal: boolean;
+    recurring_charge: boolean;
+    plan: number;
+    receiving_method: string | null;
+    has_installment: boolean;
+    can_use_financial: boolean;
+    financial_user_id: string;
+    has_free_days: boolean;
+  }
+
+  interface ImovelTypeRoomField {
+    name: string;
+    title: string;
+    is_default: boolean;
+    extra?: Array<{
+      name: string;
+      title: string;
+    }>;
+  }
+
+  interface ImovelTypeInformationField {
+    name: string;
+    title: string;
+  }
+
+  interface ImovelTypeAreaField {
+    name: string;
+    title: string;
+    measures: string[];
+    is_primary: boolean;
+  }
+
+  interface ImovelType {
+    updated_at: string;
+    created_at: string;
+    id: string;
+    title: string;
+    primary_area: string;
+    rooms_fields: ImovelTypeRoomField[];
+    information_fields: ImovelTypeInformationField[];
+    area_fields: ImovelTypeAreaField[];
+  }
+
+  interface ImovelSubtype {
+    updated_at: string;
+    created_at: string;
+    id: string;
+    title: string;
+    type: ImovelType;
+  }
+
+  interface ImovelSituation {
+    updated_at: string;
+    created_at: string;
+    id: string;
+    title: string;
+    order: number;
+  }
+
+  interface Imovel {
+    updated_at: string;
+    created_at: string;
+    id: string;
+    calculated_price: string;
+    previous_price: string | null;
+    condominium_price: string | null;
+    taxes_price: string | null;
+    territorial_tax_price: string | null;
+    territorial_tax_type: string | null;
+    total_price: string;
+    transaction: number;
+    reference: string;
+    profile: number;
+    situation_id: string;
+    land_type: string | null;
+    near_sea: boolean | null;
+    solar_position_id: string | null;
+    is_property_titled: boolean;
+    is_deeded: boolean;
+    is_corner: boolean;
+    is_on_network: boolean;
+    is_season_available: boolean;
+    primary_area: ImovelArea;
+    areas: ImovelAreas;
+    rooms: ImovelRooms;
+    prices_per_area: ImovelPricesPerArea;
+    is_financeable_mcmv: boolean | null;
+    has_finance: boolean;
+    is_financeable: boolean;
+    taxes_description: string | null;
+    tour_360: string | null;
+    send_summary_every: string | null;
+    meta_title: string;
+    meta_description: string;
+    custom_url: string | null;
+    description: string;
+    title_formatted: string;
+    max_people: number | null;
+    real_estate_id: string;
+    network_type: string;
+    can_send_summary: boolean;
+    delivery_forecast: string | null;
+    lifetime: string | null;
+    is_exchangeable: boolean;
+    exchange_note: string | null;
+    exchange_max_price: string | null;
+    incorporation: string | null;
+    video_embed_url: string | null;
+    zone_id: string | null;
+    status: string;
+    site_link: string;
+    is_grouped_condo: boolean;
+    active: boolean;
+    has_furniture: boolean;
+    created_on_site: boolean;
+    warranties: string | null;
+    formatted_condo_position: string | null;
+    matriculation: string | null;
+    informations: Record<string, any>;
+    address_formatted: string;
+    zip_code: string | null;
+    street_address: string;
+    street_number: string;
+    complement_address: string | null;
+    maps_latitude: string | null;
+    maps_longitude: string | null;
+    maps_heading: string | null;
+    maps_pitch: string | null;
+    maps_zoom: number;
+    maps_street_zoom: number | null;
+    video: string | null;
+    occupation_note: string;
+    furniture_note: string;
+    private_note: string;
+    negotiation_note: string | null;
+    is_published: boolean;
+    is_home_published: boolean | null;
+    is_network_published: boolean;
+    is_neighborhood_shown: boolean;
+    is_street_shown: boolean;
+    is_complement_shown: boolean;
+    is_street_number_shown: boolean;
+    is_exact_map_shown: boolean;
+    is_map_shown: boolean;
+    is_streetview_shown: boolean;
+    is_floor_shown: boolean;
+    is_apartment_number_shown: boolean;
+    is_commission_combined: boolean;
+    is_keys_ready: boolean;
+    is_condominium_shown: boolean;
+    is_applying_watermark: boolean;
+    has_owner_authorization: boolean;
+    has_sale_card: boolean;
+    should_apply_watermark: boolean;
+    price_financial_index_id: string;
+    subtype_id: string;
+    user_id: string;
+    people_id: string;
+    condominium_id: string;
+    neighborhood_id: string;
+    exclusive_until: string | null;
+    is_exclusive: boolean;
+    is_featured: boolean;
+    is_exclusivity_expired: boolean;
+    is_renovation_expired: boolean;
+    next_review_at: string | null;
+    last_review_at: string | null;
+    network_property_url: string | null;
+    keys_location: string | null;
+    price: string;
+    static_street_view_url: string | null;
+    stripe_text: string | null;
+    stripe_background: string;
+    is_draft: boolean;
+    is_blocked: boolean;
+    is_price_shown: boolean;
+    price_alternative_text: string | null;
+    title: string;
+    itr: string | null;
+    country: ImovelCountry;
+    state: ImovelState;
+    city: ImovelCity;
+    real_estate: ImovelRealEstate;
+    type: ImovelType;
+    neighborhood: ImovelNeighborhood;
+    permissions: string[];
+    situation: ImovelSituation;
+    subtype: ImovelSubtype;
+    images: ImovelImage[];
+  }
+
 
 // Dimensões recomendadas para status do WhatsApp: 1080x1920 (9:16)
 const WHATSAPP_STATUS_WIDTH = 1080;
@@ -36,24 +358,32 @@ const WHATSAPP_STATUS_HEIGHT = 1920;
 
 function Templates({ token }: { token: string }) {
   const [templateData, setTemplateData] = useState<TemplateData>({
-    titulo: "",
-    quartos: "",
-    vagas: "",
-    area: "",
-    valor: "",
-    fotos: [],
-    referencia: "",
+    transaction: 0,
+    title: "",
+    rooms: {},
+    backgroundImage: "",
+    firstImage: "",
+    secondImage: "",
+    thirdImage: "",
+    reference: "",
+    calculated_price: "",
   });
 
+  const [showEditForm, setShowEditForm] = useState(false);
   const [reference, setReference] = useState<string>("");
   const [imovel, setImovel] = useState<any>({});
+
+  console.log('templateData', templateData);
 
   const handleInputChange = (name: string, value: string) => {
     setTemplateData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleUploadChange = ({ fileList }: { fileList: UploadFile[] }) => {
-    setTemplateData((prev) => ({ ...prev, fotos: fileList }));
+  const handleImageSelect = (imageUrl: string, imageType: 'backgroundImage' | 'firstImage' | 'secondImage' | 'thirdImage') => {
+    setTemplateData(prev => ({
+      ...prev,
+      [imageType]: imageUrl
+    }));
   };
 
   const downloadTemplate = async () => {
@@ -69,12 +399,10 @@ function Templates({ token }: { token: string }) {
     ctx.fillRect(0, 0, WHATSAPP_STATUS_WIDTH, WHATSAPP_STATUS_HEIGHT);
 
     // Imagem principal (ocupa toda a altura)
-    if (templateData.fotos.length > 0) {
+    if (templateData.backgroundImage) {
       const mainImg = new window.Image();
       mainImg.crossOrigin = "anonymous";
-      mainImg.src = templateData.fotos[0].originFileObj
-        ? URL.createObjectURL(templateData.fotos[0].originFileObj)
-        : templateData.fotos[0].url ?? templateData.fotos[0].thumbUrl ?? "";
+      mainImg.src = templateData.backgroundImage;
       await new Promise((resolve) => {
         mainImg.onload = resolve;
         mainImg.onerror = resolve;
@@ -113,7 +441,7 @@ function Templates({ token }: { token: string }) {
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     ctx.fillText(
-      templateData.titulo || "VENDO APARTAMENTO",
+      templateData.title || "VENDO APARTAMENTO",
       24,
       infoBoxY + 24,
       WHATSAPP_STATUS_WIDTH - 48
@@ -127,9 +455,9 @@ function Templates({ token }: { token: string }) {
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     const detailsArr = [
-      templateData.quartos && `${templateData.quartos} QUARTOS`,
-      templateData.vagas && `${templateData.vagas} VAGA(S)`,
-      templateData.area && `${templateData.area}M²`,
+      templateData.rooms.bedroom?.value && `${templateData.rooms.bedroom.value} QUARTOS`,
+      templateData.rooms.garage?.value && `${templateData.rooms.garage.value} VAGA(S)`,
+      templateData.rooms.primary_area?.value && `${templateData.rooms.primary_area.value}M²`,
     ].filter(Boolean);
     ctx.fillText(
       detailsArr.join("   |   "),
@@ -140,30 +468,28 @@ function Templates({ token }: { token: string }) {
     ctx.restore();
 
     // Imagens secundárias (até 3)
-    const secondaryFotos = templateData.fotos.slice(1, 4);
+    const secondaryImages = [templateData.firstImage, templateData.secondImage, templateData.thirdImage].filter(Boolean);
     const imgGap = 16;
     const imgWidth = 320;
     const imgHeight = 300;
-    const totalImgs = secondaryFotos.length;
+    const totalImgs = secondaryImages.length;
     const totalWidth = totalImgs * imgWidth + (totalImgs - 1) * imgGap;
     let startX = (WHATSAPP_STATUS_WIDTH - totalWidth) / 2;
     const imgY = infoBoxY + 130;
 
     for (let i = 0; i < totalImgs; i++) {
-      const file = secondaryFotos[i];
+      const imageUrl = secondaryImages[i];
       const img = new window.Image();
       img.crossOrigin = "anonymous";
-      img.src = file.originFileObj
-        ? URL.createObjectURL(file.originFileObj)
-        : file.url ?? file.thumbUrl ?? "";
+      img.src = imageUrl;
       await new Promise((resolve) => {
         img.onload = resolve;
         img.onerror = resolve;
       });
       ctx.save();
       // Borda arredondada
-      ctx.beginPath();
       const radius = 16;
+      ctx.beginPath();
       ctx.moveTo(startX + radius, imgY);
       ctx.lineTo(startX + imgWidth - radius, imgY);
       ctx.quadraticCurveTo(
@@ -238,14 +564,14 @@ function Templates({ token }: { token: string }) {
     }
 
     // Referência (cinza, itálico)
-    if (templateData.referencia) {
+    if (templateData.reference) {
       ctx.save();
       ctx.font = "italic 18px Arial";
       ctx.fillStyle = "#888";
       ctx.textAlign = "left";
       ctx.textBaseline = "top";
       ctx.fillText(
-        `REF: ${templateData.referencia}`,
+        `REF: ${templateData.reference}`,
         24,
         infoBoxY + infoBoxHeight - 40,
         WHATSAPP_STATUS_WIDTH - 48
@@ -260,7 +586,7 @@ function Templates({ token }: { token: string }) {
         const a = document.createElement("a");
         a.href = url;
         a.download = `imovel-whatsapp-status-${
-          templateData.referencia || "template"
+          templateData.reference || "template"
         }.png`;
         document.body.appendChild(a);
         a.click();
@@ -281,16 +607,58 @@ function Templates({ token }: { token: string }) {
           .then((res) => {
             console.log(res.data.data);
             setImovel(res.data.data);
+            setTemplateData({
+                transaction: res.data.data.transaction,
+                title: res.data.data.title,
+                rooms: {
+                    bathroom: {
+                        title_formated: res?.data?.data?.rooms.bathroom.title_formated,
+                        priority: 6
+                    },
+                    bedroom: {
+                        title_formated: `${res?.data?.data?.rooms.bedroom.value} ${res?.data?.data?.rooms.bedroom.value > 1 ? ' QUARTOS' : ' QUARTO'} `,
+                        priority: 1
+                    },
+                    closet: {
+                        title_formated: res?.data?.data?.rooms.closet.title_formated,
+                        priority: 7
+                    },
+                    garage: {
+                        title_formated: `${res?.data?.data?.rooms.garage.value} ${res?.data?.data?.rooms.garage.value > 1 ? ' VAGAS' : ' VAGA'} `,
+                        priority: 2
+                    },
+                    dinningroom: {
+                        title_formated: res?.data?.data?.rooms?.dinningroom?.title_formated,
+                        priority: 5
+                    },
+                    kitchen: {
+                        title_formated: res?.data?.data?.rooms.kitchen.title_formated,
+                        priority: 4
+                    },
+                    suite: {
+                        title_formated: res?.data?.data?.rooms.suite.title_formated,
+                    },
+                    primary_area: {
+                        title_formated: res?.data?.data?.primary_area.value.replace(',00', '') + res?.data?.data?.primary_area.measure,
+                        priority: 3
+                    },
+                },
+                reference: res.data.data.reference,
+                backgroundImage: res.data.data.images[0]?.file_url?.large || "",
+                firstImage: res.data.data.images[1]?.file_url?.large || "",
+                secondImage: res.data.data.images[2]?.file_url?.large || "",
+                thirdImage: res.data.data.images[3]?.file_url?.large || "",
+                calculated_price: res.data.data.calculated_price,
+            });
+            setShowEditForm(true);
           });
-        // console.log(res.data.data);
-        // setImovel(res.data.data[0]);
       });
   };
 
   return (
     <div style={{ padding: 24 }}>
       <Row gutter={24}>
-        {/* Formulário */}
+        {/* Formulário de Busca */}
         <Col xs={24} md={12}>
           <Card title="Buscar Imóvel">
             <Space direction="vertical" style={{ width: "100%" }} size="large">
@@ -305,6 +673,152 @@ function Templates({ token }: { token: string }) {
             </Space>
           </Card>
         </Col>
+
+        {/* Formulário de Edição */}
+        {showEditForm && (
+          <Col xs={24} md={12}>
+            <Card title="Editar Template">
+              <Space direction="vertical" style={{ width: "100%" }} size="middle">
+                <div>
+                  <Text strong>Título</Text>
+                  <Input
+                    value={templateData.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    placeholder="Título do imóvel"
+                  />
+                </div>
+
+                <div>
+                  <Text strong>Referência</Text>
+                  <Input
+                    value={templateData.reference}
+                    onChange={(e) => handleInputChange('reference', e.target.value)}
+                    placeholder="Referência do imóvel"
+                  />
+                </div>
+
+                <div>
+                    <Text strong>Tipo de Transação</Text>
+                    <Select
+                        style={{ width: "100%" }}
+                        placeholder="Selecione o tipo de transação"
+                        value={templateData.transaction}
+                        onChange={(value) => handleInputChange('transaction', value.toString())}
+                    >
+                        <Option value={'1'}>Venda</Option>
+                        <Option value={'2'}>Aluguel</Option>
+                    </Select>
+                </div>
+
+                <div>
+                    <Text strong>Valor</Text>
+                    <Input
+                        value={templateData.calculated_price}
+                        onChange={(e) => handleInputChange('calculated_price', e.target.value)}
+                        placeholder="Valor do imóvel"
+                    />
+                </div>
+
+                <Divider>Imagens</Divider>
+
+                <div>
+                  <Text strong>Imagem de Fundo</Text>
+                  <Select
+                    style={{ width: "100%" }}
+                    placeholder="Selecione a imagem de fundo"
+                    value={templateData.backgroundImage}
+                    onChange={(value) => handleImageSelect(value, 'backgroundImage')}
+                  >
+                    {imovel?.images?.map((img: ImovelImage) => (
+                      <Option key={img.id} value={img.file_url.large}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <img 
+                            src={img.file_url.medium} 
+                            alt="" 
+                            style={{ width: 40, height: 40, objectFit: 'cover' }}
+                          />
+                          <span>Imagem {imovel.images.indexOf(img) + 1}</span>
+                        </div>
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+
+                <div>
+                  <Text strong>Primeira Imagem</Text>
+                  <Select
+                    style={{ width: "100%" }}
+                    placeholder="Selecione a primeira imagem"
+                    value={templateData.firstImage}
+                    onChange={(value) => handleImageSelect(value, 'firstImage')}
+                    allowClear
+                  >
+                    {imovel?.images?.map((img: ImovelImage) => (
+                      <Option key={img.id} value={img.file_url.large}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <img 
+                            src={img.file_url.medium} 
+                            alt="" 
+                            style={{ width: 40, height: 40, objectFit: 'cover' }}
+                          />
+                          <span>Imagem {imovel.images.indexOf(img) + 1}</span>
+                        </div>
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+
+                <div>
+                  <Text strong>Segunda Imagem</Text>
+                  <Select
+                    style={{ width: "100%" }}
+                    placeholder="Selecione a segunda imagem"
+                    value={templateData.secondImage}
+                    onChange={(value) => handleImageSelect(value, 'secondImage')}
+                    allowClear
+                  >
+                    {imovel?.images?.map((img: ImovelImage) => (
+                      <Option key={img.id} value={img.file_url.large}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <img 
+                            src={img.file_url.medium} 
+                            alt="" 
+                            style={{ width: 40, height: 40, objectFit: 'cover' }}
+                          />
+                          <span>Imagem {imovel.images.indexOf(img) + 1}</span>
+                        </div>
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+
+                <div>
+                  <Text strong>Terceira Imagem</Text>
+                  <Select
+                    style={{ width: "100%" }}
+                    placeholder="Selecione a terceira imagem"
+                    value={templateData.thirdImage}
+                    onChange={(value) => handleImageSelect(value, 'thirdImage')}
+                    allowClear
+                  >
+                    {imovel?.images?.map((img: ImovelImage) => (
+                      <Option key={img.id} value={img.file_url.large}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <img 
+                            src={img.file_url.medium} 
+                            alt="" 
+                            style={{ width: 40, height: 40, objectFit: 'cover' }}
+                          />
+                          <span>Imagem {imovel.images.indexOf(img) + 1}</span>
+                        </div>
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+              </Space>
+            </Card>
+          </Col>
+        )}
 
         {/* Preview */}
         <Col xs={24} md={24}>
@@ -333,7 +847,6 @@ function Templates({ token }: { token: string }) {
                   width: "100%",
                   height: "100%",
                   pointerEvents: "none",
-                //   zIndex: 1,-
                 }}
                 className="z-10"
               >
@@ -393,16 +906,16 @@ function Templates({ token }: { token: string }) {
                     }}
                   >
                     {/* Imagem principal */}
-                    {imovel?.images?.length > 0 && (
+                    {templateData.backgroundImage && (
                       <div
                         style={{
                           width: "100%",
-                          height: "100%", // Ajuste para ocupar 55% do container pai (ou use '100%' se desejar)
+                          height: "100%",
                           position: "relative",
                         }}
                       >
                         <img
-                          src={imovel?.images[0].file_url.large}
+                          src={templateData.backgroundImage}
                           alt="Imagem principal"
                           style={{
                             width: "100%",
@@ -420,25 +933,7 @@ function Templates({ token }: { token: string }) {
                         />
                       </div>
                     )}
-                    {/* Faixa laranja e valor */}
 
-                    {/* <div
-                                            style={{
-                                                width: '100%',
-                                                display: 'flex',
-                                                gap: 24,
-                                                position: 'absolute',
-                                                left: 0,
-                                                right: 0,
-                                                bottom: 320,
-                                                zIndex: 2,
-                                                justifyContent: 'center',
-                                                color: 'black',
-                                            }}>
-                                            <span style={{ fontSize: 56, fontWeight: 'bold', textShadow: '0 2px 8px rgba(0,0,0,0.10)' }}>
-                                                Valor: R$ {templateData.valor}
-                                            </span>
-                                        </div> */}
                     <div
                       style={{
                         position: "absolute",
@@ -446,33 +941,31 @@ function Templates({ token }: { token: string }) {
                         right: 0,
                         top: 0,
                         height: 100,
-                        // zIndex: 1000000, // aumenta o zIndex para garantir que fique acima das sombras
                         padding: 24,
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
-                        pointerEvents: "none", // garante que não bloqueie interações abaixo
+                        pointerEvents: "none",
                       }}
                       className="z-20"
                     >
                       <div
                         style={{
-                          color: "#ff9100", // cor mais vibrante e visível
+                          color: "#ff9100",
                           fontWeight: "bold",
                           fontSize: 128,
                           marginTop: 300,
-                        //   zIndex: 1000000,
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          textShadow: "0 12px 48px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25)", // reforça contraste
+                          textShadow: "0 12px 48px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25)",
                           pointerEvents: "none",
                           fontFamily:
                             "'Montserrat', 'Segoe UI', 'Arial', sans-serif",
                           letterSpacing: 4,
                         }}
                       >
-                        {imovel?.transaction === 1 ? "VENDO" : "ALUGO"}
+                        {(templateData.transaction === '1' || templateData.transaction === 1) ? "VENDO" : "ALUGO"}
                       </div>
                       <div
                         style={{
@@ -483,7 +976,7 @@ function Templates({ token }: { token: string }) {
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          textShadow: "0 8px 32px rgba(0,0,0,0.25)", // opcional: reforça contraste acima das sombras
+                          textShadow: "0 8px 32px rgba(0,0,0,0.25)",
                           pointerEvents: "none",
                           wordBreak: "break-word",
                           textAlign: "center",
@@ -491,9 +984,10 @@ function Templates({ token }: { token: string }) {
                             "'Montserrat', 'Segoe UI', 'Arial', sans-serif",
                         }}
                       >
-                        {imovel?.title}
+                        {templateData.title}
                       </div>
                     </div>
+                    
                     {/* Informações do imóvel */}
                     <div
                       style={{
@@ -501,7 +995,7 @@ function Templates({ token }: { token: string }) {
                         left: 0,
                         right: 0,
                         top: Math.round(1920 * 0.65),
-                        height: 450,
+                        height: 500,
                         background: "rgba(255, 140, 0, 0.50)",
                         zIndex: 3,
                         padding: 24,
@@ -522,136 +1016,23 @@ function Templates({ token }: { token: string }) {
                           gap: 12,
                         }}
                       >
-                        {[
-                          {
-                            value: imovel?.rooms?.bedroom?.title_formated,
-                            icon: (
-                              <i
-                                className="anticon"
-                                style={{
-                                  marginRight: 6,
-                                  fontSize: 22,
-                                  color: "#f37900",
-                                }}
-                              >
-                                <span
-                                  role="img"
-                                  className="anticon anticon-home"
-                                />
-                                <svg
-                                  viewBox="64 64 896 896"
-                                  focusable="false"
-                                  data-icon="home"
-                                  width="1em"
-                                  height="1em"
-                                  fill="currentColor"
-                                  aria-hidden="true"
-                                >
-                                  <path d="M946.5 505L557.6 176.5a60.2 60.2 0 0 0-79.2 0L77.5 505a7.9 7.9 0 0 0-1.5 11.1l21.2 28.3a7.9 7.9 0 0 0 11.1 1.5L151 517.6V856c0 17.7 14.3 32 32 32h658c17.7 0 32-14.3 32-32V517.6l42.7 28.3a7.9 7.9 0 0 0 11.1-1.5l21.2-28.3a7.9 7.9 0 0 0-1.5-11.1zM792 848H232V504.4l280-233.3 280 233.3V848z"></path>
-                                </svg>
-                              </i>
-                            ),
-                          },
-                          {
-                            value: imovel?.rooms?.suite?.title_formated,
-                            icon: (
-                              <i
-                                className="anticon"
-                                style={{
-                                  marginRight: 6,
-                                  fontSize: 22,
-                                  color: "#f37900",
-                                }}
-                              >
-                                <span
-                                  role="img"
-                                  className="anticon anticon-star"
-                                />
-                                <svg
-                                  viewBox="64 64 896 896"
-                                  focusable="false"
-                                  data-icon="star"
-                                  width="1em"
-                                  height="1em"
-                                  fill="currentColor"
-                                  aria-hidden="true"
-                                >
-                                  <path d="M908.1 353.1l-246.6-36-110.2-223.4c-5.5-11.1-16.7-18.1-29-18.1s-23.5 7-29 18.1L338.5 317.1 91.9 353.1c-12.2 1.8-22.5 10.3-26.4 21.9-3.9 11.6-.7 24.3 8.1 32.8l178.4 173.9-42.1 245.5c-2.1 12.2 2.9 24.7 12.9 32.1 10 7.4 23.2 8.4 34.1 2.6L512 792.6l220.1 115.5c4.7 2.5 9.8 3.7 14.9 3.7 6.7 0 13.3-2.1 19-6.3 10-7.4 15-19.9 12.9-32.1l-42.1-245.5 178.4-173.9c8.8-8.5 12-21.2 8.1-32.8-3.9-11.6-14.2-20.1-26.4-21.9z"></path>
-                                </svg>
-                              </i>
-                            ),
-                          },
-                          {
-                            value: imovel?.rooms?.garage?.title_formated,
-                            icon: (
-                              <i
-                                className="anticon"
-                                style={{
-                                  marginRight: 6,
-                                  fontSize: 22,
-                                  color: "#f37900",
-                                }}
-                              >
-                                <span
-                                  role="img"
-                                  className="anticon anticon-car"
-                                />
-                                <svg
-                                  viewBox="64 64 896 896"
-                                  focusable="false"
-                                  data-icon="car"
-                                  width="1em"
-                                  height="1em"
-                                  fill="currentColor"
-                                  aria-hidden="true"
-                                >
-                                  <path d="M959.6 494.7l-54.2-162.6c-8.2-24.6-31.1-41.1-57.1-41.1H175.7c-26 0-48.9 16.5-57.1 41.1L64.4 494.7c-2.2 6.6-3.4 13.5-3.4 20.5v320.2c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32v-32h640v32c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32V515.2c0-7-1.2-13.9-3.4-20.5zM175.7 352h692.6l54.2 162.6H121.5L175.7 352zm-47.7 483.4V515.2h768v320.2h-64v-32c0-17.7-14.3-32-32-32H224c-17.7 0-32 14.3-32 32v32h-64zm128-64c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64zm512 0c-35.3 0-64-28.7-64-64s28.7-64 64-64 64 28.7 64 64-28.7 64-64 64z"></path>
-                                </svg>
-                              </i>
-                            ),
-                          },
-                          // {
-                          //     value: imovel?.rooms?.bathroom?.title_formated,
-                          //     icon: <i className="anticon" style={{marginRight: 6, fontSize: 22, color: '#f37900'}}><span role="img" className="anticon anticon-rest" /><svg viewBox="64 64 896 896" focusable="false" data-icon="rest" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M832 112H192c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H232V184h560v656z"></path></svg></i>
-                          // },
-                          // {
-                          //     value: imovel?.rooms?.livingroom?.title_formated,
-                          //     icon: <i className="anticon" style={{marginRight: 6, fontSize: 22, color: '#f37900'}}><span role="img" className="anticon anticon-apartment" /><svg viewBox="64 64 896 896" focusable="false" data-icon="apartment" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M888 760h-56V184c0-17.7-14.3-32-32-32H224c-17.7 0-32 14.3-32 32v576h-56c-17.7 0-32 14.3-32 32v56c0 17.7 14.3 32 32 32h752c17.7 0 32-14.3 32-32v-56c0-17.7-14.3-32-32-32zm-664-24V200h576v536H224zm664 88H136v-56h752v56z"></path></svg></i>
-                          // },
-                          // {
-                          //     value: imovel?.rooms?.diningroom?.title_formated,
-                          //     icon: <i className="anticon" style={{marginRight: 6, fontSize: 22, color: '#f37900'}}><span role="img" className="anticon anticon-table" /><svg viewBox="64 64 896 896" focusable="false" data-icon="table" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M904 160H120c-17.7 0-32 14.3-32 32v640c0 17.7 14.3 32 32 32h784c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32zm-40 632H160V232h704v560z"></path></svg></i>
-                          // },
-                          // {
-                          //     value: imovel?.rooms?.kitchen?.title_formated,
-                          //     icon: <i className="anticon" style={{marginRight: 6, fontSize: 22, color: '#f37900'}}><span role="img" className="anticon anticon-fire" /><svg viewBox="64 64 896 896" focusable="false" data-icon="fire" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M834.9 581.1c-6.2-13.2-13.2-25.9-21.1-38.1-7.9-12.2-16.6-23.7-26.1-34.5-9.5-10.8-19.7-20.9-30.6-30.3-10.9-9.4-22.4-17.9-34.5-25.5-12.1-7.6-24.7-14.2-37.8-19.7-13.1-5.5-26.7-9.9-40.7-13.2-14-3.3-28.4-5.5-43.1-6.6-14.7-1.1-29.7-1.1-44.9 0-15.2 1.1-30.1 3.3-44.7 6.6-14.6 3.3-28.8 7.7-42.6 13.2-13.8 5.5-27.1 12.1-39.9 19.7-12.8 7.6-25.1 16.1-36.9 25.5-11.8 9.4-22.9 19.5-33.3 30.3-10.4 10.8-20.1 22.3-29.1 34.5-9 12.2-17.2 24.9-24.7 38.1-7.5 13.2-14.2 26.9-20.1 41.1-5.9 14.2-11 28.8-15.3 43.8-4.3 15-7.8 30.4-10.5 46.1-2.7 15.7-4.6 31.7-5.7 48-1.1 16.3-1.6 32.9-1.6 49.8 0 17.7 14.3 32 32 32h576c17.7 0 32-14.3 32-32 0-16.9-.5-33.5-1.6-49.8-1.1-16.3-3-32.3-5.7-48-2.7-15.7-6.2-31.1-10.5-46.1-4.3-15-9.4-29.6-15.3-43.8-5.9-14.2-12.6-27.9-20.1-41.1z"></path></svg></i>
-                          // },
-                          // {
-                          //     value: imovel?.rooms?.service_area?.title_formated,
-                          //     icon: <i className="anticon" style={{marginRight: 6, fontSize: 22, color: '#f37900'}}><span role="img" className="anticon anticon-tool" /><svg viewBox="64 64 896 896" focusable="false" data-icon="tool" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M911.6 812.1l-99.7-99.7c-6.2-6.2-16.4-6.2-22.6 0l-67.9 67.9c-6.2 6.2-6.2 16.4 0 22.6l99.7 99.7c6.2 6.2 16.4 6.2 22.6 0l67.9-67.9c6.2-6.2 6.2-16.4 0-22.6zM512 128c-212.1 0-384 171.9-384 384 0 212.1 171.9 384 384 384s384-171.9 384-384c0-212.1-171.9-384-384-384zm0 704c-176.7 0-320-143.3-320-320s143.3-320 320-320 320 143.3 320 320-143.3 320-320 320z"></path></svg></i>
-                          // },
-                          // {
-                          //     value: imovel?.rooms?.area?.value && `${imovel?.rooms?.area?.value}m²`,
-                          //     icon: <i className="anticon" style={{marginRight: 6, fontSize: 22, color: '#f37900'}}><span role="img" className="anticon anticon-border" /><svg viewBox="64 64 896 896" focusable="false" data-icon="border" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M904 160H120c-17.7 0-32 14.3-32 32v640c0 17.7 14.3 32 32 32h784c17.7 0 32-14.3 32-32V192c0-17.7-14.3-32-32-32zm-40 632H160V232h704v560z"></path></svg></i>
-                          // }
-                        ]
-                          .filter((item) => !!item.value)
-                          .map((item, idx, arr) => (
-                            <span
-                              key={idx}
-                              style={{ display: "flex", alignItems: "center" }}
-                            >
-                              {item.icon}
-                              {item.value}
-                              {idx < arr.length - 1 && (
-                                <span
-                                  style={{ margin: "0 12px", color: "#bbb" }}
-                                >
-                                  |
-                                </span>
-                              )}
-                            </span>
-                          ))}
+                        {Object.entries(templateData.rooms)
+                          .filter(([_, value]: [string, any]) => value && value.priority !== undefined)
+                          .sort((a: [string, any], b: [string, any]) => a[1].priority - b[1].priority)
+                          .slice(0, 3)
+                          .map(([key, value]: [string, any]) => {
+                            const isQuartos = value?.title_formated?.toLowerCase().includes("quartos");
+                            const suite = templateData.rooms?.suite;
+                            return (
+                              <div key={key} style={{ display: "flex", alignItems: "center", gap: 8, flexDirection: "column" }}>
+                                <span>{value?.title_formated}</span>
+                                {isQuartos && suite?.title_formated && (
+                                  <span style={{ marginTop: 0 }}>{suite.title_formated}</span>
+                                )}
+                              </div>
+                            );
+                          })
+                        }
                       </div>
                       <div
                         style={{
@@ -673,9 +1054,10 @@ function Templates({ token }: { token: string }) {
                             marginLeft: 8,
                           }}
                         >
-                        {imovel?.calculated_price}
+                        {templateData?.calculated_price}
                         </span>
                       </div>
+                      
                       {/* Imagens secundárias (até 3) */}
                       <div
                         style={{
@@ -685,28 +1067,25 @@ function Templates({ token }: { token: string }) {
                           marginBottom: 8,
                         }}
                       >
-                        {imovel?.images
-                          ?.slice(1, 4)
-                          .map((file: any, idx: any) => {
-                            const src = file.file_url.large;
-                            return (
-                              <img
-                                key={file.uid || idx}
-                                src={src}
-                                alt={`Imagem secundária ${idx + 1}`}
-                                style={{
-                                  width: 320,
-                                  height: 300,
-                                  objectFit: "cover",
-                                  borderRadius: 16,
-                                  border: "2px solid #eee",
-                                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                                  background: "#fafafa",
-                                }}
-                                draggable={false}
-                              />
-                            );
-                          })}
+                        {[templateData.firstImage, templateData.secondImage, templateData.thirdImage]
+                          .filter(Boolean)
+                          .map((imageUrl, idx) => (
+                            <img
+                              key={idx}
+                              src={imageUrl}
+                              alt={`Imagem secundária ${idx + 1}`}
+                              style={{
+                                width: 320,
+                                height: 300,
+                                objectFit: "cover",
+                                borderRadius: 16,
+                                border: "2px solid #eee",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                background: "#fafafa",
+                              }}
+                              draggable={false}
+                            />
+                          ))}
                       </div>
 
                       <div
@@ -716,8 +1095,8 @@ function Templates({ token }: { token: string }) {
                           fontSize: 18,
                         }}
                       >
-                        {templateData.referencia &&
-                          `REF: ${templateData.referencia}`}
+                        {templateData.reference &&
+                          `REF: ${templateData.reference}`}
                       </div>
                     </div>
                       <img src={Logo.src} alt="Logo" style={{ position: "absolute", bottom: 30, left: 0 }} />
@@ -742,6 +1121,7 @@ function Templates({ token }: { token: string }) {
                 </div>
               </div>
             </div>
+            
             {/* Botão para baixar o template em 1080x1920 */}
             <div style={{ textAlign: "center", marginTop: 16 }}>
               <Button
@@ -752,65 +1132,9 @@ function Templates({ token }: { token: string }) {
                 Baixar imagem para Status do WhatsApp (1080x1920)
               </Button>
             </div>
-            {/* Fim do Card */}
           </Card>
         </Col>
       </Row>
-      {/* 
-            Informações sobre a imagem de fundo 
-            <div
-                style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    zIndex: 3,
-                    padding: 24,
-                    background: 'rgba(255,255,255,0.85)',
-                    borderBottomLeftRadius: 8,
-                    borderBottomRightRadius: 8
-                }}
-            >
-                <Title level={3} style={{ color: '#ff6b00', margin: 0 }}>
-                    {templateData.titulo || 'VENDO APARTAMENTO'}
-                </Title>
-
-                <Row style={{ marginTop: 16 }} justify="space-between">
-                    <Col>
-                        <Text strong>
-                            {templateData.quartos && `${templateData.quartos} QUARTOS`}
-                        </Text>
-                    </Col>
-                    <Col>
-                        <Text strong>
-                            {templateData.vagas && `${templateData.vagas} VAGA(S)`}
-                        </Text>
-                    </Col>
-                    <Col>
-                        <Text strong>
-                            {templateData.area && `${templateData.area}M²`}
-                        </Text>
-                    </Col>
-                </Row>
-
-                <Divider style={{ margin: '16px 0' }} />
-
-                <Title level={4} style={{ margin: 0 }}>
-                    {templateData.valor && `R$ ${templateData.valor}`}
-                </Title>
-
-                <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>
-                    {templateData.referencia && `REF: ${templateData.referencia}`}
-                </Text>
-            </div> 
-            */}
-      <Button
-        type="primary"
-        onClick={downloadTemplate}
-        style={{ marginTop: 16, width: "100%" }}
-      >
-        Download Template (Status WhatsApp)
-      </Button>
     </div>
   );
 }
