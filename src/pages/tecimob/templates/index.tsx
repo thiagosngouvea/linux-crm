@@ -509,9 +509,9 @@ function Templates({ token }: { token: string }) {
                 rooms: fullRooms,
                 reference: res.data.data.reference,
                 backgroundImage: res.data.data.images[0]?.file_url?.large || "",
-                firstImage: res.data.data.images[1]?.file_url?.large || "",
-                secondImage: res.data.data.images[2]?.file_url?.large || "",
-                thirdImage: res.data.data.images[3]?.file_url?.large || "",
+                firstImage: res.data.data.images[2]?.file_url?.large || "",
+                secondImage: res.data.data.images[3]?.file_url?.large || "",
+                thirdImage: res.data.data.images[4]?.file_url?.large || "",
                 calculated_price: res.data.data.calculated_price,
                 show_rooms: true,
             });
@@ -825,7 +825,7 @@ function Templates({ token }: { token: string }) {
                             borderTopLeftRadius: 0,
                             borderTopRightRadius: 0,
                             display: "block",
-                            filter: "none",
+                            filter: "brightness(0.8)", 
                             imageRendering: "auto",
                           }}
                           draggable={false}
@@ -898,12 +898,26 @@ function Templates({ token }: { token: string }) {
                               return title.split(" à Venda")[0].trim();
                             }
 
-                            return title;
+                            return title.toUpperCase();
                           })()
                         }
                       </div>
                     </div>
-                    
+                    <div
+                        style={{
+                          color: "#FFF",
+                          fontStyle: "normal",
+                          fontWeight: "bold",
+                          fontSize: 40,
+                          position: "absolute",
+                          bottom: 670,
+                          left: 10,
+                          textAlign: "center",
+                          zIndex: 4,
+                        }}
+                      >
+                        {templateData.reference}
+                      </div>
                     {/* Informações do imóvel */}
                     <div
                       style={{
@@ -912,7 +926,7 @@ function Templates({ token }: { token: string }) {
                         right: 0,
                         top: Math.round(1920 * 0.65),
                         height: 500,
-                        background: "rgba(255, 140, 0, 0.70)",
+                        background: (templateData.transaction === '1' || templateData.transaction === 1) ? "rgba(255, 140, 0, 0.70)" : "rgba(0, 81, 255, 0.7)",
                         zIndex: 3,
                         padding: 24,
                         display: "flex",
@@ -955,7 +969,7 @@ function Templates({ token }: { token: string }) {
                               >
                                 <span style={{ display: "flex", alignItems: "center", gap: 6, color: "#fff", justifyContent: "center" }}>
                                   {value?.icon && <span style={{ display: "flex", alignItems: "center", marginTop: isQuartos ? 40 : 30 }}>{value.icon}</span>}
-                                  <span style={{ marginTop: isQuartos ? 0 : 30}}>{value?.title_formated}</span>
+                                  <span style={{ marginTop: isQuartos ? 0 : 30}}>{value?.title_formated.toUpperCase()}</span>
                                 </span>
                                 {isQuartos && suite?.title_formated && (
                                   <span style={{ marginTop: -45, color: "#fff" }}>{suite.title_formated.toUpperCase()}</span>
@@ -1017,19 +1031,24 @@ function Templates({ token }: { token: string }) {
                             />
                           ))}
                       </div>
-
-                      <div
-                        style={{
-                          color: "#888",
-                          fontStyle: "italic",
-                          fontSize: 18,
-                        }}
-                      >
-                        {templateData.reference &&
-                          `REF: ${templateData.reference}`}
-                      </div>
                     </div>
-                      <img src={Logo.src} alt="Logo" style={{ position: "absolute", bottom: 30, left: 0 }} />
+                      <img
+                        src={Logo.src}
+                        alt="Logo"
+                        style={{
+                          position: "absolute",
+                          bottom: 30,
+                          left: 0,
+                          width: "auto",
+                          filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.15)) contrast(1.2) brightness(1.1)",
+                          imageRendering: "crisp-edges",
+                          WebkitFilter: "drop-shadow(0 2px 8px rgba(0,0,0,0.15)) contrast(1.2) brightness(1.1)",
+                        }}
+                        draggable={false}
+                        loading="eager"
+                        decoding="async"
+                        className="z-1000"
+                      />
                       <div 
                       style={{ 
                         position: "absolute", 
@@ -1038,12 +1057,16 @@ function Templates({ token }: { token: string }) {
                         color: "#fff", 
                         fontSize: 32, 
                         fontWeight: "normal", 
-                        textAlign: "center", 
+                        textAlign: "center",  
+                        filter: "brightness(1.2)",
+                        zIndex: 1000,
+                        fontFamily:
+                            "'Montserrat', 'Segoe UI', 'Arial', sans-serif",
                         }}>
-                            <span style={{ display: "flex", alignItems: "center" }}>
+                            <span style={{ display: "flex", alignItems: "center", fontFamily: "'Montserrat', 'Segoe UI', 'Arial', sans-serif" }}>
                               ENTRE EM CONTATO
                             </span>
-                            <span style={{ display: "flex", alignItems: "center", fontWeight: "bold", fontSize: 48 }}>
+                            <span style={{ display: "flex", alignItems: "center", fontWeight: "bold", fontSize: 48, fontFamily: "'Montserrat', 'Segoe UI', 'Arial', sans-serif" }}>
                               81 99476-4467
                             </span>
                       </div>
