@@ -10,6 +10,7 @@ import {
   Space,
   Divider,
   Select,
+  Switch,
 } from "antd";
 import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 import { tecimobService } from "../../../services/tecimob.service";
@@ -18,6 +19,14 @@ import html2canvas from "html2canvas";
 import { parse } from "cookie";
 import Cookies from "js-cookie";
 import Logo from "../../../assets/logo.png";
+import { IoIosBed } from "react-icons/io";
+import { BiSolidCarGarage } from "react-icons/bi";
+import { TbSquareRoundedNumber1 } from "react-icons/tb";
+import { FaBath } from "react-icons/fa6";
+import { BiCloset } from "react-icons/bi";
+import { FaKitchenSet } from "react-icons/fa6";
+import { TbRulerMeasure } from "react-icons/tb";
+
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -32,6 +41,7 @@ interface TemplateData {
   secondImage: string;
   thirdImage: string;
   reference: string;
+  show_rooms?: boolean; // Adicionar esta propriedade
 }
 
 interface ImovelImage {
@@ -367,15 +377,17 @@ function Templates({ token }: { token: string }) {
     thirdImage: "",
     reference: "",
     calculated_price: "",
+    show_rooms: true,
   });
 
   const [showEditForm, setShowEditForm] = useState(false);
   const [reference, setReference] = useState<string>("");
   const [imovel, setImovel] = useState<any>({});
+  const [originalRooms, setOriginalRooms] = useState<any>(null);
 
   console.log('templateData', templateData);
 
-  const handleInputChange = (name: string, value: string) => {
+  const handleInputChange = (name: string, value: string | boolean | any) => { // Aceitar mais tipos
     setTemplateData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -607,48 +619,71 @@ function Templates({ token }: { token: string }) {
           .then((res) => {
             console.log(res.data.data);
             setImovel(res.data.data);
+            
+            const fullRooms = {
+                bathroom: {
+                    title_formated: res?.data?.data?.rooms?.bathroom?.title_formated,
+                    icon: <FaBath size={64}/>,
+                    priority: 6,
+                    value: res?.data?.data?.rooms?.bathroom?.value
+                },
+                bedroom: {
+                    title_formated: `${res?.data?.data?.rooms?.bedroom?.value} ${res?.data?.data?.rooms?.bedroom?.value > 1 ? ' QUARTOS' : ' QUARTO'} `,
+                    icon: <IoIosBed size={64} />,
+                    priority: 1,
+                    value: res?.data?.data?.rooms?.bedroom?.value
+                },
+                closet: {
+                    title_formated: res?.data?.data?.rooms?.closet?.title_formated,
+                    icon: <BiCloset size={64}/>,
+                    priority: 7,
+                    value: res?.data?.data?.rooms?.closet?.value
+                },
+                garage: {
+                    title_formated: `${res?.data?.data?.rooms?.garage?.value} ${res?.data?.data?.rooms?.garage?.value > 1 ? ' VAGAS' : ' VAGA'} `,
+                    icon: <BiSolidCarGarage size={64}/>,
+                    priority: 2,
+                    value: res?.data?.data?.rooms?.garage?.value
+                },
+                dinningroom: {
+                    title_formated: res?.data?.data?.rooms?.dinningroom?.title_formated,
+                    icon: <FaKitchenSet size={64}/>,
+                    priority: 5,
+                    value: res?.data?.data?.rooms?.dinningroom?.value
+                },
+                kitchen: {
+                    title_formated: res?.data?.data?.rooms?.kitchen?.title_formated,
+                    icon: <FaKitchenSet size={64}/>,
+                    priority: 4,
+                    value: res?.data?.data?.rooms?.kitchen?.value
+                },
+                suite: {
+                    title_formated: res?.data?.data?.rooms?.suite?.title_formated,
+                    value: res?.data?.data?.rooms?.suite?.value
+                },
+                primary_area: {
+                    title_formated: res?.data?.data?.primary_area?.value?.replace(',00', '') + res?.data?.data?.primary_area?.measure,
+                    icon: <TbRulerMeasure size={64} />,
+                    priority: 3,
+                    value: res?.data?.data?.primary_area?.value,
+                    measure: res?.data?.data?.primary_area?.measure
+                },
+            };
+
+            // Guardar os cômodos originais
+            setOriginalRooms(fullRooms);
+            
             setTemplateData({
                 transaction: res.data.data.transaction,
                 title: res.data.data.title,
-                rooms: {
-                    bathroom: {
-                        title_formated: res?.data?.data?.rooms.bathroom.title_formated,
-                        priority: 6
-                    },
-                    bedroom: {
-                        title_formated: `${res?.data?.data?.rooms.bedroom.value} ${res?.data?.data?.rooms.bedroom.value > 1 ? ' QUARTOS' : ' QUARTO'} `,
-                        priority: 1
-                    },
-                    closet: {
-                        title_formated: res?.data?.data?.rooms.closet.title_formated,
-                        priority: 7
-                    },
-                    garage: {
-                        title_formated: `${res?.data?.data?.rooms.garage.value} ${res?.data?.data?.rooms.garage.value > 1 ? ' VAGAS' : ' VAGA'} `,
-                        priority: 2
-                    },
-                    dinningroom: {
-                        title_formated: res?.data?.data?.rooms?.dinningroom?.title_formated,
-                        priority: 5
-                    },
-                    kitchen: {
-                        title_formated: res?.data?.data?.rooms.kitchen.title_formated,
-                        priority: 4
-                    },
-                    suite: {
-                        title_formated: res?.data?.data?.rooms.suite.title_formated,
-                    },
-                    primary_area: {
-                        title_formated: res?.data?.data?.primary_area.value.replace(',00', '') + res?.data?.data?.primary_area.measure,
-                        priority: 3
-                    },
-                },
+                rooms: fullRooms,
                 reference: res.data.data.reference,
                 backgroundImage: res.data.data.images[0]?.file_url?.large || "",
                 firstImage: res.data.data.images[1]?.file_url?.large || "",
                 secondImage: res.data.data.images[2]?.file_url?.large || "",
                 thirdImage: res.data.data.images[3]?.file_url?.large || "",
                 calculated_price: res.data.data.calculated_price,
+                show_rooms: true,
             });
             setShowEditForm(true);
           });
@@ -716,6 +751,40 @@ function Templates({ token }: { token: string }) {
                         value={templateData.calculated_price}
                         onChange={(e) => handleInputChange('calculated_price', e.target.value)}
                         placeholder="Valor do imóvel"
+                    />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <Text strong>Mostrar Cômodos</Text>
+                    <Switch
+                        checked={!!templateData.show_rooms}
+                        checkedChildren="Sim"
+                        unCheckedChildren="Não"
+                        style={{ 
+                            backgroundColor: "#ff9100",
+                            borderColor: "#ff9100",
+                            color: "#fff",
+                            borderRadius: 16,
+                            width: 100,
+                            fontSize: 16,
+                            fontWeight: 600,
+                         }}
+                        onChange={(checked) => {
+                            if (!checked) {
+                                // Desabilitar: remove tudo de rooms e deixa só primary_area
+                                const primaryArea = templateData.rooms?.primary_area
+                                    ? { primary_area: templateData.rooms.primary_area }
+                                    : {};
+                                handleInputChange('rooms', primaryArea);
+                                handleInputChange('show_rooms', false);
+                            } else {
+                                // Habilitar: coloca de volta os cômodos originais (se possível)
+                                if (originalRooms) {
+                                    handleInputChange('rooms', originalRooms);
+                                }
+                                handleInputChange('show_rooms', true);
+                            }
+                        }}
                     />
                 </div>
 
@@ -954,7 +1023,7 @@ function Templates({ token }: { token: string }) {
                           color: "#ff9100",
                           fontWeight: "bold",
                           fontSize: 128,
-                          marginTop: 300,
+                          marginTop: 450,
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
@@ -996,7 +1065,7 @@ function Templates({ token }: { token: string }) {
                         right: 0,
                         top: Math.round(1920 * 0.65),
                         height: 500,
-                        background: "rgba(255, 140, 0, 0.50)",
+                        background: "rgba(255, 140, 0, 0.70)",
                         zIndex: 3,
                         padding: 24,
                         display: "flex",
@@ -1012,27 +1081,41 @@ function Templates({ token }: { token: string }) {
                           marginBottom: 8,
                           display: "flex",
                           justifyContent: "center",
-                          alignItems: "center",
-                          gap: 12,
+                          alignItems: "stretch",
+                          gap: 0,
+                          width: "100%",
                         }}
                       >
                         {Object.entries(templateData.rooms)
-                          .filter(([_, value]: [string, any]) => value && value.priority !== undefined)
+                          .filter(([_, value]: [string, any]) => value && value.priority !== undefined && !value?.title_formated?.includes("undefined") && value?.title_formated !== undefined)
                           .sort((a: [string, any], b: [string, any]) => a[1].priority - b[1].priority)
                           .slice(0, 3)
                           .map(([key, value]: [string, any]) => {
                             const isQuartos = value?.title_formated?.toLowerCase().includes("quartos");
                             const suite = templateData.rooms?.suite;
                             return (
-                              <div key={key} style={{ display: "flex", alignItems: "center", gap: 8, flexDirection: "column" }}>
-                                <span>{value?.title_formated}</span>
+                              <div
+                                key={key}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 8,
+                                  flexDirection: "column",
+                                  flex: "1 1 0",
+                                  justifyContent: "center",
+                                  minWidth: 0,
+                                }}
+                              >
+                                <span style={{ display: "flex", alignItems: "center", gap: 6, color: "#fff", justifyContent: "center" }}>
+                                  {value?.icon && <span style={{ display: "flex", alignItems: "center", marginTop: isQuartos ? 40 : 30 }}>{value.icon}</span>}
+                                  <span style={{ marginTop: isQuartos ? 0 : 30}}>{value?.title_formated}</span>
+                                </span>
                                 {isQuartos && suite?.title_formated && (
-                                  <span style={{ marginTop: 0 }}>{suite.title_formated}</span>
+                                  <span style={{ marginTop: -45, color: "#fff" }}>{suite.title_formated.toUpperCase()}</span>
                                 )}
                               </div>
                             );
-                          })
-                        }
+                          })}
                       </div>
                       <div
                         style={{
