@@ -39,7 +39,6 @@ function Imoveis({ token }: { token: string }) {
     try {
       const response = await tecimobService.getImoveis(token);
 
-      console.log(response?.data?.data);
       const formattedData = response?.data?.data?.map((property: any) => ({
           reference: property.reference,
           status: property.status,
@@ -293,8 +292,6 @@ function Imoveis({ token }: { token: string }) {
       .filter((diff: any) => Object.keys(diff.campos).length > 0)
   };
 
-  console.log('todasDiferencas', todasDiferencas);
-
   // Colunas para a tabela de diferenças
   const columnsDetalhados = [
     {
@@ -340,10 +337,6 @@ function Imoveis({ token }: { token: string }) {
     },
   ]
 
-  const imoveisNaoTecimob = imoveisLinux.filter((imovel: any) => !imoveis.some((imoveitecimob: any) => imoveitecimob.reference === imovel.reference));
-
-
-  
   return (
     <div>
         <Modal

@@ -6,7 +6,7 @@ import {
   Typography,
   Row,
   Col,
-  Upload,
+  Modal,
   Space,
   Divider,
   Select,
@@ -386,7 +386,29 @@ function Templates({ token }: { token: string }) {
   const [imovel, setImovel] = useState<any>({});
   const [originalRooms, setOriginalRooms] = useState<any>(null);
 
-  console.log('templateData', templateData);
+  const [modalLogin, setModalLogin] = useState(false);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [messageLogin, setMessageLogin] = useState('');
+
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
+    await tecimobService.login(email, password)
+            .then((res) => {
+
+                if(res.data.data.message === "Usuário não encontrado."){
+                    setMessageLogin("Usuário não encontrado");
+                } else if (res.data.data.message === "Senha inválida.") {
+                    setMessageLogin("Senha inválida");
+                } else if (res.data.data.access_token){
+                    Cookies.set("token.tecimob", res.data.data.access_token);
+                    setModalLogin(false);
+                    window.location.reload();
+                }
+            })
+  }
 
   const handleInputChange = (name: string, value: string | boolean | any) => { // Aceitar mais tipos
     setTemplateData((prev) => ({ ...prev, [name]: value }));
@@ -522,6 +544,50 @@ function Templates({ token }: { token: string }) {
 
   return (
     <div style={{ padding: 24 }}>
+        <Modal
+            open={modalLogin}
+            onCancel={() => setModalLogin(false)}
+            footer={null}
+            title="O seu token está expirado, por favor, entre com o seu email e senha"
+        >
+            <div className="p-6 space-y-4 md:space-y-6">
+                {messageLogin && <p className="text-red-500">{messageLogin}</p>}
+                <form className="space-y-4 md:space-y-6" onSubmit={handleLogin}>
+                    <div>
+                        <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                            placeholder="name@company.com"
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
+                            Senha
+                        </label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="••••••••"
+                            className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    >
+                        Entrar
+                    </button>
+                </form>
+            </div>
+        </Modal>
       <Row gutter={24}>
         {/* Formulário de Busca */}
         <Col xs={24} md={12}>
