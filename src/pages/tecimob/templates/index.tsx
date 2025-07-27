@@ -541,7 +541,7 @@ function Templates({ token }: { token: string }) {
 
         {/* Formulário de Edição */}
         {showEditForm && (
-          <Col xs={24} md={12}>
+          <Col xs={24} md={24} style={{ marginTop: 24 }}>
             <Card title="Editar Template">
               <Space direction="vertical" style={{ width: "100%" }} size="middle">
                 <div>
@@ -720,7 +720,7 @@ function Templates({ token }: { token: string }) {
         )}
 
         {/* Preview */}
-        <Col xs={24} md={24}>
+        <Col xs={24} md={24} style={{ marginTop: 24 }}>
           <Card>
             {/* Miniatura responsiva do template 1080x1920 (9:16) */}
             <div
