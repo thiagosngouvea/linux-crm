@@ -1,7 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+ 
+ @font-face {
+   font-family: 'Montserrat Arabic';
+   src: url('/fonts/Montserrat-Arabic_Bold_700.otf') format('opentype');
+   font-weight: 700;
+   font-style: normal;
+   font-display: swap;
+ }
+ 
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -17,6 +25,7 @@
 }
 
 body {
+  font-family: 'Montserrat Arabic', sans-serif;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,

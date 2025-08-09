@@ -21,6 +21,17 @@ export default function Document() {
           sizes="16x16"
           href="/favicon-16x16.png"
         />
+        <link
+          rel="preload"
+          as="font"
+          href="/fonts/Montserrat-Arabic_Bold_700.otf"
+          type="font/otf"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.cdnfonts.com/css/offlander"
+          rel="stylesheet"
+        />
         <link rel="manifest" href="/site.webmanifest" />
         {/* <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" /> */}
         <meta name="theme-color" content="#ffffff" />

@@ -539,8 +539,45 @@ function Templates({ token }: { token: string }) {
             });
             setShowEditForm(true);
           });
+      }).catch((err) => {
+        console.log(err.response.data.message);
+        setMessageLogin(err.response.data.message);
+        setModalLogin(true);
       });
   };
+
+  // posição por imagem (em %; 50/50 = centro)
+  const [secondaryPositions, setSecondaryPositions] = useState<{[k:number]: {x: number; y: number}}>({
+    0: { x: 50, y: 50 },
+    1: { x: 50, y: 50 },
+    2: { x: 50, y: 50 },
+  });
+
+  const [drag, setDrag] = useState<{
+    idx: number | null;
+    startX: number;
+    startY: number;
+    startPos: { x: number; y: number };
+    rect?: { width: number; height: number };
+  }>({ idx: null, startX: 0, startY: 0, startPos: { x: 50, y: 50 } });
+
+  const clamp = (v: number) => Math.max(0, Math.min(100, v));
+
+  const handleMouseDown = (idx: number) => (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const startPos = secondaryPositions[idx] || { x: 50, y: 50 };
+    setDrag({ idx, startX: e.clientX, startY: e.clientY, startPos, rect: { width: rect.width, height: rect.height } });
+  };
+
+  const handleMouseMove = (idx: number) => (e: React.MouseEvent<HTMLDivElement>) => {
+    if (drag.idx !== idx || !drag.rect) return;
+    const dx = ((e.clientX - drag.startX) / drag.rect.width) * 100;
+    const dy = ((e.clientY - drag.startY) / drag.rect.height) * 100;
+    const next = { x: clamp(drag.startPos.x + dx), y: clamp(drag.startPos.y + dy) };
+    setSecondaryPositions(prev => ({ ...prev, [idx]: next }));
+  };
+
+  const handleMouseUp = () => setDrag(d => ({ ...d, idx: null }));
 
   return (
     <div style={{ padding: 24 }}>
@@ -804,7 +841,7 @@ function Templates({ token }: { token: string }) {
                 position: "relative",
               }}
             >
-              <div
+              {/* <div
                 style={{
                   position: "absolute",
                   top: 0,
@@ -813,7 +850,6 @@ function Templates({ token }: { token: string }) {
                   height: "100%",
                   pointerEvents: "none",
                 }}
-                className="z-10"
               >
                 <div
                   style={{
@@ -821,9 +857,10 @@ function Templates({ token }: { token: string }) {
                     top: 0,
                     left: 0,
                     width: "100%",
-                    height: "5%",
+                    height: "8%",
                     background:
-                      "linear-gradient(to bottom, rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.00) 100%)",
+                      "linear-gradient(to bottom, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.00) 100%)",
+                    zIndex: 2,
                   }}
                 />
                 <div
@@ -837,7 +874,7 @@ function Templates({ token }: { token: string }) {
                       "linear-gradient(to top, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.00) 100%)",
                   }}
                 />
-              </div>
+              </div> */}
               <div
                 style={{
                   width: "100%",
@@ -845,6 +882,7 @@ function Templates({ token }: { token: string }) {
                   position: "relative",
                   overflow: "hidden",
                   background: "#eee",
+                  zIndex: 1,
                 }}
               >
                 {/* Renderização do conteúdo do template em miniatura */}
@@ -857,7 +895,7 @@ function Templates({ token }: { token: string }) {
                     left: 0,
                     transform: "scale(0.3333)", // 360/1080 = 0.3333
                     transformOrigin: "top left",
-                    pointerEvents: "none", // evita interação na miniatura
+                    // pointerEvents: "none", // evita interação na miniatura
                   }}
                 >
                   <div
@@ -891,11 +929,35 @@ function Templates({ token }: { token: string }) {
                             borderTopLeftRadius: 0,
                             borderTopRightRadius: 0,
                             display: "block",
-                            filter: "brightness(0.8)", 
+                            filter: "brightness(0.9)", 
                             imageRendering: "auto",
                           }}
                           draggable={false}
                           loading="eager"
+                        />
+                        {/* Drop shadow superior */}
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "15%",
+                            background: "linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.0) 100%)",
+                            pointerEvents: "none",
+                          }}
+                        />
+                        {/* Drop shadow inferior */}
+                        <div
+                          style={{
+                            position: "absolute",
+                            bottom: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "10%",
+                            background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.0) 100%)",
+                            pointerEvents: "none",
+                          }}
                         />
                       </div>
                     )}
@@ -906,30 +968,31 @@ function Templates({ token }: { token: string }) {
                         left: 0,
                         right: 0,
                         top: 0,
-                        height: 100,
-                        padding: 24,
+                        height: 35,
+                        padding: 0,
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
                         pointerEvents: "none",
                       }}
-                      className="z-20"
+                      // className="z-20"
                     >
                       <div
                         style={{
-                          color: "#ff9100",
+                          color: (templateData.transaction === '1' || templateData.transaction === 1) ? "#ff790b" : "#2025cd",
                           fontWeight: "bold",
-                          fontSize: 128,
-                          marginTop: 450,
+                          fontSize: 144,
+                          marginTop: 360,
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          textShadow: "0 12px 48px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.25)",
+                          textShadow: "0 12px 48px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.9)",
                           pointerEvents: "none",
                           fontFamily:
-                            "'Montserrat', 'Segoe UI', 'Arial', sans-serif",
-                          letterSpacing: 4,
+                            "'Offlander', sans-serif",
+                          letterSpacing: 0.83,
                         }}
+                        className="z-1000 !important"
                       >
                         {(templateData.transaction === '1' || templateData.transaction === 1) ? "VENDO" : "ALUGO"}
                       </div>
@@ -937,17 +1000,18 @@ function Templates({ token }: { token: string }) {
                         style={{
                           color: "#fff",
                           fontWeight: "bold",
-                          fontSize: 64,
-                          marginTop: 0,
+                          fontSize: 90,
+                          marginTop: -50,
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          textShadow: "0 8px 32px rgba(0,0,0,0.25)",
+                          textShadow: "0 8px 32px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.9)",
                           pointerEvents: "none",
                           wordBreak: "break-word",
                           textAlign: "center",
                           fontFamily:
-                            "'Montserrat', 'Segoe UI', 'Arial', sans-serif",
+                            "'Offlander', sans-serif",
+                          filter: "brightness(1.2)",
                         }}
                       >
                         {
@@ -973,13 +1037,16 @@ function Templates({ token }: { token: string }) {
                         style={{
                           color: "#FFF",
                           fontStyle: "normal",
+                          fontFamily: "'Montserrat', sans-serif",
                           fontWeight: "bold",
-                          fontSize: 40,
+                          fontSize: 50,
                           position: "absolute",
                           bottom: 710,
                           left: 10,
                           textAlign: "center",
                           zIndex: 4,
+                          textShadow: "0 12px 48px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.9)",
+                          // textShadow: "0 2px 8px rgba(0,0,0,0.50)",
                         }}
                       >
                         {templateData.reference}
@@ -991,8 +1058,8 @@ function Templates({ token }: { token: string }) {
                         left: 0,
                         right: 0,
                         top: Math.round(1920 * 0.63),
-                        height: 520,
-                        background: (templateData.transaction === '1' || templateData.transaction === 1) ? "rgba(255, 140, 0, 0.70)" : "rgba(0, 81, 255, 0.7)",
+                        height: 550,
+                        background: (templateData.transaction === '1' || templateData.transaction === 1) ? "rgba(255, 121, 11, 0.70)" : "rgba(32, 37, 205, 0.6)",
                         zIndex: 3,
                         padding: 24,
                         display: "flex",
@@ -1034,11 +1101,26 @@ function Templates({ token }: { token: string }) {
                                 }}
                               >
                                 <span style={{ display: "flex", alignItems: "center", gap: 6, color: "#fff", justifyContent: "center" }}>
-                                  {value?.icon && <span style={{ display: "flex", alignItems: "center", marginTop: isQuartos ? 40 : 30 }}>{value.icon}</span>}
-                                  <span style={{ marginTop: isQuartos ? 0 : 30}}>{value?.title_formated.toUpperCase()}</span>
+                                  {value?.icon && (
+                                    <span 
+                                      style={{ 
+                                        display: "flex", 
+                                        alignItems: "center", 
+                                        marginTop: isQuartos ? 40 : 30,
+                                        padding: 16,
+                                        borderRadius: 8,
+                                        background: "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,1) 100%)",
+                                        boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+                                        border: "2px solid rgba(255,255,255,0.2)"
+                                      }}
+                                    >
+                                      {value.icon}
+                                    </span>
+                                  )}
+                                  <span style={{ marginTop: isQuartos ? 0 : 30, fontFamily: "'Roboto', sans-serif", fontWeight: "bold", fontSize: 32, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{value?.title_formated.toUpperCase()}</span>
                                 </span>
                                 {isQuartos && suite?.title_formated && (
-                                  <span style={{ marginTop: -45, color: "#fff" }}>{suite.title_formated.toUpperCase()}</span>
+                                  <span style={{ marginTop: -45, color: "#fff", marginLeft: 30, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{suite.title_formated.toUpperCase()}</span>
                                 )}
                               </div>
                             );
@@ -1053,15 +1135,18 @@ function Templates({ token }: { token: string }) {
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
+                          fontFamily: "'Montserrat', sans-serif",
                         }}
                       >
                         VALOR{" "}
                         <span
+                          className="font-montserratArabic text-black"
                           style={{
                             color: "#fff",
                             fontWeight: "bold",
                             fontSize: 48,
                             marginLeft: 8,
+                            letterSpacing: 1,
                           }}
                         >
                         {templateData?.calculated_price}
@@ -1073,29 +1158,49 @@ function Templates({ token }: { token: string }) {
                         style={{
                           display: "flex",
                           justifyContent: "center",
-                          gap: 16,
+                          gap: 32,
                           marginBottom: 8,
                         }}
                       >
                         {[templateData.firstImage, templateData.secondImage, templateData.thirdImage]
                           .filter(Boolean)
-                          .map((imageUrl, idx) => (
-                            <img
-                              key={idx}
-                              src={imageUrl}
-                              alt={`Imagem secundária ${idx + 1}`}
-                              style={{
-                                width: 320,
-                                height: 300,
-                                objectFit: "cover",
-                                borderRadius: 16,
-                                border: "2px solid #eee",
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                                background: "#fafafa",
-                              }}
-                              draggable={false}
-                            />
-                          ))}
+                          .map((imageUrl, idx) => {
+                            const pos = secondaryPositions[idx] || { x: 50, y: 50 };
+                            const dragging = drag.idx === idx;
+                            return (
+                              <div
+                                key={idx}
+                                onMouseDown={handleMouseDown(idx)}
+                                onMouseMove={handleMouseMove(idx)}
+                                onMouseUp={handleMouseUp}
+                                onMouseLeave={handleMouseUp}
+                                style={{
+                                  width: 320,
+                                  height: 300,
+                                  borderRadius: 32,
+                                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                  background: "#fafafa",
+                                  overflow: "hidden",
+                                  cursor: dragging ? "grabbing" : "grab",
+                                  userSelect: "none",
+                                }}
+                              >
+                                <img
+                                  src={imageUrl as string}
+                                  alt={`Imagem secundária ${idx + 1}`}
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                    objectPosition: `${pos.x}% ${pos.y}%`,
+                                    display: "block",
+                                    pointerEvents: "none",
+                                  }}
+                                  draggable={false}
+                                />
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
                       <img
@@ -1103,36 +1208,50 @@ function Templates({ token }: { token: string }) {
                         alt="Logo"
                         style={{
                           position: "absolute",
+                          zIndex: 1000000000000,
                           bottom: 30,
                           left: 0,
                           width: "auto",
-                          filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.15)) contrast(1.2) brightness(1.1)",
+                          filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.2)) drop-shadow(0 2px 8px rgba(0,0,0,0.6)) contrast(1.3) saturate(1.1)",
                           imageRendering: "crisp-edges",
-                          WebkitFilter: "drop-shadow(0 2px 8px rgba(0,0,0,0.15)) contrast(1.2) brightness(1.1)",
+                          WebkitFilter: "drop-shadow(0 4px 16px rgba(0,0,0,0.8)) drop-shadow(0 2px 8px rgba(0,0,0,0.6)) contrast(1.3) brightness(1.2) saturate(1.1)",
+                          transform: "scale(1.05)",
                         }}
                         draggable={false}
                         loading="eager"
                         decoding="async"
-                        className="z-1000"
                       />
                       <div 
                       style={{ 
                         position: "absolute", 
-                        bottom: 30, 
-                        right: 100, 
+                        bottom: 20, 
+                        right: 60, 
                         color: "#fff", 
                         fontSize: 32, 
                         fontWeight: "normal", 
                         textAlign: "center",  
                         filter: "brightness(1.2)",
                         zIndex: 1000,
-                        fontFamily:
-                            "'Montserrat', 'Segoe UI', 'Arial', sans-serif",
+                        textShadow: "0 4px 16px rgba(0,0,0,0.8), 0 2px 8px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.9)",
                         }}>
-                            <span style={{ display: "flex", alignItems: "center", fontFamily: "'Montserrat', 'Segoe UI', 'Arial', sans-serif" }}>
+                            <span style={{ 
+                              display: "flex", 
+                              alignItems: "center", 
+                              fontFamily: "'Montserrat', sans-serif",
+                              textShadow: "inherit",
+                              letterSpacing: "0.5px"
+                            }}>
                               ENTRE EM CONTATO
                             </span>
-                            <span style={{ display: "flex", alignItems: "center", fontWeight: "bold", fontSize: 48, fontFamily: "'Montserrat', 'Segoe UI', 'Arial', sans-serif" }}>
+                            <span style={{ 
+                              display: "flex", 
+                              alignItems: "center", 
+                              fontWeight: "bold", 
+                              fontSize: 48, 
+                              fontFamily: "'Montserrat Arabic', sans-serif",
+                              textShadow: "inherit",
+                              letterSpacing: "1px"
+                            }}>
                               81 99476-4467
                             </span>
                       </div>

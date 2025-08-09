@@ -28,6 +28,9 @@ const config: Config = {
           "950":"#172554"
         }
       },
+      fontFamily: {
+        montserratArabic: ['"Montserrat Arabic"', 'sans-serif'],
+      },
     },
   },
   plugins: [],
