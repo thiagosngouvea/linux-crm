@@ -841,40 +841,6 @@ function Templates({ token }: { token: string }) {
                 position: "relative",
               }}
             >
-              {/* <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  pointerEvents: "none",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "8%",
-                    background:
-                      "linear-gradient(to bottom, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.00) 100%)",
-                    zIndex: 2,
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "5%",
-                    background:
-                      "linear-gradient(to top, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.00) 100%)",
-                  }}
-                />
-              </div> */}
               <div
                 style={{
                   width: "100%",
@@ -942,7 +908,7 @@ function Templates({ token }: { token: string }) {
                             top: 0,
                             left: 0,
                             width: "100%",
-                            height: "15%",
+                            height: "25%",
                             background: "linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.0) 100%)",
                             pointerEvents: "none",
                           }}
@@ -979,14 +945,14 @@ function Templates({ token }: { token: string }) {
                     >
                       <div
                         style={{
-                          color: (templateData.transaction === '1' || templateData.transaction === 1) ? "#ff790b" : "#2025cd",
+                          color: (templateData.transaction === '1' || templateData.transaction === 1) ? "#ff790b" : "#2134cd",
                           fontWeight: "bold",
-                          fontSize: 144,
+                          fontSize: 180,
                           marginTop: 360,
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          textShadow: "0 12px 48px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.9)",
+                          // textShadow: "0 12px 48px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.9)",
                           pointerEvents: "none",
                           fontFamily:
                             "'Offlander', sans-serif",
@@ -1000,18 +966,19 @@ function Templates({ token }: { token: string }) {
                         style={{
                           color: "#fff",
                           fontWeight: "bold",
-                          fontSize: 90,
-                          marginTop: -50,
+                          fontSize: 120,
+                          marginTop: -70,
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
-                          textShadow: "0 8px 32px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.9)",
+                          // textShadow: "0 8px 32px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.9)",
                           pointerEvents: "none",
                           wordBreak: "break-word",
                           textAlign: "center",
                           fontFamily:
                             "'Offlander', sans-serif",
                           filter: "brightness(1.2)",
+                          lineHeight: 0.8,
                         }}
                       >
                         {
@@ -1039,10 +1006,10 @@ function Templates({ token }: { token: string }) {
                           fontStyle: "normal",
                           fontFamily: "'Montserrat', sans-serif",
                           fontWeight: "bold",
-                          fontSize: 50,
+                          fontSize: '35px',
                           position: "absolute",
-                          bottom: 710,
-                          left: 10,
+                          bottom: 760,
+                          left: 5,
                           textAlign: "center",
                           zIndex: 4,
                           textShadow: "0 12px 48px rgba(0,0,0,0.8), 0 4px 16px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.9)",
@@ -1057,7 +1024,7 @@ function Templates({ token }: { token: string }) {
                         position: "absolute",
                         left: 0,
                         right: 0,
-                        top: Math.round(1920 * 0.63),
+                        top: Math.round(1920 * 0.60),
                         height: 550,
                         background: (templateData.transaction === '1' || templateData.transaction === 1) ? "rgba(255, 121, 11, 0.70)" : "rgba(32, 37, 205, 0.6)",
                         zIndex: 3,
@@ -1109,7 +1076,7 @@ function Templates({ token }: { token: string }) {
                                         marginTop: isQuartos ? 40 : 30,
                                         padding: 16,
                                         borderRadius: 8,
-                                        background: "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,1) 100%)",
+                                        background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.8) 100%)",
                                         boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
                                         border: "2px solid rgba(255,255,255,0.2)"
                                       }}
@@ -1131,22 +1098,22 @@ function Templates({ token }: { token: string }) {
                           color: "#fff",
                           fontWeight: "medium",
                           fontSize: 36,
-                          marginBottom: 4,
+                          marginBottom: 2,
                           display: "flex",
                           justifyContent: "center",
                           alignItems: "center",
                           fontFamily: "'Montserrat', sans-serif",
                         }}
                       >
-                        VALOR{" "}
+                        <span style={{ fontSize: 36, marginRight: 40 }}>VALOR{" "}</span>
                         <span
                           className="font-montserratArabic text-black"
                           style={{
                             color: "#fff",
                             fontWeight: "bold",
-                            fontSize: 48,
+                            fontSize: 52,
                             marginLeft: 8,
-                            letterSpacing: 1,
+                            letterSpacing: 1.2,
                           }}
                         >
                         {templateData?.calculated_price}
@@ -1209,13 +1176,13 @@ function Templates({ token }: { token: string }) {
                         style={{
                           position: "absolute",
                           zIndex: 1000000000000,
-                          bottom: 30,
+                          bottom: 50,
                           left: 0,
                           width: "auto",
                           filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.2)) drop-shadow(0 2px 8px rgba(0,0,0,0.6)) contrast(1.3) saturate(1.1)",
                           imageRendering: "crisp-edges",
                           WebkitFilter: "drop-shadow(0 4px 16px rgba(0,0,0,0.8)) drop-shadow(0 2px 8px rgba(0,0,0,0.6)) contrast(1.3) brightness(1.2) saturate(1.1)",
-                          transform: "scale(1.05)",
+                          transform: "scale(1.40)",
                         }}
                         draggable={false}
                         loading="eager"
@@ -1224,7 +1191,7 @@ function Templates({ token }: { token: string }) {
                       <div 
                       style={{ 
                         position: "absolute", 
-                        bottom: 20, 
+                        bottom: 40, 
                         right: 60, 
                         color: "#fff", 
                         fontSize: 32, 
@@ -1239,18 +1206,20 @@ function Templates({ token }: { token: string }) {
                               alignItems: "center", 
                               fontFamily: "'Montserrat', sans-serif",
                               textShadow: "inherit",
-                              letterSpacing: "0.5px"
+                              letterSpacing: "0.83px",
+                              fontSize: "24.6px",
+                              marginBottom: -10
                             }}>
-                              ENTRE EM CONTATO
+                              ENTRE EM CONTATO:
                             </span>
                             <span style={{ 
                               display: "flex", 
                               alignItems: "center", 
                               fontWeight: "bold", 
-                              fontSize: 48, 
+                              fontSize: 40, 
                               fontFamily: "'Montserrat Arabic', sans-serif",
                               textShadow: "inherit",
-                              letterSpacing: "1px"
+                              letterSpacing: "0.83px"
                             }}>
                               81 99476-4467
                             </span>
