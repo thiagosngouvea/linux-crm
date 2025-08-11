@@ -1054,6 +1054,7 @@ function Templates({ token }: { token: string }) {
                           .map(([key, value]: [string, any]) => {
                             const isQuartos = value?.title_formated?.toLowerCase().includes("quartos");
                             const suite = templateData.rooms?.suite;
+                            console.log('key', key)
                             return (
                               <div
                                 key={key}
@@ -1073,7 +1074,7 @@ function Templates({ token }: { token: string }) {
                                       style={{ 
                                         display: "flex", 
                                         alignItems: "center", 
-                                        marginTop: isQuartos ? 40 : 30,
+                                        marginTop: isQuartos ? 40 : 40,
                                         padding: 16,
                                         borderRadius: 8,
                                         background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.8) 100%)",
@@ -1084,10 +1085,10 @@ function Templates({ token }: { token: string }) {
                                       {value.icon}
                                     </span>
                                   )}
-                                  <span style={{ marginTop: isQuartos ? 0 : 30, fontFamily: "'Roboto', sans-serif", fontWeight: "bold", fontSize: 32, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{value?.title_formated.toUpperCase()}</span>
+                                  <span style={{ marginTop: isQuartos ? 0 : 30, fontFamily: "'Roboto', sans-serif", fontWeight: "bold", fontSize: 32, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{key.includes('area') ? '': '0'}{value?.title_formated.toUpperCase()}</span>
                                 </span>
                                 {isQuartos && suite?.title_formated && (
-                                  <span style={{ marginTop: -45, color: "#fff", marginLeft: 30, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{suite.title_formated.toUpperCase()}</span>
+                                  <span style={{ marginTop: -60, color: "#fff", marginLeft: 55, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>(0{suite.title_formated.toUpperCase()})</span>
                                 )}
                               </div>
                             );
@@ -1116,7 +1117,7 @@ function Templates({ token }: { token: string }) {
                             letterSpacing: 1.2,
                           }}
                         >
-                        {templateData?.calculated_price}
+                        {templateData?.calculated_price?.replace('R$', 'R$  ')}
                         </span>
                       </div>
                       
