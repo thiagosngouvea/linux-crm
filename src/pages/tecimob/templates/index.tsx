@@ -1112,7 +1112,7 @@ function Templates({ token }: { token: string }) {
                           style={{
                             color: "#fff",
                             fontWeight: "bold",
-                            fontSize: 52,
+                            fontSize: 72,
                             marginLeft: 8,
                             letterSpacing: 1.2,
                           }}
@@ -1127,7 +1127,7 @@ function Templates({ token }: { token: string }) {
                           display: "flex",
                           justifyContent: "center",
                           gap: 32,
-                          marginBottom: 8,
+                          marginBottom: 48,
                         }}
                       >
                         {[templateData.firstImage, templateData.secondImage, templateData.thirdImage]
