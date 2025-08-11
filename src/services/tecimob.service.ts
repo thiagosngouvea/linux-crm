@@ -491,6 +491,48 @@ const patchFinancial = async (
   );
 }
 
+const patchInitialInformation = async (
+  token: string,
+  id: string,
+  data: {
+    transaction?: number,
+    is_draft?: boolean,
+    user_id?: string,
+    people_id?: string,
+    subtype_id?: string,
+    condominium_id?: string,
+    reference?: string,
+    profile?: number,
+    land_type?: any,
+    near_sea?: any,
+    is_property_titled?: boolean,
+    is_deeded?: boolean,
+    is_corner?: boolean,
+    informations?: any,
+    delivery_forecast?: any,
+    incorporation?: any,
+    lifetime?: any,
+    situation_id?: string,
+    has_furniture?: boolean,
+    agent_id?: string | null,
+    solar_position_id?: string | null,
+    condo_position?: any,
+    type_id?: string,
+    is_condo?: boolean,
+    isFinishing?: boolean
+  }
+) => {
+  return await axios.patch(
+    `https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/inicial-informations`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+}
+
 const getCharacteristics = async (token: string, id: string) => {
   return await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/characteristics/`, {
     headers: {
@@ -1012,6 +1054,16 @@ export const tecimobService = {
   getImages,
   uploadImage,
   getPublish,
-  patchPublish
+  patchPublish,
+  patchInitialInformation,
+  getTypes,
+  getSituations,
+  criarImovelPartialOne,
+  getRooms,
+  patchImovelRooms,
+  getAreas,
+  patchImovelAreas,
+  getPeople,
+  getUsers,
 };
   

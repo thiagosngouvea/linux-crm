@@ -20,6 +20,11 @@ function Comparar({ token }: { token: string }) {
 
   const [messageLogin, setMessageLogin] = useState('');
 
+  const [openModalSync, setOpenModalSync] = useState(false)
+
+  const [actions, setActions] = useState<any>(null);
+
+
   const handleLogin = async (e: any) => {
     e.preventDefault();
     await tecimobService.login(email, password)
@@ -48,7 +53,10 @@ function Comparar({ token }: { token: string }) {
         ""
       );
 
-      console.log('response?.data?.data', response?.data?.properties);
+      const response2 = await tecimobService.getImoveis(token);
+
+      console.log('response2', response2);
+
       const formattedData = response?.data?.properties?.map((property: any) => ({
           ...property,
           reference: property.reference,
@@ -73,7 +81,6 @@ function Comparar({ token }: { token: string }) {
           street: property.street,
           street_number: property.number,
         }));
-        console.log('formattedData', formattedData);
       setImoveis(formattedData);  
     } catch (error: any) {
       message.error(`Erro ao buscar imóveis Tecimob: ${error?.response?.data?.status === 401 ? 'Token inválido' : 'Erro ao buscar imóveis'}`);
@@ -130,6 +137,22 @@ function Comparar({ token }: { token: string }) {
 
   // Mapeamento de campos equivalentes entre as bases
   const fieldMapping = {
+    'Quartos': {
+      linux: 'bedrooms',
+      tecimob: 'rooms.bedroom.value'
+    },
+    'Suites': {
+      linux: 'suites',
+      tecimob: 'rooms.suite.value'
+    },
+    'Banheiros': {
+      linux: 'bathrooms',
+      tecimob: 'rooms.bathroom.value'
+    },
+    'Garagens': {
+      linux: 'garages',
+      tecimob: 'rooms.garage.value'
+    },
     // Campos básicos
     'Referência': {
       linux: 'reference',
@@ -153,13 +176,12 @@ function Comparar({ token }: { token: string }) {
     // Tipo e subtipo
     'Tipo de Imóvel': {
       linux: 'type',
-      tecimob: 'type.title'
+      tecimob: 'type'
     },
     'Subtipo de Imóvel': {
       linux: 'subtype',
-      tecimob: 'subtype.title'
+      tecimob: 'subtype',
     },
-
     // Localização
     'Estado': {
       linux: 'state',
@@ -289,22 +311,51 @@ function Comparar({ token }: { token: string }) {
         return value;
       }
     },
-    condominium_fee: {
-      linux: 'condominium_price',
-      tecimob: 'condominium_fee'
-    },
+    // condominium_fee: {
+    //   linux: 'condominium_price',
+    //   tecimob: 'condominium_fee'
+    // },
 
     // Características do imóvel
-    area: {
-      linux: 'areas.built_area.value',
-      tecimob: 'area',
-      transform: (value: any) => {
-        if (value === null || value === undefined) return null;
-        return String(value);
+    'Área': {
+      linux: 'area',
+      tecimob: 'areas.primary_area.value',
+      transform: (value: any, obj: any) => {
+        if (value === null || value === undefined) {
+          // Se built_area.value for null, pegar de ground_total_area.value
+          const groundTotalValue = getNestedValue(obj, 'areas.ground_total_area.value');
+          if (groundTotalValue !== null && groundTotalValue !== undefined) {
+            let normalizedValue = String(groundTotalValue);
+            // For area values, convert decimal comma to dot and remove thousands separators
+            if (normalizedValue.includes(',') && normalizedValue.includes('.')) {
+              // Format like 3.321,86 -> 3321.86
+              normalizedValue = normalizedValue.replace(/\./g, '').replace(',', '.');
+            } else if (normalizedValue.includes(',')) {
+              // Format like 3321,86 -> 3321.86
+              normalizedValue = normalizedValue.replace(',', '.');
+            }
+            // Normalize decimal format: remove trailing zeros and ensure consistent format
+            const num = parseFloat(normalizedValue);
+            return isNaN(num) ? normalizedValue : num.toString();
+          }
+          return null;
+        }
+        let normalizedValue = String(value);
+        // For area values, convert decimal comma to dot and remove thousands separators
+        if (normalizedValue.includes(',') && normalizedValue.includes('.')) {
+          // Format like 3.321,86 -> 3321.86
+          normalizedValue = normalizedValue.replace(/\./g, '').replace(',', '.');
+        } else if (normalizedValue.includes(',')) {
+          // Format like 3321,86 -> 3321.86
+          normalizedValue = normalizedValue.replace(',', '.');
+        }
+        // Normalize decimal format: remove trailing zeros and ensure consistent format
+        const num = parseFloat(normalizedValue);
+        return isNaN(num) ? normalizedValue : num.toString();
       }
     },
-    measurement_unit: {
-      linux: 'areas.built_area.measure',
+    'Unidade de Medida': {
+      linux: 'areas.primary_area.measure',
       tecimob: 'measurement_unit'
     },
 
@@ -338,7 +389,12 @@ function Comparar({ token }: { token: string }) {
   };
 
   // Função para comparar valores considerando as transformações necessárias
-  const compareValues = (tecimobValue: any, linuxValue: any, fieldConfig: any, fullTecimobObj: any) => {
+  const compareValues = (tecimobValue: any, linuxValue: any, fieldConfig: any, fullTecimobObj: any, fieldName?: string) => {
+    // Lógica especial para Subtipo de Imóvel: se o valor do Linux for "Padrão", considera como igual
+    if (fieldName === 'Subtipo de Imóvel' && linuxValue === 'Padrão') {
+      return true;
+    }
+
     if (typeof fieldConfig === 'string') {
       return tecimobValue === linuxValue;
     }
@@ -401,7 +457,7 @@ function Comparar({ token }: { token: string }) {
             ? imovelLinux?.[config]
             : getNestedValue(imovelLinux, config.linux);
 
-          if (!compareValues(tecimobValue, linuxValue, config, imovelTecimob)) {
+          if (!compareValues(tecimobValue, linuxValue, config, imovelTecimob, campo)) {
             diferencas.campos[campo] = {
               tecimob: tecimobValue,
               linux: linuxValue,
@@ -415,8 +471,11 @@ function Comparar({ token }: { token: string }) {
       .filter((diff: any) => Object.keys(diff.campos).length > 0)
   };
 
-  const handleSincronizar = (actions: any) => {
-    console.log('actions', actions);
+
+  const handleSincronizar = (record: any) => {
+    setOpenModalSync(true);
+    setActions(record);
+
   }
 
   // Colunas para a tabela de diferenças
@@ -491,8 +550,6 @@ function Comparar({ token }: { token: string }) {
   // Get available fields for the select component
   const availableFields = Object.keys(fieldMapping);
 
-  console.log('todasDiferencas', todasDiferencas);
-
   const handleUpdateBaseTecimob = async () => {
     setLoading(true);
     try {
@@ -518,6 +575,45 @@ function Comparar({ token }: { token: string }) {
     }
   }
 
+  
+  const handleSincronizarBase = async () => {
+    setLoading(true);
+    try {
+      const response = await tecimobService.getImovelByReference(token, actions?.referencia);
+      const property = response?.data?.data || [];
+
+      // const typesResponse = await tecimobService.getTypes(token);
+
+      // const types = typesResponse?.data?.data || [];
+
+      // const type = types.find((type: any) => type.id === property.type_id);
+
+      const data = {
+        ...property,
+        ...actions?.campos
+      }
+
+      // Processa em lotes para evitar sobrecarga e problemas de concorrência
+      // const batchSize = 10;
+      // for (let i = 0; i < properties.length; i += batchSize) {
+      //   const batch = properties.slice(i, i + batchSize);
+      //   await Promise.all(
+      //     batch.map((property: any) => tecimobPropertiesService.create(property))
+      //   );
+      // }
+
+      message.success('Base atualizada com sucesso');
+    } catch (error: any) {
+      message.error(`Erro ao buscar imóveis Tecimob: ${error?.response?.data?.status === 401 ? 'Token inválido' : 'Erro ao buscar imóveis'}`);
+      if (error?.response?.data?.status === 401) {
+        setModalLogin(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  console.log('actions*****', actions);
   return (
     <div>
         <Modal
@@ -597,6 +693,57 @@ function Comparar({ token }: { token: string }) {
                     allowClear
                 />
             </div>
+            <Modal
+                open={openModalSync}
+                onCancel={() => setOpenModalSync(false)}
+                footer={null}
+                title="Sincronizar Base Tecimob"
+            >
+                <div>
+                    <p className="text-lg font-semibold mb-4">
+                        Referência: {actions?.referencia}
+                    </p>
+                    <div className="mb-4">
+                        <h3 className="text-md font-medium mb-2">Campos que serão alterados:</h3>
+                        {actions?.campos && Object.entries(actions.campos).map(([campo, dados]: [string, any]) => (
+                            <div key={campo} className="mb-3 p-3 border rounded-lg bg-gray-50">
+                                <p className="font-medium text-gray-800">{campo}</p>
+                                <div className="mt-2 space-y-1">
+                                    <p className="text-sm">
+                                        <span className="text-red-600 font-medium">Tecimob:</span> {String(dados.tecimob ?? 'Não informado')}
+                                    </p>
+                                    <p className="text-sm">
+                                        <span className="text-green-600 font-medium">→ Será alterado para:</span> {String(dados.linux ?? 'Não informado')}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="mb-4">
+                    <p className="text-gray-700 mb-2">
+                        Tem certeza que deseja sincronizar a base Tecimob? Esta ação irá atualizar os dados dos imóveis.
+                    </p>
+                </div>
+                <div className="flex justify-end gap-2">
+                    <button
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg text-sm px-4 py-2"
+                        onClick={() => setOpenModalSync(false)}
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        className="bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg text-sm px-4 py-2"
+                        onClick={() => {
+                            handleSincronizarBase();
+                            // setOpenModalSync(false);
+                        }}
+                    >
+                        Sincronizar
+                    </button>
+                </div>
+            </Modal>
+
 
             <Table 
                 dataSource={todasDiferencas.imoveisComDiferencas} 
