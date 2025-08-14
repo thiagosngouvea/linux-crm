@@ -29,6 +29,13 @@ export default function Document() {
           crossOrigin="anonymous"
         />
         <link
+          rel="preload"
+          as="font"
+          href="/fonts/Offlander-Regular.otf"
+          type="font/otf"
+          crossOrigin="anonymous"
+        />
+        <link
           href="https://fonts.cdnfonts.com/css/offlander"
           rel="stylesheet"
         />

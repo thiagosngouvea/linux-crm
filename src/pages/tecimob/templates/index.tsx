@@ -949,13 +949,13 @@ function Templates({ token }: { token: string }) {
                           fontWeight: "bold",
                           fontSize: 180,
                           marginTop: 360,
-                          display: "flex",
+                          display: "flex", 
                           justifyContent: "center",
                           alignItems: "center",
                           // textShadow: "0 12px 48px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.9)",
                           pointerEvents: "none",
-                          fontFamily:
-                            "'Offlander', sans-serif",
+                          fontFamily: "offlander",
+                          fontStyle: "normal",
                           letterSpacing: 0.83,
                         }}
                         className="z-1000 !important"
@@ -1051,9 +1051,10 @@ function Templates({ token }: { token: string }) {
                           .filter(([_, value]: [string, any]) => value && value.priority !== undefined && !value?.title_formated?.includes("undefined") && value?.title_formated !== undefined)
                           .sort((a: [string, any], b: [string, any]) => a[1].priority - b[1].priority)
                           .slice(0, 3)
-                          .map(([key, value]: [string, any]) => {
+                          .map(([key, value]: [string, any], index, array) => {
                             const isQuartos = value?.title_formated?.toLowerCase().includes("quartos");
                             const suite = templateData.rooms?.suite;
+                            const shouldReplaceHA = key === 'primary_area' && array.length === 1;
                             console.log('key', key)
                             return (
                               <div
@@ -1085,7 +1086,7 @@ function Templates({ token }: { token: string }) {
                                       {value.icon}
                                     </span>
                                   )}
-                                  <span style={{ marginTop: isQuartos ? 0 : 30, fontFamily: "'Roboto', sans-serif", fontWeight: "bold", fontSize: 32, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{key.includes('area') ? '': '0'}{value?.title_formated.toUpperCase()}</span>
+                                  <span style={{ marginTop: isQuartos ? 0 : shouldReplaceHA ? 50 : 30, marginLeft: shouldReplaceHA ? 10 : 0, fontFamily: "'Roboto', sans-serif", fontWeight: "bold", fontSize: shouldReplaceHA ? 48 : 32, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{key.includes('area') ? '': '0'}{shouldReplaceHA ? value?.title_formated.toUpperCase().replace('HA', ' HECTARES') : value?.title_formated.toUpperCase()}</span>
                                 </span>
                                 {isQuartos && suite?.title_formated && (
                                   <span style={{ marginTop: -60, color: "#fff", marginLeft: 55, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>(0{suite.title_formated.toUpperCase()})</span>
@@ -1130,45 +1131,44 @@ function Templates({ token }: { token: string }) {
                           marginBottom: 48,
                         }}
                       >
-                        {[templateData.firstImage, templateData.secondImage, templateData.thirdImage]
-                          .filter(Boolean)
-                          .map((imageUrl, idx) => {
-                            const pos = secondaryPositions[idx] || { x: 50, y: 50 };
-                            const dragging = drag.idx === idx;
-                            return (
-                              <div
-                                key={idx}
-                                onMouseDown={handleMouseDown(idx)}
-                                onMouseMove={handleMouseMove(idx)}
-                                onMouseUp={handleMouseUp}
-                                onMouseLeave={handleMouseUp}
+                        {Array(3).fill(null).map((_, idx) => {
+                          const imageUrl = [templateData.firstImage, templateData.secondImage, templateData.thirdImage][idx] || templateData.firstImage;
+                          const pos = secondaryPositions[idx] || { x: 50, y: 50 };
+                          const dragging = drag.idx === idx;
+                          return (
+                            <div
+                              key={idx}
+                              onMouseDown={handleMouseDown(idx)}
+                              onMouseMove={handleMouseMove(idx)}
+                              onMouseUp={handleMouseUp}
+                              onMouseLeave={handleMouseUp}
+                              style={{
+                                width: 320,
+                                height: 300,
+                                borderRadius: 32,
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                background: "#fafafa",
+                                overflow: "hidden",
+                                cursor: dragging ? "grabbing" : "grab",
+                                userSelect: "none",
+                              }}
+                            >
+                              <img
+                                src={imageUrl as string}
+                                alt={`Imagem secundária ${idx + 1}`}
                                 style={{
-                                  width: 320,
-                                  height: 300,
-                                  borderRadius: 32,
-                                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                                  background: "#fafafa",
-                                  overflow: "hidden",
-                                  cursor: dragging ? "grabbing" : "grab",
-                                  userSelect: "none",
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  objectPosition: `${pos.x}% ${pos.y}%`,
+                                  display: "block",
+                                  pointerEvents: "none",
                                 }}
-                              >
-                                <img
-                                  src={imageUrl as string}
-                                  alt={`Imagem secundária ${idx + 1}`}
-                                  style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                    objectPosition: `${pos.x}% ${pos.y}%`,
-                                    display: "block",
-                                    pointerEvents: "none",
-                                  }}
-                                  draggable={false}
-                                />
-                              </div>
-                            );
-                          })}
+                                draggable={false}
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                       <img

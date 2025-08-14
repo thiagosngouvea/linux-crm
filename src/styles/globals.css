@@ -9,6 +9,14 @@
    font-style: normal;
    font-display: swap;
  }
+
+ @font-face {
+   font-family: 'Offlander';
+   src: url('/fonts/Offlander-Regular.otf') format('opentype');
+   font-weight: 700;
+   font-style: normal;
+   font-display: swap;
+ }
  
 :root {
   --foreground-rgb: 0, 0, 0;

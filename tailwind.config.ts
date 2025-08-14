@@ -30,6 +30,7 @@ const config: Config = {
       },
       fontFamily: {
         montserratArabic: ['"Montserrat Arabic"', 'sans-serif'],
+        offlander: ['"Offlander"', 'sans-serif'],
       },
     },
   },

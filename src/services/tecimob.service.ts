@@ -118,7 +118,7 @@ const getImovelByReference = async (token: string, reference: string) => {
 }
 
 const getPeople = async (token: string) => {
-  return await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/people?sort=-updated_at&include=user&with_cellphone_number=true&limit=20&offset=1`, {
+  return await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/people?sort=-updated_at&include=user&with_cellphone_number=true&limit=20000&offset=1`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -266,7 +266,7 @@ const patchImovelRooms = async (
   data: {
     transaction?: any,
     is_draft?: boolean,
-    type: {
+    type?: {
       id: string,
       title: string,
       order: number,
@@ -294,11 +294,16 @@ const patchImovelRooms = async (
       primary_area: string
     },
     rooms: {
-      [key: string]: {
-        value: string,
+      [key: string | number]: {
+        value: any,
+        title?: string,
+        name?: string,
+        title_formated?: string,
         extra?: {
-          [extraKey: string]: {
-            value: boolean
+          [extraKey: string | number]: {
+            name?: string,
+            title?: string,
+            value?: any
           }
         }
       }
@@ -523,7 +528,7 @@ const patchInitialInformation = async (
   }
 ) => {
   return await axios.patch(
-    `https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/inicial-informations`,
+    `https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/initial-informations`,
     data,
     {
       headers: {
@@ -531,6 +536,14 @@ const patchInitialInformation = async (
       },
     }
   );
+}
+
+const getInitialInformation = async (token: string, id: string) => {
+  return await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/properties/partial/${id}/initial-informations/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }
 
 const getCharacteristics = async (token: string, id: string) => {
@@ -1065,5 +1078,6 @@ export const tecimobService = {
   patchImovelAreas,
   getPeople,
   getUsers,
+  getInitialInformation,
 };
   
