@@ -964,7 +964,7 @@ function Templates({ token }: { token: string }) {
                             }
                             
                             // Check formatted text length
-                            return title.length > 28 ? 360 : 200;
+                            return title.length > 29 ? 360 : 200;
                           })(),
                           display: "flex", 
                           justifyContent: "center",
