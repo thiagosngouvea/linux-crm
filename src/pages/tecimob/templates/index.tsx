@@ -43,6 +43,7 @@ interface TemplateData {
   thirdImage: string;
   reference: string;
   show_rooms?: boolean; // Adicionar esta propriedade
+  status: string;
 }
 
 interface ImovelImage {
@@ -379,6 +380,7 @@ function Templates({ token }: { token: string }) {
     reference: "",
     calculated_price: "",
     show_rooms: true,
+    status: "",
   });
 
   const [showEditForm, setShowEditForm] = useState(false);
@@ -530,12 +532,13 @@ function Templates({ token }: { token: string }) {
                 thirdImage: res.data.data.images[4]?.file_url?.large || "",
                 calculated_price: res.data.data.calculated_price,
                 show_rooms: true,
+                status: res.data.data.status,
             });
             setShowEditForm(true);
           });
-      }).catch((err) => {
-        console.log(err.response.data.message);
-        setMessageLogin(err.response.data.message);
+      }).catch((err: any) => {
+        console.log(err.response?.data?.message);
+        setMessageLogin(err.response?.data?.message);
         setModalLogin(true);
       });
   };
@@ -819,6 +822,11 @@ function Templates({ token }: { token: string }) {
         {/* Preview */}
         <Col xs={24} md={24} style={{ marginTop: 24 }}>
           <Card>
+            {templateData.status && (
+              <div className={` ${templateData.status === "Excluído" ? "bg-red-500" : "bg-green-500"} text-white p-2 rounded-md mb-10 text-center`}>
+                <Text style={{ color: "#fff", fontSize: 24, fontWeight: "bold" }}>{templateData.status}</Text>
+              </div>
+            )}
             {/* Miniatura responsiva do template 1080x1920 (9:16) */}
             <div
               id="template-preview"
@@ -942,17 +950,32 @@ function Templates({ token }: { token: string }) {
                           color: (templateData.transaction === '1' || templateData.transaction === 1) ? "#ff790b" : "#2134cd",
                           fontWeight: "bold",
                           fontSize: 180,
-                          marginTop: 360,
+                          marginTop: (() => {
+                            let title = templateData.title || "";
+                            
+                            // Remove " p/ ..." and everything after
+                            if (title.includes(" p/ ")) {
+                              title = title.split(" p/ ")[0].trim();
+                            }
+                            
+                            // Remove " à Venda" and everything after
+                            if (title.includes(" à Venda")) {
+                              title = title.split(" à Venda")[0].trim();
+                            }
+                            
+                            // Check formatted text length
+                            return title.length > 28 ? 360 : 200;
+                          })(),
                           display: "flex", 
                           justifyContent: "center",
                           alignItems: "center",
                           // textShadow: "0 12px 48px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.9)",
                           pointerEvents: "none",
-                          fontFamily: "offlander",
+                          // fontFamily: "offlander",
                           fontStyle: "normal",
                           letterSpacing: 0.83,
                         }}
-                        className="z-1000 !important"
+                        className="z-1000 !important font-offlander text-blue"
                       >
                         {(templateData.transaction === '1' || templateData.transaction === 1) ? "VENDO" : "ALUGO"}
                       </div>
@@ -1172,7 +1195,7 @@ function Templates({ token }: { token: string }) {
                           position: "absolute",
                           zIndex: 1000000000000,
                           bottom: 50,
-                          left: 0,
+                          left: -30,
                           width: "auto",
                           filter: "drop-shadow(0 4px 16px rgba(0,0,0,0.2)) drop-shadow(0 2px 8px rgba(0,0,0,0.6)) contrast(1.3) saturate(1.1)",
                           imageRendering: "crisp-edges",
@@ -1186,7 +1209,7 @@ function Templates({ token }: { token: string }) {
                       <div 
                       style={{ 
                         position: "absolute", 
-                        bottom: 40, 
+                        bottom: 60, 
                         right: 60, 
                         color: "#fff", 
                         fontSize: 32, 
