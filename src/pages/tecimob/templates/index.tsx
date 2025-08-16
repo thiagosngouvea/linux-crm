@@ -437,9 +437,10 @@ function Templates({ token }: { token: string }) {
     toPng(templateElement, {
       width,
       height,
-      pixelRatio: 2, // Maior qualidade
+      pixelRatio: 1, // Reduzido de 2 para 1 para diminuir o tamanho
       cacheBust: true,
       backgroundColor: '#ffffff',
+      quality: 0.8, // Adicionar compressão
       style: {
         transform: 'none',
         position: 'relative',
@@ -448,7 +449,22 @@ function Templates({ token }: { token: string }) {
       },
     })
       .then((dataUrl) => {
-        saveAs(dataUrl, 'template.png');
+        // Converter para JPEG com compressão para reduzir tamanho
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = () => {
+          canvas.width = width;
+          canvas.height = height;
+          ctx?.drawImage(img, 0, 0);
+          
+          // Converter para JPEG com compressão (0.7 = 70% de qualidade)
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          saveAs(compressedDataUrl, `${templateData.reference}.jpg`);
+        };
+        
+        img.src = dataUrl;
       })
       .catch((err) => {
         console.error('Erro ao exportar imagem:', err);
