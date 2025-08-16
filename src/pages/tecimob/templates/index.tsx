@@ -1119,7 +1119,7 @@ function Templates({ token }: { token: string }) {
                                       {value.icon}
                                     </span>
                                   )}
-                                  <span style={{ marginTop: isQuartos ? 0 : shouldReplaceHA ? 50 : 30, marginLeft: shouldReplaceHA ? 10 : 0, fontFamily: "'Roboto', sans-serif", fontWeight: "bold", fontSize: shouldReplaceHA ? 48 : 32, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{key.includes('area') ? '': '0'}{shouldReplaceHA ? value?.title_formated.toUpperCase().replace('HA', ' HECTARES').replace('M²', ' M²') : value?.title_formated.toUpperCase()}</span>
+                                  <span style={{ marginTop: isQuartos ? 0 : shouldReplaceHA ? 50 : 30, marginLeft: shouldReplaceHA ? 10 : 0, fontFamily: "'Roboto', sans-serif", fontWeight: "bold", fontSize: shouldReplaceHA ? 48 : 32, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>{key.includes('area') ? '': '0'}{shouldReplaceHA ? value?.title_formated.toUpperCase().replace('HA', ' HECTARES').replace('M²', ' M²') : value?.title_formated.toUpperCase().replace('M²', ' M²')}</span>
                                 </span>
                                 {isQuartos && suite?.title_formated && (
                                   <span style={{ marginTop: -60, color: "#fff", marginLeft: 65, textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>(0{suite.title_formated.toUpperCase()})</span>
