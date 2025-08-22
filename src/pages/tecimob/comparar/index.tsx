@@ -953,7 +953,7 @@ function Comparar({ token }: { token: string }) {
         const linuxProperty = imoveisLinux.find(
           (imovel: any) => imovel.reference === actions?.referencia
         );
-        console.log("linuxProperty", linuxProperty);
+        
         if (linuxProperty) {
           const updateData: any = {};
           
