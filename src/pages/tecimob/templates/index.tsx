@@ -1081,7 +1081,7 @@ function Templates({ token }: { token: string }) {
                         }}
                       >
                         {Object.entries(templateData.rooms)
-                          .filter(([_, value]: [string, any]) => value && value.priority !== undefined && !value?.title_formated?.includes("undefined") && value?.title_formated !== undefined)
+                          .filter(([_, value]: [string, any]) => value && value.priority !== undefined && typeof value?.title_formated === 'string' && !value.title_formated.includes("undefined"))
                           .sort((a: [string, any], b: [string, any]) => a[1].priority - b[1].priority)
                           .slice(0, 3)
                           .map(([key, value]: [string, any], index, array) => {
