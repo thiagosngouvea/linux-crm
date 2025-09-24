@@ -276,7 +276,7 @@ const Questionario = React.memo(function Questionario() {
       className="bg-white p-4 max-w-screen-xl mx-auto min-h-screen"
     >
       <Title level={2}>
-        <EditOutlined /> Completar Informações da Propriedade
+        <EditOutlined /> Atualizar Informações da Propriedade
       </Title>
 
       {/* Informações da Propriedade */}
@@ -338,7 +338,7 @@ const Questionario = React.memo(function Questionario() {
       </Card>
 
       {hasFieldsToUpdate ? (
-        <Card title="Complete as Informações em Falta">
+        <Card title="Atualize as Informações se Necessário">
           <Form form={form} layout="vertical" onFinish={onFinish}>
             <Row gutter={[16, 16]}>
               {needsReference && (
