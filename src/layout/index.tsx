@@ -41,7 +41,7 @@ interface LayoutSidebarProps {
     children: React.ReactNode;
 }
 
-const excludePaths:any = ['/auth/login'];
+const excludePaths:any = ['/auth/login', '/tecimob/questionario/[id]'];
 
 export default function LayoutSidebar({children}: LayoutSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
@@ -55,13 +55,15 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
 
   const [isAdmin, setIsAdmin] = useState(false);
 
+  console.log(route.pathname);
+
   useEffect(() => {
     setIsAdmin(user?.role === 'super_admin' || user?.role === 'admin');
   }, [user]);
 
   const isMobile = windowSize.width ? windowSize.width <= 768 : false;
 
-  return !route.pathname.includes(excludePaths) ? (
+  return !excludePaths.includes(route.pathname) ? (
     !isMobile ? (
     <Layout style={{ minHeight: '100vh' }}>
           <Sider theme='light' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} style={{ position: 'sticky', maxHeight: '100vh'}}>

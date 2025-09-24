@@ -8,8 +8,8 @@ import { parse } from "cookie";
 import Cookies from "js-cookie";
 
 function Comparar({ token }: { token: string }) {
-  const [imoveis, setImoveis] = useState([]);
-  const [imoveisLinux, setImoveisLinux] = useState([]);
+  const [imoveis, setImoveis] = useState<any[]>([]);
+  const [imoveisLinux, setImoveisLinux] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalLogin, setModalLogin] = useState(false);
   const [expandedRowKey, setExpandedRowKey] = useState<string | null>(null);
@@ -52,9 +52,7 @@ function Comparar({ token }: { token: string }) {
         ""
       );
 
-      const response2 = await tecimobService.getImoveis(token);
 
-      console.log("response2", response2);
 
       const formattedData = response?.data?.properties?.map(
         (property: any) => ({
@@ -109,6 +107,77 @@ function Comparar({ token }: { token: string }) {
     fetchImoveis();
   }, []);
 
+  const syncImoveisDetails = async () => {
+    setLoading(true);
+    try {
+      // Buscar todos os imóveis do Tecimob
+      const imoveisTecimob = await tecimobService.getImoveis(token);
+      const tecimobProperties = imoveisTecimob.data.data;
+      
+      console.log(`Iniciando sincronização de ${tecimobProperties.length} imóveis...`);
+      
+      let successCount = 0;
+      let errorCount = 0;
+      
+      // Iterar sobre cada imóvel do Tecimob
+      for (let i = 0; i < tecimobProperties.length; i++) {
+        const imovel = tecimobProperties[i];
+        
+        try {
+          // Buscar detalhes do imóvel
+          const responseDetails = await tecimobService.getImovelDetails(token, imovel.id);
+          const imovelDetails = responseDetails.data.data;
+          
+          // Encontrar o imóvel correspondente na base de dados local pela referência
+          const localImovel = imoveis.find((local: any) => local.reference === imovelDetails.reference);
+          
+          if (localImovel) {
+            // Preparar dados para atualização
+            const updateData = {
+              description: imovelDetails.description || '',
+              meta_title: imovelDetails.meta_title || '',
+              meta_description: imovelDetails.meta_description || ''
+            };
+            
+            // Atualizar na base de dados
+            await tecimobPropertiesService.update(localImovel.id, updateData);
+            
+            console.log(`Imóvel ${imovelDetails.reference} atualizado com sucesso`);
+            successCount++;
+          } else {
+            console.warn(`Imóvel com referência ${imovelDetails.reference} não encontrado na base local`);
+            errorCount++;
+          }
+          
+          // Adicionar um pequeno delay para evitar sobrecarga da API
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+        } catch (error) {
+          console.error(`Erro ao processar imóvel ${imovel.id}:`, error);
+          errorCount++;
+        }
+      }
+      
+      // Mostrar resultado final
+      if (successCount > 0) {
+        message.success(`${successCount} imóveis atualizados com sucesso!`);
+      }
+      
+      if (errorCount > 0) {
+        message.warning(`${errorCount} imóveis apresentaram erro durante a sincronização`);
+      }
+      
+      // Recarregar a lista de imóveis para mostrar as atualizações
+      await fetchImoveis();
+      
+    } catch (error) {
+      console.error("Erro na sincronização:", error);
+      message.error("Erro ao sincronizar detalhes dos imóveis");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const fetchImoveisLinux = async () => {
     setLoading(true);
     try {
@@ -159,6 +228,9 @@ function Comparar({ token }: { token: string }) {
         calculated_price_linux: imoveiLinux?.calculated_price,
       };
     });
+
+  console.log("imoveis", imoveis.filter((imovel: any) => imovel.reference === "TESTE"));
+  console.log("imoveisLinux", imoveisLinux.filter((imovel: any) => imovel.reference === "TESTE"));
 
   // Mapeamento de campos equivalentes entre as bases
   const fieldMapping = {
@@ -400,6 +472,18 @@ function Comparar({ token }: { token: string }) {
         }
         return value;
       },
+    },
+    "Descrição": {
+      linux: "description",
+      tecimob: "description",
+    },
+    "Meta Título": {
+      linux: "meta_title",
+      tecimob: "meta_title",
+    },
+    "Meta Descrição": {
+      linux: "meta_description",
+      tecimob: "meta_description",
     },
     // 'Link do Site': {
     //   linux: 'site_link',
@@ -744,9 +828,6 @@ function Comparar({ token }: { token: string }) {
     }
   };
 
-  console.log("actions", actions);
-
-  console.log("imoveis", imoveis);
   
   // Log do imóvel com referência CH0017-PV
   // const imovelCH0017 = imoveis.find((imovel: any) => imovel.reference === "CH0017-PV");
@@ -1049,6 +1130,14 @@ function Comparar({ token }: { token: string }) {
           }}
         >
           Atualizar Base Tecimob
+        </button>
+        <button
+          className="ml-4 text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+          onClick={() => {
+            syncImoveisDetails();
+          }}
+        >
+          Sincronizar Detalhes dos Imóveis
         </button>
         <div className="flex items-center gap-2 mb-4">
           <h1 className="text-2xl font-bold text-orange-500">

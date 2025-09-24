@@ -101,6 +101,14 @@ const getImoveis = async (token: string) => {
   });
 }
 
+const getImovelDetails = async (token: string, id: string) => {
+  return await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/properties/${id}?include=rate%2Cstages%2Cis_under_negotiation%2Cuser%2Ccondominium%2Ccondo_characteristics%2Ccharacteristics%2Cestablishments%2Cpeople%2Cpeople.primary_phone%2Ccover_image%2Cpermissions%2Creal_estate.primary_domain%2Csituation%2Cagent%2Csolar_position%2Cexchange_types&count=matcheds_sent%2Cmatcheds_new%2Cdocuments%2Cdeals_without_pipeline%2Cnotes%2Cnotes_auth%2Cbookings_active`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 const getUniqueImovel = async (token: string, id: string) => {
   return await axios.get(`https://api.gerenciarimoveis-cf.com.br/api/properties/${id}`, {
     headers: {
@@ -1035,6 +1043,7 @@ export const tecimobService = {
   getPublicacaoImovel,
   alterarPublicacaoImovel,
   getImoveis,
+  getImovelDetails,
   getUniqueImovel,
   getImovelByReference,
   getPropertiesTypes,
