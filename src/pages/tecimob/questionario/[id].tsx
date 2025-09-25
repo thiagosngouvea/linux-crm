@@ -241,6 +241,7 @@ const Questionario = React.memo(function Questionario() {
           justifyContent: "center",
           alignItems: "center",
           minHeight: "400px",
+          padding: "16px",
         }}
       >
         <Spin size="large" />
@@ -250,7 +251,7 @@ const Questionario = React.memo(function Questionario() {
 
   if (!propertyData || !managementData) {
     return (
-      <div style={{ textAlign: "center", padding: "50px" }}>
+      <div style={{ textAlign: "center", padding: "24px 16px" }}>
         <Text type="danger">Propriedade não encontrada</Text>
       </div>
     );
@@ -273,9 +274,22 @@ const Questionario = React.memo(function Questionario() {
 
   return (
     <div
-      className="bg-white p-4 max-w-screen-xl mx-auto min-h-screen"
+      className="bg-white min-h-screen"
+      style={{ 
+        padding: "16px", 
+        maxWidth: "1200px", 
+        margin: "0 auto" 
+      }}
     >
-      <Title level={2}>
+      <Title 
+        level={2} 
+        style={{ 
+          fontSize: "20px",
+          lineHeight: "28px",
+          marginBottom: "24px"
+        }}
+        className="sm:text-2xl"
+      >
         <EditOutlined /> Atualizar Informações da Propriedade
       </Title>
 
@@ -283,66 +297,82 @@ const Questionario = React.memo(function Questionario() {
       <Card
         title="Informações da Propriedade"
         style={{ marginBottom: "24px" }}
-        extra={<Text code>#{propertyData.reference}</Text>}
+        extra={<Text code style={{ fontSize: "12px" }}>#{propertyData.reference}</Text>}
+        size="small"
       >
         <Row gutter={[16, 16]}>
-          <Col span={12}>
-            <Space direction="vertical" style={{ width: "100%" }}>
+          <Col xs={24} md={12}>
+            <Space direction="vertical" style={{ width: "100%" }} size="small">
               <div>
-                <Text strong>Título:</Text> {propertyData.title}
+                <Text strong>Título:</Text>
+                <br className="block sm:hidden" />
+                <span className="sm:ml-2">{propertyData.title}</span>
               </div>
               <div>
-                <Text strong>Endereço:</Text> {propertyData.address}
+                <Text strong>Endereço:</Text>
+                <br className="block sm:hidden" />
+                <span className="sm:ml-2">{propertyData.address}</span>
               </div>
               <div>
-                <Text strong>Tipo:</Text> {propertyData.type}
+                <Text strong>Tipo:</Text>
+                <span className="ml-2">{propertyData.type}</span>
               </div>
               <div>
-                <Text strong>Transação:</Text> {propertyData.transaction}
+                <Text strong>Transação:</Text>
+                <span className="ml-2">{propertyData.transaction}</span>
               </div>
               <div>
-                <Text strong>Status:</Text> {propertyData.status}
+                <Text strong>Status:</Text>
+                <span className="ml-2">{propertyData.status}</span>
               </div>
             </Space>
           </Col>
-          <Col span={12}>
-            <Space direction="vertical" style={{ width: "100%" }}>
+          <Col xs={24} md={12}>
+            <Space direction="vertical" style={{ width: "100%" }} size="small">
               <div>
-                <Text strong>Preço Venda:</Text>{" "}
-                <Text style={{ color: "#52c41a", fontSize: "16px" }}>
+                <Text strong>Preço Venda:</Text>
+                <br className="block sm:hidden" />
+                <Text style={{ color: "#52c41a", fontSize: "14px" }} className="sm:text-base sm:ml-2">
                   R$ {propertyData.sale_price?.toLocaleString("pt-BR")}
                 </Text>
               </div>
               <div>
-                <Text strong>Preço Aluguel:</Text>{" "}
-                <Text style={{ color: "#1890ff", fontSize: "16px" }}>
+                <Text strong>Preço Aluguel:</Text>
+                <br className="block sm:hidden" />
+                <Text style={{ color: "#1890ff", fontSize: "14px" }} className="sm:text-base sm:ml-2">
                   R$ {propertyData.rental_price?.toLocaleString("pt-BR")}
                 </Text>
               </div>
               <div>
-                <Text strong>Quartos:</Text> {propertyData.bedrooms}
+                <Text strong>Quartos:</Text>
+                <span className="ml-2">{propertyData.bedrooms}</span>
               </div>
               <div>
-                <Text strong>Banheiros:</Text> {propertyData.bathrooms}
+                <Text strong>Banheiros:</Text>
+                <span className="ml-2">{propertyData.bathrooms}</span>
               </div>
               <div>
-                <Text strong>Área:</Text> {propertyData.area}m²
+                <Text strong>Área:</Text>
+                <span className="ml-2">{propertyData.area}m²</span>
               </div>
             </Space>
           </Col>
         </Row>
         <div style={{ marginTop: "16px" }}>
-          <Text strong>Responsável:</Text> {propertyData.responsible1} -{" "}
-          {propertyData.contact_responsible1}
+          <Text strong>Responsável:</Text>
+          <br className="block sm:hidden" />
+          <span className="sm:ml-2">
+            {propertyData.responsible1} - {propertyData.contact_responsible1}
+          </span>
         </div>
       </Card>
 
       {hasFieldsToUpdate ? (
-        <Card title="Atualize as Informações se Necessário">
+        <Card title="Atualize as Informações se Necessário" size="small">
           <Form form={form} layout="vertical" onFinish={onFinish}>
             <Row gutter={[16, 16]}>
               {needsReference && (
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item
                     name="reference"
                     label="Referência"
@@ -356,7 +386,7 @@ const Questionario = React.memo(function Questionario() {
               )}
 
               {needsType && (
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item
                     name="type"
                     label="Tipo"
@@ -374,7 +404,7 @@ const Questionario = React.memo(function Questionario() {
               )}
 
               {needsTransaction && (
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item
                     name="transaction"
                     label="Transação"
@@ -392,7 +422,7 @@ const Questionario = React.memo(function Questionario() {
               )}
 
               {needsArea && (
-                <Col span={8}>
+                <Col xs={24} sm={16} md={8}>
                   <Form.Item
                     name="area"
                     label="Área"
@@ -408,7 +438,7 @@ const Questionario = React.memo(function Questionario() {
               )}
 
               {needsMeasurementUnit && (
-                <Col span={4}>
+                <Col xs={24} sm={8} md={4}>
                   <Form.Item
                     name="measurement_unit"
                     label="Unidade"
@@ -425,7 +455,7 @@ const Questionario = React.memo(function Questionario() {
 
             <Row gutter={[16, 16]}>
               {needsSaleValue && (
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item
                     name="sale_value"
                     label="Valor de Venda"
@@ -446,7 +476,7 @@ const Questionario = React.memo(function Questionario() {
               )}
 
               {needsRentalValue && (
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item
                     name="rental_value"
                     label="Valor de Aluguel"
@@ -466,7 +496,7 @@ const Questionario = React.memo(function Questionario() {
 
             <Row gutter={[16, 16]}>
               {needsResponsible2 && (
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item
                     name="responsible2"
                     label="Responsável 2"
@@ -480,7 +510,7 @@ const Questionario = React.memo(function Questionario() {
               )}
 
               {needsContactResponsible2 && (
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item
                     name="contact_responsible2"
                     label="Contato Responsável 2"
@@ -499,7 +529,7 @@ const Questionario = React.memo(function Questionario() {
 
             <Row gutter={[16, 16]}>
               {needsCondominiumName && (
-                <Col span={8}>
+                <Col xs={24} sm={8}>
                   <Form.Item name="condominium_name" label="Nome do Condomínio">
                     <Input placeholder="Nome do condomínio" />
                   </Form.Item>
@@ -507,7 +537,7 @@ const Questionario = React.memo(function Questionario() {
               )}
 
               {needsNeighborhood && (
-                <Col span={8}>
+                <Col xs={24} sm={8}>
                   <Form.Item
                     name="neighborhood"
                     label="Bairro"
@@ -519,7 +549,7 @@ const Questionario = React.memo(function Questionario() {
               )}
 
               {needsCity && (
-                <Col span={8}>
+                <Col xs={24} sm={8}>
                   <Form.Item
                     name="city"
                     label="Cidade"
@@ -555,16 +585,19 @@ const Questionario = React.memo(function Questionario() {
           </Form>
         </Card>
       ) : (
-        <Card>
-          <div style={{ textAlign: "center", padding: "50px" }}>
+        <Card size="small">
+          <div style={{ textAlign: "center", padding: "32px 16px" }}>
             <CheckCircleOutlined
               style={{
-                fontSize: "48px",
+                fontSize: "40px",
                 color: "#52c41a",
                 marginBottom: "16px",
               }}
+              className="sm:text-5xl"
             />
-            <Title level={3}>Todas as informações estão completas!</Title>
+            <Title level={3} style={{ fontSize: "18px", marginBottom: "8px" }} className="sm:text-xl">
+              Todas as informações estão completas!
+            </Title>
             <Text>Não há campos pendentes para esta propriedade.</Text>
           </div>
         </Card>
