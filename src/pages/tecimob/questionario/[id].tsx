@@ -151,10 +151,10 @@ const Questionario = React.memo(function Questionario() {
         // Pré-preencher formulário com dados da propriedade quando os campos do management estão null
         form.setFieldsValue({
           reference: managementItem.reference || property.reference,
-          responsible2: managementItem.responsible2 || property.responsible1,
+          responsible2: managementItem.responsible2 || property.responsible2,
           contact_responsible2:
             managementItem.contact_responsible2 ||
-            property.contact_responsible1,
+            property.contact_responsible2,
           type: managementItem.type || property.type,
           area: managementItem.area || property.area,
           measurement_unit:
@@ -450,9 +450,6 @@ const Questionario = React.memo(function Questionario() {
                   <Form.Item
                     name="rental_value"
                     label="Valor de Aluguel"
-                    rules={[
-                      { required: true, message: "Informe o valor de aluguel" },
-                    ]}
                   >
                     <InputNumber
                       style={{ width: "100%" }}
