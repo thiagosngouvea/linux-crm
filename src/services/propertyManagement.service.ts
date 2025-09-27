@@ -9,7 +9,7 @@ const getAll = async (
     filterType = ""
 ) =>
   await api.get(
-    `/property-management?page=${page}&per_page=${per_page}&orderBy=name&orderType=ASC${
+    `/property-management?page=${page}&per_page=${per_page}&orderBy=created_at&orderType=DESC${
     !!filterValue
     ? `&filterBy=${filterBy}&filterValue=${filterValue}&filterType=${filterType}`
     : ""

@@ -189,7 +189,9 @@ const Questionario = React.memo(function Questionario() {
       }
 
       // Preparar dados para atualização - apenas campos que estavam null
-      const updateData: any = {};
+      const updateData: any = {
+        form_responded: true,
+      };
 
       if (needsReference && values.reference)
         updateData.reference = values.reference;

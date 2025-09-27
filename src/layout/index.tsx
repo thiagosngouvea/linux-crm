@@ -89,6 +89,9 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
                     <Menu.Item key="sub4" icon={<BsCalendarEvent />} onClick={() => route.push('/imoveis/agendamentos')}>
                         Agendamentos
                     </Menu.Item>
+                    <Menu.Item key="sub5" icon={<BsListUl />} onClick={() => route.push('/imoveis/questionario')}>
+                        Questionário
+                    </Menu.Item>
                 </SubMenu>
                 <SubMenu key="sub2" icon={<BsFillHouseDoorFill />} title="Tecimob">
                     <Menu.Item key="sub5" icon={<BsListUl />} onClick={() => route.push('/tecimob/imoveis')}>
