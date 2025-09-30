@@ -473,18 +473,18 @@ function Comparar({ token }: { token: string }) {
         return value;
       },
     },
-    "Descrição": {
-      linux: "description",
-      tecimob: "description",
-    },
-    "Meta Título": {
-      linux: "meta_title",
-      tecimob: "meta_title",
-    },
-    "Meta Descrição": {
-      linux: "meta_description",
-      tecimob: "meta_description",
-    },
+    // "Descrição": {
+    //   linux: "description",
+    //   tecimob: "description",
+    // },
+    // "Meta Título": {
+    //   linux: "meta_title",
+    //   tecimob: "meta_title",
+    // },
+    // "Meta Descrição": {
+    //   linux: "meta_description",
+    //   tecimob: "meta_description",
+    // },
     // 'Link do Site': {
     //   linux: 'site_link',
     //   tecimob: 'site_link',
