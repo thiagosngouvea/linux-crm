@@ -41,7 +41,7 @@ interface LayoutSidebarProps {
     children: React.ReactNode;
 }
 
-const excludePaths:any = ['/auth/login', '/tecimob/questionario/[id]'];
+const excludePaths:any = ['/auth/login', '/imoveis/questionario/[id]'];
 
 export default function LayoutSidebar({children}: LayoutSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
