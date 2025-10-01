@@ -171,13 +171,13 @@ const QuestionarioGerenciamento = () => {
 
   const copyToClipboard = async (id: string, reference: string) => {
     try {
-      const url = `${window.location.origin}/tecimob/questionario/${id}`;
+      const url = `${window.location.origin}/imoveis/questionario/${id}`;
       await navigator.clipboard.writeText(url);
       message.success(`Link copiado para a propriedade ${reference}!`);
     } catch (error) {
       // Fallback para navegadores mais antigos
       const textArea = document.createElement("textarea");
-      textArea.value = `${window.location.origin}/tecimob/questionario/${id}`;
+      textArea.value = `${window.location.origin}/imoveis/questionario/${id}`;
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
@@ -517,7 +517,7 @@ const QuestionarioGerenciamento = () => {
               type="text"
               size="small"
               icon={<EditOutlined />}
-              onClick={() => router.push(`/tecimob/questionario/${record.id}`)}
+              onClick={() => router.push(`/imoveis/questionario/${record.id}`)}
             />
           </Tooltip>
           {record.form_responded && (
