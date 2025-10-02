@@ -20,7 +20,20 @@ export default function App({ Component, pageProps }: AppProps) {
   const route = useRouter();
   const { recoveryAuth, logout, user } = useAuthStore();
 
+  // Páginas que não requerem autenticação
+  const publicPaths = ['/auth/login'];
+  
+  // Função para verificar se a rota atual é pública
+  const isPublicPath = (pathname: string) => {
+    return publicPaths.includes(pathname) || pathname.startsWith('/imoveis/questionario/');
+  };
+
   useEffect(() => {
+    // Não verificar autenticação em páginas públicas
+    if (isPublicPath(route.pathname)) {
+      return;
+    }
+
     async function recoveryAuthLogin() {
         await recoveryAuth().then((res: any) => {
             if(!!res.success){
@@ -33,7 +46,7 @@ export default function App({ Component, pageProps }: AppProps) {
         });
     }
     recoveryAuthLogin();
-}, [user]);
+}, [user, route.pathname]);
 
 
  return (

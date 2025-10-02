@@ -43,6 +43,11 @@ interface LayoutSidebarProps {
 
 const excludePaths:any = ['/auth/login', '/imoveis/questionario/[id]'];
 
+// Função para verificar se a rota atual deve ser excluída do layout autenticado
+const shouldExcludeFromLayout = (pathname: string) => {
+  return excludePaths.includes(pathname) || pathname.startsWith('/imoveis/questionario/');
+};
+
 export default function LayoutSidebar({children}: LayoutSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const windowSize = useWindowSize();
@@ -63,7 +68,7 @@ export default function LayoutSidebar({children}: LayoutSidebarProps) {
 
   const isMobile = windowSize.width ? windowSize.width <= 768 : false;
 
-  return !excludePaths.includes(route.pathname) ? (
+  return !shouldExcludeFromLayout(route.pathname) ? (
     !isMobile ? (
     <Layout style={{ minHeight: '100vh' }}>
           <Sider theme='light' collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} style={{ position: 'sticky', maxHeight: '100vh'}}>

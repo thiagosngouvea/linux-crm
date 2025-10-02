@@ -19,11 +19,17 @@ const api = () => {
 
   // if (typeof window !== "undefined") {
   instance.interceptors.request.use(function (config) {
-    const token = Cookies.get("SS$S");
-    if (token) {
-      let sessionParsed = JSON.parse(token);
-      if (sessionParsed && sessionParsed.token) {
-        config.headers.Authorization = `Bearer ${sessionParsed.token}`;
+    // Verificar se estamos em uma página pública que não precisa de token
+    const isPublicRoute = typeof window !== "undefined" && 
+      window.location.pathname.startsWith('/imoveis/questionario/');
+    
+    if (!isPublicRoute) {
+      const token = Cookies.get("SS$S");
+      if (token) {
+        let sessionParsed = JSON.parse(token);
+        if (sessionParsed && sessionParsed.token) {
+          config.headers.Authorization = `Bearer ${sessionParsed.token}`;
+        }
       }
     }
 
@@ -36,10 +42,14 @@ const api = () => {
     },
     function (error) {
       let status = error?.response?.status;
+      const isPublicRoute = typeof window !== "undefined" && 
+        window.location.pathname.startsWith('/imoveis/questionario/');
+      
       if (
         window &&
         status === 401 &&
-        error?.config?.url !== "/sessions"
+        error?.config?.url !== "/sessions" &&
+        !isPublicRoute
       ) {
         notification.error({
           message: "Por favor, faça o login para continuar",
